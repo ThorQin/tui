@@ -1,0 +1,2 @@
+﻿tui.banBackspace();
+

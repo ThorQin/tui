@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=IE8">
+    <title>TUI library</title>
+    <link rel="stylesheet" href="tui/css/tui.min.css" type="text/css" />
+	<link href="font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<!--[if lt IE 9]>
+		<script src="/tui/html5shiv.min.js"></script>
+	<![endif]-->
+	<script src="Scripts/jquery-1.11.0.js"></script>
+	<script src="tui/tui.core.js"></script>
+	<script src="tui/lang/zh-cn.js"></script>
+	<script src="tui/lang/en-us.js"></script>
+	<script src="tui/tui.time.js"></script>
+    <script src="tui/tui.control.js"></script>
+	<script src="tui/tui.button.js"></script>
+	<script src="tui/tui.checkbox.js"></script>
+	<script src="tui/tui.radiobox.js"></script>
+	<script src="tui/tui.popup.js"></script>
+	<script src="tui/tui.calendar.js"></script>
+	<script src="tui/tui.upload.js"></script>
+	<script src="tui/tui.input.js"></script>
+	<script src="tui/tui.dialog.js"></script>
+	<script src="tui/tui.scrollbar.js"></script>
+	<script src="app.js"></script>
+	<script>
+		//tui.lang = "zh-cn";
+		$(function () {
+			tui.on("btnTest btnB btnA", function (e) {
+				$("#info").append(e.name + " action fired!<br>");
+				var pop = tui.ctrl.popup();
+				pop.show("<div style='width:200px;height:200px;'><a id='btnA' class='tui-button'>test</a></div>", e.ctrl, "Rb");
+			});
+
+			tui.ctrl.button("btnFire").on("click", function (e) {
+				$("#info").append("btnFile clicked!<br>");
+			});
+			//tui.ctrl.button("btnA").on("mousedown mouseup keydown keyup", function (e) {
+			//	$("#info").append(e.type + " event!<br>");
+			//});
+
+			tui.ctrl.input("fileInput").on("complete", function (data) {
+				$("#info").append(tui.format("Change {0} ,ext: {1}, fileid: {2}!<br>", data.file, data.ext, data.response.fileId));
+			});
+
+			tui.on("btnValidate", function (e) {
+				$(".tui-input").each(function (index, elem) {
+					tui.ctrl.input(elem).validate();
+				});
+
+				//tui.msgbox("This is a test message.", "Test title");
+				var dlg = tui.ctrl.dialog();
+				dlg.showResource("dlgResource", "测试资源");
+			});
+
+			tui.on("btninfo", function (e) {
+				tui.infobox("这是一个测试消息", "测试一下消息框");
+			});
+			tui.on("btnerr", function (e) {
+				tui.errbox("这是一个测试消息", "测试一下消息框");
+			});
+			tui.on("btnwarn", function (e) {
+				tui.warnbox("这是一个测试消息", "测试一下消息框");
+			});
+			tui.on("btnask", function (e) {
+				tui.askbox("这是一个测试消息", "测试一下消息框");
+			});
+			tui.on("btnwait", function (e) {
+				var dlg = tui.waitbox("正在加载，请稍候...");
+				setTimeout(function () {
+					dlg.close();
+				}, 1000);
+			});
+			tui.ctrl.scrollbar("scl").on("scroll", function (data) {
+				$("#info").html(data.value);
+			});
+		});
+	</script>
+	<style>
+		
+	</style>
+</head>
+<body>
+    <h1>TypeScript HTML App</h1>
+	<i class="fa fa-gear fa-spin fa-lg"></i>
+	
+	<button id="btnFire" class="tui-button tui-primary"><i class="fa fa-camera-retro"></i> Click</button>
+	<button id="btnTest" class="tui-button"><i class="fa fa-check"></i> 复选框</button>
+	<button id="btnB" class="tui-button tui-danger">危险</button>
+	<a id="btnA" class="tui-button tui-warning">警告</a>
+	<span id="btnTest" class="tui-button tui-success">成功</span>
+
+	<a class="tui-checkbox">选项1</a><a class="tui-checkbox">选项2</a>
+
+	<a class="tui-radiobox" data-group="abc">选项1</a><a class="tui-radiobox" data-group="abc">选项2</a>
+	
+	<div class="tui-calendar"></div>
+
+	<div class="tui-btn-group">
+		<a class="tui-button"><i class="fa fa-list"></i> 列表</a>
+		<a class="tui-button"><i class="fa fa-font"></i></a>
+		<a class="tui-button"><i class="fa fa-italic"></i></a>
+		<a class="tui-button"><i class="fa fa-indent"></i></a>
+	</div> <br>
+
+	<div id="info" class="test-cls" data-checked=12 data-actived="true">
+
+	</div>
+	<br>
+
+	<div id="dlgResource">
+
+		<div class="tui-input" 
+			 data-type="text" 
+			 data-placeholder="用户名称" 
+			 data-validator="{'*any':'请输入用户名','*email':'必须是邮件格式'}"></div> 
+		<div class="tui-input" data-type="password" data-placeholder="用户密码" 
+			 data-validator='{"*any":"请输入密码","*password":"密码必须包含数字英文大小写和符号且不能小于6位"}'></div> 
+		<div class="tui-input" data-type="calendar" 
+			 data-placeholder="请选择日期" data-validator="{'*any':'请选择日期'}"></div>
+		<div class="tui-input" data-type="select"></div>
+		<div class="tui-input" data-type="multi-select" 
+			 data-icon="fa-user"></div> 
+		<i class="fa fa-exclamation-triangle" 
+		   style="color:#feb000;font-size:16px;text-shadow:2px"></i>
+		<br><br>
+		<div id="fileInput" class="tui-input" data-type="file" 
+			 data-upload-url="upload.ashx" data-accept="image/gif" 
+			 data-placeholder="请选择文件" data-format=".*\.sql$"></div> 
+		<div class="tui-input" data-type="custom-text" 
+			 data-placeholder="请输入" data-icon="fa-search"></div>
+		<div class="tui-input" data-type="custom-select" 
+			 data-placeholder="请选择" data-icon="fa-user"></div>
+	
+		<a id="btninfo" class="tui-button">消息</a>
+		<a id="btnerr" class="tui-button">错误</a>
+		<a id="btnwarn" class="tui-button">警告</a>
+		<a id="btnask" class="tui-button">询问</a>
+		<a id="btnwait" class="tui-button">等待</a>
+	</div>
+
+	
+	<a id="btnValidate" class="tui-button" >Check validate</a>
+	<div class="test-cls" unselectable="on">
+		asdfasdf
+	</div>
+	
+	<span id="scl" class="tui-scrollbar" data-direction="horizontal" style="width:200px" data-total="100" data-page="20"></span>
+	<span class="tui-scrollbar" style="height:200px" data-total="100"></span>
+
+	
+</body>
+</html>

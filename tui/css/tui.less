@@ -1,0 +1,809 @@
+﻿@import 'awesome4.less';
+@borderColor: #cccccc;
+@maskLayer:2147483647;
+@tooltipLayer: 2147483646;
+@warnColor:#feb000;
+@buttonRadius:3px;
+
+.tui-spin {
+  -webkit-animation: spin 2s infinite linear;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+}
+
+.tui-inline {
+	display:inline-block;
+	vertical-align:middle;
+}
+
+@-moz-keyframes spin {
+  0% { -moz-transform: rotate(0deg); }
+  100% { -moz-transform: rotate(359deg); }
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(359deg); }
+}
+@-o-keyframes spin {
+  0% { -o-transform: rotate(0deg); }
+  100% { -o-transform: rotate(359deg); }
+}
+@-ms-keyframes spin {
+  0% { -ms-transform: rotate(0deg); }
+  100% { -ms-transform: rotate(359deg); }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(359deg); }
+}
+
+.tui-fadein {
+  -webkit-animation: fadein 0.1s linear;
+  -moz-animation: fadein 0.1s linear;
+  -o-animation: fadein 0.1s linear;
+  animation: fadein 0.1s linear;
+}
+@-moz-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@-webkit-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@-o-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@-ms-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+.tui-fadeout {
+  -webkit-animation: fadeout 0.1s linear;
+  -moz-animation: fadeout 0.1s linear;
+  -o-animation: fadeout 0.1s linear;
+  animation: fadeout 0.1s linear;
+}
+@-moz-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@-webkit-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@-o-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@-ms-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+
+.font() {
+	font:normal 14px 'Microsoft Yahei',Arial,Verdana;
+}
+.btn() {
+	.font;
+	padding:6px 14px;
+	text-align:center;
+	vertical-align:middle;
+	text-decoration:none;
+	display:inline-block;
+}
+.shadow(@x, @y, @blur, @color : rgba(0,0,0,.1)) {
+	-webkit-box-shadow: @x @y @blur @color;
+	-moz-box-shadow: @x @y @blur @color;
+	box-shadow: @x @y @blur @color;
+}
+.border-radius(@size) {
+	-webkit-border-radius:@size;
+	-moz-border-radius:@size;
+	border-radius:@size;
+}
+.right-radius(@size) {
+	-webkit-border-top-right-radius:@size;
+	-webkit-border-bottom-right-radius:@size;
+	-moz-border-top-right-radius:@size;
+	-moz-border-bottom-right-radius:@size;
+	border-top-right-radius:@size;
+	border-bottom-right-radius:@size;
+}
+.left-radius(@size) {
+	-webkit-border-top-left-radius:@size;
+	-webkit-border-bottom-left-radius:@size;
+	-moz-border-top-left-radius:@size;
+	-moz-border-bottom-left-radius:@size;
+	border-top-left-radius:@size;
+	border-bottom-left-radius:@size;
+}
+.top-radius(@size) {
+	-webkit-border-top-left-radius:@size;
+	-webkit-border-top-right-radius:@size;
+	-moz-border-top-left-radius:@size;
+	-moz-border-top-right-radius:@size;
+	border-top-left-radius:@size;
+	border-top-right-radius:@size;
+}
+.bottom-radius(@size) {
+	-webkit-border-bottom-left-radius:@size;
+	-webkit-border-bottom-right-radius:@size;
+	-moz-border-bottom-left-radius:@size;
+	-moz-border-bottom-right-radius:@size;
+	border-bottom-left-radius:@size;
+	border-bottom-right-radius:@size;
+}
+
+.liner-color(@begin, @end) {
+	background-color: (@begin + @end) / 2;
+	filter:e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d')", @begin, @end));
+	background-image: -webkit-gradient(linear, left top, left bottom, from(@begin), to(@end));
+	background-image: -webkit-linear-gradient(top, @begin, @end);
+	background-image: -moz-linear-gradient(top,  @begin, @end);
+	background-image: -ms-linear-gradient(top, @begin, @end);  
+	background-image: -o-linear-gradient(top, @begin, @end);
+}
+.btn-color(@begin, @end) {
+	.liner-color(@begin,@end);
+	border-color: @end - #111;
+	&:hover {
+		.liner-color(@end,@begin);
+	}
+	&:active,&.tui-actived {
+		.liner-color(@end - #111, @end - #111);
+	}
+}
+.icon-base() {
+	display: inline-block;
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.icon() {
+	.icon-base;
+	font-size:14px;
+	width:12px;
+	margin-right:2px;
+}
+.tooltip() {
+	padding:4px 8px;
+	color: #ddd;
+	position:absolute;
+	left:0;
+	top:100%;
+	white-space:nowrap;
+	z-index:@tooltipLayer;
+	background-color:#555;
+	.border-radius(4px);
+	.shadow(1px, 2px, 5px, rgba(0,0,0,0.2));
+}
+
+.opacity(@value) {
+	opacity:@value;
+	@filterValue: @value * 100;
+	filter:alpha(opacity=@filterValue);
+}
+
+.tui-blur {
+	filter: url(blur.svg#blur); /* FireFox, Chrome, Opera */
+	-webkit-filter: blur(5px); /* Chrome, Opera */
+	-moz-filter: blur(5px);
+	-ms-filter: blur(5px);
+	filter: blur(5px);
+	/* IE6~IE9 */
+	/*filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=5, MakeShadow=false);*/
+}
+
+body {
+    .font;
+}
+
+[unselectable=on] {
+	cursor: default;
+	-moz-user-select:none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+div.tui-mask {
+	display:block;
+	position:fixed;
+	background-color:#fff;
+	.opacity(0);
+	left:0;
+	top:0;
+	right:0;
+	bottom:0;
+	cursor:default;
+}
+
+.tui-hidden {
+	display:none;
+}
+
+// TUI button
+.tui-button {
+	.btn;
+	margin:2px;
+	cursor:pointer;
+	.border-radius(@buttonRadius);
+	//.shadow(0px, 1px, 2px);
+	text-decoration: none;
+	color: #000;
+	.btn-color(#f5f5f5, #f0f0f0);
+	border: 1px solid @borderColor;
+	vertical-align:middle;
+	text-align:center;
+	min-width:40px;
+	&.tui-success {
+		color: #fff;
+		.btn-color(#00c555, #00b545);
+	}
+	&.tui-primary {
+		color: #fff;
+		.btn-color(#0085f5, #0075e5);
+	}
+	&.tui-danger {
+		color: #fff;
+		.btn-color(#f51500, #e50500);
+	}
+	&.tui-warning {
+		color: #fff;
+		.btn-color(#ff8a00, #ef7a00);
+	}
+}
+
+// Checkbox and Radriobox
+.tui-checkbox,.tui-radiobox {
+	.btn;
+	padding:4px 5px;
+	text-align:center;
+	margin:2px;
+	cursor:pointer;
+	text-decoration: none;
+	.border-radius(4px);
+	color: #000;
+	vertical-align:middle;
+	.fa {
+		margin-left:2px;
+		margin-right:3px;
+		width:12px;
+	}
+	&:active,&.tui-actived {
+		background-color:#f5f5f5;
+	}
+}
+
+.tui-checkbox {
+	&:before {
+		.icon;
+		.fa-square-o;
+	}
+	&[data-checked]:before {
+		.icon;
+		.fa-check-square-o;
+	}
+}
+.tui-radiobox {
+	&:before {
+		.icon;
+		.fa-circle-o;
+	}
+	&[data-checked]:before {
+		.icon;
+		.fa-dot-circle-o;
+	}
+}
+
+// Calendar Control
+.tui-calendar {
+	padding:2px;
+	border: 1px solid #c0c0c0;
+	white-space:nowrap;
+	display:inline-block;
+	font-family: Calibri;
+	font-size:14px;
+	vertical-align:middle;
+	td {
+		padding:3px;
+		text-align:center;
+		width: 24px;
+		border:1px solid transparent;
+		&[colspan='3'] {
+			width:inherit;
+		}
+		&.tui-prev-month,&.tui-next-month {
+			color:#d0d0d0;
+		}
+		&.tui-weekend {
+			background-color:#fafafa;
+		}
+		&.tui-today {
+			color:#f00;
+			border:1px solid #017bce;
+		}
+		&.tui-actived {
+			background-color:#017bce;
+			color:#fff;
+		}
+		&.tui-prev-month-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-left;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+		&.tui-prev-year-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-double-left;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+		&.tui-next-month-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-right;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+		&.tui-next-year-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-double-right;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+	}
+	.tui-week {
+		background-color: #017bce;
+		color:#fff;
+		font-size:12px;
+	}
+}
+
+// Popup Control
+.tui-popup {
+	display:inline-block;
+	position:fixed;
+	padding:0px;
+	outline:none;
+	z-index:99999;
+	.shadow(1px, 2px, 7px, rgba(0,0,0,0.1));
+	.border-radius(4px);
+	border: 1px solid #c0c0c0;
+	background-color: #fff;
+	.tui-calendar {
+		border:none;
+		outline:none;
+	}
+}
+
+
+// Input Control
+.tui-input {
+	@buttonWidth: 34px;
+	@radius: 3px;
+	@borderFocusColor: rgb(113, 178, 230);
+	@buttonBackColor: #f0f0f0;
+	@buttonHoverColor: #f5f5f5;
+	@buttonActiveColor: #e0e0e0;
+	@inputBackColor: #fff;
+
+	margin:2px;
+	display:inline-block;
+	position:relative;
+	border:1px solid @borderColor;
+	.border-radius(@radius);
+	outline:none;
+	width:200px;
+	height:30px;
+	vertical-align:middle;
+	background-color:@inputBackColor;
+	//overflow:hidden;
+	.tui-placeholder {
+		color:#ccc;
+		//font-style:italic;
+	}
+	&.tui-focus,&:focus {
+		border:1px solid @borderFocusColor;
+		.shadow(0px, 0px, 5px, rgba(113,178,230,0.5));
+	}
+	> input {
+		position:absolute;
+		left:0;
+		top:0;
+		border:none;
+		outline:none;
+		padding:4px 8px;
+		padding-top:4px;
+		background-color:transparent;
+		font-size: 14px;
+		font-family: 'Microsoft YaHei';
+	}
+
+	> label {
+		display: inline-block;
+		padding:4px 8px;
+		position:absolute;
+		white-space:nowrap;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		left:0;
+		top:0;
+		right:@buttonWidth;
+		top:0;
+		bottom:0;
+	}
+
+	> span {
+		.icon-base;
+		font-size:14px;
+		position:absolute;
+		width:@buttonWidth;
+		right:0;
+		top:0;
+		bottom:0;
+		cursor:pointer;
+		background-color:@buttonBackColor;
+		.right-radius(@radius);
+		color:#000;
+		border-left:1px solid @borderColor;
+		text-align:center;
+		&:hover,&.tui-input-btn-hover {
+			background-color:@buttonHoverColor;
+		}
+		&:active,&.tui-input-btn-active {
+			background-color:@buttonActiveColor;
+		}
+	}
+	> div {
+		.icon-base;
+		line-height:30px;
+		font-size:14px;
+		position:absolute;
+		width:@buttonWidth;
+		top:0;
+		right:0;
+		bottom:0;
+		cursor:default;
+		color:@warnColor;
+		text-align:center;
+		background-color:@inputBackColor;
+		.border-radius(@radius);
+		&:before {
+			.fa-exclamation-triangle;
+		}
+		&[data-warning]:hover:after {
+			.tooltip;
+			content:attr(data-warning);
+		}
+	}
+	&[data-type=select] > span:before,&[data-type=multi-select] > span:before {
+		.fa-chevron-down;
+	}
+	&[data-type=calendar] > span:before {
+		.fa-calendar;
+	}
+	&[data-type=file] > span:before {
+		.fa-folder-o;
+	}
+}
+
+
+.tui-dialog-mask:extend(div.tui-mask) {
+	background-color:#444;
+	.opacity(0.5);
+}
+.tui-dialog {
+	@radius: 6px;
+	@captionColor: #f0f0f0;
+	@lineColor: #ddd;
+	@captionHeight: 40px;
+	@backColor:#fcfcfc;
+
+	.tui-fadein;
+
+	outline:none;
+	display:block;
+	position:fixed;
+	background-color:white;
+	.border-radius(@radius);
+	min-width:340px;
+	//border:1px solid @lineColor;
+	.shadow(0px, 1px, 10px, rgba(0,0,0,0.7));
+	> div {
+		padding:30px 20px;
+		background-color:@backColor;
+		border-top:1px solid @lineColor;
+		border-bottom:1px solid @lineColor;
+	}
+	> .tui-dlg-title-bar {
+		.top-radius(@radius);
+		position:relative;
+		overflow:hidden;
+		padding:5px 20px;
+		border:0;
+		height:@captionHeight;
+		line-height:@captionHeight;
+		font-weight:bold;
+		font-size:16px;
+		font-family:'Microsoft YaHei';
+		.tui-dlg-close {
+			position:absolute;
+			top:10px;
+			right:10px;
+			width:30px;
+			height:30px;
+			line-height:30px;
+			text-align:center;
+			padding:0;
+			background-color:transparent;
+			border:0;
+			cursor:pointer;
+			outline:none;
+			.border-radius(3px);
+			&:hover {
+				background-color:#eee;
+			}
+			&:before {
+				.icon-base;
+				.fa-times;
+			}
+		}
+	}
+	> .tui-dlg-btn-bar {
+		.bottom-radius(@radius);
+		overflow:hidden;
+		padding:5px 20px;
+		border:0;
+		background-color:@captionColor;
+		min-height:@captionHeight;
+		text-align:right;
+	}
+
+	.tui-dlg-msg {
+		text-align:center;
+	}
+	.tui-dlg-warp {
+		text-align:center;
+		&:before {
+			.icon-base;
+			font-size:3em;
+			margin:-8px 0;
+			margin-right:20px;
+			vertical-align:middle;
+		}
+		&.tui-dlg-info:before {
+			.fa-check;
+			color:#33d500;
+		}
+		&.tui-dlg-warn:before {
+			.fa-exclamation;
+			color:@warnColor;
+		}
+		&.tui-dlg-err:before {
+			.fa-times;
+			color:red;
+		}
+		&.tui-dlg-ask:before {
+			.fa-question;
+			color:#339bf5;
+		}
+		&.tui-dlg-wait:before {
+			.fa-gear;
+			.tui-spin;
+			color:#aaa;
+		}
+	}
+
+}
+
+.tui-btn-group {
+	margin-left:2px;
+	margin-right:2px;
+	white-space:nowrap;
+	> * {
+		float:left;
+		margin-left:0;
+		margin-right:0;
+		border-left:none;
+		.border-radius(0px);
+		&.tui-button {
+			min-width:0px;
+		}
+	}
+	> *:first-child {
+		.left-radius(@buttonRadius);
+		border-left:1px solid @borderColor;
+	}
+	> *:last-child {
+		.right-radius(@buttonRadius);
+	}
+	&:after {
+		display:block;
+		content:"";
+		clear:left;
+	}
+}
+
+.tui-scrollbar {
+	@iconColor:#999;
+	@iconActiveColor:#333;
+	@backColor:#f0f0f0;
+	@thumbColor:@iconColor;
+	@thumbActiveColor:#666;
+	@btnSize:16px;
+	@borderSize:4px;
+	@space:4px;
+	@radius:3px;
+	@buttonPadding:4px;
+
+	font-size:9px;
+	margin:0;
+	padding:0;
+	display:inline-block;
+	position:relative;
+	width:@btnSize;
+	background-color:@backColor;
+	vertical-align:middle;
+	cursor:default;
+	.border-radius(3px);
+	span {
+		display:inline-block;
+		position:absolute;
+		left:0;
+		right:0;
+		margin:0;
+		padding:0;
+		text-align:center;
+		vertical-align:middle;
+	}
+	.tui-scroll-head {
+		top:0;
+		height:@btnSize;
+		padding-top:@buttonPadding;
+		line-height:@btnSize;
+		&:before {
+			display:inline-block;
+			position:relative;
+			content:"";
+			width:0;
+			height:0;
+			border:@borderSize solid transparent;
+			border-bottom:4px solid @iconColor;
+			top:-2px;
+			left:auto;
+		}
+		&:hover:before,&.tui-actived:before {
+			border-bottom-color:@iconActiveColor;
+		}
+	}
+	.tui-scroll-thumb {
+		left:@space;
+		right:@space;
+		background-color:@thumbColor;
+		.border-radius(@radius);
+		border-left:@space solid transparent;
+		border-right:@space solid transparent;
+		&:hover,&.tui-actived {
+			background-color:@thumbActiveColor;
+		}
+	}
+	.tui-scroll-foot {
+		bottom:0;
+		height:@btnSize;
+		line-height:@btnSize;
+		padding-bottom:@buttonPadding;
+		&:before {
+			display:inline-block;
+			position:relative;
+			content:"";
+			width:0;
+			height:0;
+			border:@borderSize solid transparent;
+			border-top:4px solid @iconColor;
+			top:2px;
+			left:auto;
+		}
+
+		&:hover:before,&.tui-actived:before {
+			border-top-color:@iconActiveColor;
+		}
+	}
+
+	&[data-direction=horizontal] {
+		height:@btnSize;
+		width:auto;
+
+		span {
+			top:0;
+			bottom:0;
+			left:auto;
+			right:auto;
+		}
+		.tui-scroll-head {
+			left:0;
+			width:@btnSize;
+			line-height:@btnSize;
+			padding-left:@buttonPadding;
+			padding-top:0;
+			&:before {
+				display:inline-block;
+				position:relative;
+				content:"";
+				width:0;
+				height:0;
+				border:@borderSize solid transparent;
+				border-right:4px solid @iconColor;
+				left:-2px;
+				top:auto;
+			}
+			&:hover:before,&.tui-actived:before {
+				border-right-color:@iconActiveColor;
+			}
+		}
+		.tui-scroll-thumb {
+			top:@space;
+			bottom:@space;
+			left:auto;
+			right:auto;
+			background-color:@thumbColor;
+			border-top:@space solid transparent;
+			border-bottom:@space solid transparent;
+			border-left:0;
+			border-right:0;
+			&:hover,&.tui-actived {
+				background-color:@thumbActiveColor;
+			}
+		}
+		.tui-scroll-foot {
+			right:0;
+			width:@btnSize;
+			line-height:@btnSize;
+			padding-right:@buttonPadding;
+			padding-bottom:0;
+			&:before {
+				display:inline-block;
+				position:relative;
+				content:"";
+				width:0;
+				height:0;
+				border:@borderSize solid transparent;
+				border-left:4px solid @iconColor;
+				left:2px;
+				top:auto;
+			}
+			&:hover:before,&.tui-actived:before {
+				border-left-color:@iconActiveColor;
+			}
+		}
+	}
+}

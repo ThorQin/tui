@@ -1,0 +1,1030 @@
+.tui-spin {
+  -webkit-animation: spin 2s infinite linear;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+}
+.tui-inline {
+  display: inline-block;
+  vertical-align: middle;
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+  }
+}
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+  }
+}
+@-ms-keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg);
+  }
+  100% {
+    -ms-transform: rotate(359deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}
+.tui-fadein {
+  -webkit-animation: fadein 0.1s linear;
+  -moz-animation: fadein 0.1s linear;
+  -o-animation: fadein 0.1s linear;
+  animation: fadein 0.1s linear;
+}
+@-moz-keyframes fadein {
+  0% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+  100% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+}
+@-webkit-keyframes fadein {
+  0% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+  100% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+}
+@-o-keyframes fadein {
+  0% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+  100% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+}
+@-ms-keyframes fadein {
+  0% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+  100% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+}
+@keyframes fadein {
+  0% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+  100% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+}
+.tui-fadeout {
+  -webkit-animation: fadeout 0.1s linear;
+  -moz-animation: fadeout 0.1s linear;
+  -o-animation: fadeout 0.1s linear;
+  animation: fadeout 0.1s linear;
+}
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+  100% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+}
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+  100% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+}
+@-o-keyframes fadeout {
+  0% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+  100% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+}
+@-ms-keyframes fadeout {
+  0% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+  100% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+}
+@keyframes fadeout {
+  0% {
+    opacity: 1;
+    filter: alpha(opacity=100);
+  }
+  100% {
+    opacity: 0;
+    filter: alpha(opacity=0);
+  }
+}
+.tui-blur {
+  filter: url(blur.svg#blur);
+  /* FireFox, Chrome, Opera */
+  -webkit-filter: blur(5px);
+  /* Chrome, Opera */
+  -moz-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
+  /* IE6~IE9 */
+  /*filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=5, MakeShadow=false);*/
+}
+body {
+  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
+}
+[unselectable=on] {
+  cursor: default;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+div.tui-mask,
+.tui-dialog-mask {
+  display: block;
+  position: fixed;
+  background-color: #fff;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  cursor: default;
+}
+.tui-hidden {
+  display: none;
+}
+.tui-button {
+  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
+  padding: 6px 14px;
+  display: inline-block;
+  margin: 2px;
+  cursor: pointer;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  text-decoration: none;
+  color: #000;
+  background-color: #f3f3f3;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#f0f0f0');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#f0f0f0));
+  background-image: -webkit-linear-gradient(top, #f5f5f5, #f0f0f0);
+  background-image: -moz-linear-gradient(top, #f5f5f5, #f0f0f0);
+  background-image: -ms-linear-gradient(top, #f5f5f5, #f0f0f0);
+  background-image: -o-linear-gradient(top, #f5f5f5, #f0f0f0);
+  border-color: #dfdfdf;
+  border: 1px solid #cccccc;
+  vertical-align: middle;
+  text-align: center;
+  min-width: 40px;
+}
+.tui-button:hover {
+  background-color: #f3f3f3;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f0', endColorstr='#f5f5f5');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#f5f5f5));
+  background-image: -webkit-linear-gradient(top, #f0f0f0, #f5f5f5);
+  background-image: -moz-linear-gradient(top, #f0f0f0, #f5f5f5);
+  background-image: -ms-linear-gradient(top, #f0f0f0, #f5f5f5);
+  background-image: -o-linear-gradient(top, #f0f0f0, #f5f5f5);
+}
+.tui-button:active,
+.tui-button.tui-actived {
+  background-color: #dfdfdf;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#dfdfdf');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#dfdfdf), to(#dfdfdf));
+  background-image: -webkit-linear-gradient(top, #dfdfdf, #dfdfdf);
+  background-image: -moz-linear-gradient(top, #dfdfdf, #dfdfdf);
+  background-image: -ms-linear-gradient(top, #dfdfdf, #dfdfdf);
+  background-image: -o-linear-gradient(top, #dfdfdf, #dfdfdf);
+}
+.tui-button.tui-success {
+  color: #fff;
+  background-color: #00bd4d;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00c555', endColorstr='#00b545');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#00c555), to(#00b545));
+  background-image: -webkit-linear-gradient(top, #00c555, #00b545);
+  background-image: -moz-linear-gradient(top, #00c555, #00b545);
+  background-image: -ms-linear-gradient(top, #00c555, #00b545);
+  background-image: -o-linear-gradient(top, #00c555, #00b545);
+  border-color: #00a434;
+}
+.tui-button.tui-success:hover {
+  background-color: #00bd4d;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00b545', endColorstr='#00c555');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#00b545), to(#00c555));
+  background-image: -webkit-linear-gradient(top, #00b545, #00c555);
+  background-image: -moz-linear-gradient(top, #00b545, #00c555);
+  background-image: -ms-linear-gradient(top, #00b545, #00c555);
+  background-image: -o-linear-gradient(top, #00b545, #00c555);
+}
+.tui-button.tui-success:active,
+.tui-button.tui-success.tui-actived {
+  background-color: #00a434;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00a434', endColorstr='#00a434');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#00a434), to(#00a434));
+  background-image: -webkit-linear-gradient(top, #00a434, #00a434);
+  background-image: -moz-linear-gradient(top, #00a434, #00a434);
+  background-image: -ms-linear-gradient(top, #00a434, #00a434);
+  background-image: -o-linear-gradient(top, #00a434, #00a434);
+}
+.tui-button.tui-primary {
+  color: #fff;
+  background-color: #007ded;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0085f5', endColorstr='#0075e5');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#0085f5), to(#0075e5));
+  background-image: -webkit-linear-gradient(top, #0085f5, #0075e5);
+  background-image: -moz-linear-gradient(top, #0085f5, #0075e5);
+  background-image: -ms-linear-gradient(top, #0085f5, #0075e5);
+  background-image: -o-linear-gradient(top, #0085f5, #0075e5);
+  border-color: #0064d4;
+}
+.tui-button.tui-primary:hover {
+  background-color: #007ded;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0075e5', endColorstr='#0085f5');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#0075e5), to(#0085f5));
+  background-image: -webkit-linear-gradient(top, #0075e5, #0085f5);
+  background-image: -moz-linear-gradient(top, #0075e5, #0085f5);
+  background-image: -ms-linear-gradient(top, #0075e5, #0085f5);
+  background-image: -o-linear-gradient(top, #0075e5, #0085f5);
+}
+.tui-button.tui-primary:active,
+.tui-button.tui-primary.tui-actived {
+  background-color: #0064d4;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0064d4', endColorstr='#0064d4');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#0064d4), to(#0064d4));
+  background-image: -webkit-linear-gradient(top, #0064d4, #0064d4);
+  background-image: -moz-linear-gradient(top, #0064d4, #0064d4);
+  background-image: -ms-linear-gradient(top, #0064d4, #0064d4);
+  background-image: -o-linear-gradient(top, #0064d4, #0064d4);
+}
+.tui-button.tui-danger {
+  color: #fff;
+  background-color: #ed0d00;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f51500', endColorstr='#e50500');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f51500), to(#e50500));
+  background-image: -webkit-linear-gradient(top, #f51500, #e50500);
+  background-image: -moz-linear-gradient(top, #f51500, #e50500);
+  background-image: -ms-linear-gradient(top, #f51500, #e50500);
+  background-image: -o-linear-gradient(top, #f51500, #e50500);
+  border-color: #d40000;
+}
+.tui-button.tui-danger:hover {
+  background-color: #ed0d00;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e50500', endColorstr='#f51500');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#e50500), to(#f51500));
+  background-image: -webkit-linear-gradient(top, #e50500, #f51500);
+  background-image: -moz-linear-gradient(top, #e50500, #f51500);
+  background-image: -ms-linear-gradient(top, #e50500, #f51500);
+  background-image: -o-linear-gradient(top, #e50500, #f51500);
+}
+.tui-button.tui-danger:active,
+.tui-button.tui-danger.tui-actived {
+  background-color: #d40000;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#d40000', endColorstr='#d40000');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#d40000), to(#d40000));
+  background-image: -webkit-linear-gradient(top, #d40000, #d40000);
+  background-image: -moz-linear-gradient(top, #d40000, #d40000);
+  background-image: -ms-linear-gradient(top, #d40000, #d40000);
+  background-image: -o-linear-gradient(top, #d40000, #d40000);
+}
+.tui-button.tui-warning {
+  color: #fff;
+  background-color: #f78200;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff8a00', endColorstr='#ef7a00');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ff8a00), to(#ef7a00));
+  background-image: -webkit-linear-gradient(top, #ff8a00, #ef7a00);
+  background-image: -moz-linear-gradient(top, #ff8a00, #ef7a00);
+  background-image: -ms-linear-gradient(top, #ff8a00, #ef7a00);
+  background-image: -o-linear-gradient(top, #ff8a00, #ef7a00);
+  border-color: #de6900;
+}
+.tui-button.tui-warning:hover {
+  background-color: #f78200;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ef7a00', endColorstr='#ff8a00');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ef7a00), to(#ff8a00));
+  background-image: -webkit-linear-gradient(top, #ef7a00, #ff8a00);
+  background-image: -moz-linear-gradient(top, #ef7a00, #ff8a00);
+  background-image: -ms-linear-gradient(top, #ef7a00, #ff8a00);
+  background-image: -o-linear-gradient(top, #ef7a00, #ff8a00);
+}
+.tui-button.tui-warning:active,
+.tui-button.tui-warning.tui-actived {
+  background-color: #de6900;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#de6900', endColorstr='#de6900');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#de6900), to(#de6900));
+  background-image: -webkit-linear-gradient(top, #de6900, #de6900);
+  background-image: -moz-linear-gradient(top, #de6900, #de6900);
+  background-image: -ms-linear-gradient(top, #de6900, #de6900);
+  background-image: -o-linear-gradient(top, #de6900, #de6900);
+}
+.tui-checkbox,
+.tui-radiobox {
+  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
+  padding: 6px 14px;
+  display: inline-block;
+  padding: 4px 5px;
+  text-align: center;
+  margin: 2px;
+  cursor: pointer;
+  text-decoration: none;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  color: #000;
+  vertical-align: middle;
+}
+.tui-checkbox .fa,
+.tui-radiobox .fa {
+  margin-left: 2px;
+  margin-right: 3px;
+  width: 12px;
+}
+.tui-checkbox:active,
+.tui-radiobox:active,
+.tui-checkbox.tui-actived,
+.tui-radiobox.tui-actived {
+  background-color: #f5f5f5;
+}
+.tui-checkbox:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f096";
+}
+.tui-checkbox[data-checked]:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f046";
+}
+.tui-radiobox:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f10c";
+}
+.tui-radiobox[data-checked]:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f192";
+}
+.tui-calendar {
+  padding: 2px;
+  border: 1px solid #c0c0c0;
+  white-space: nowrap;
+  display: inline-block;
+  font-family: Calibri;
+  font-size: 14px;
+  vertical-align: middle;
+}
+.tui-calendar td {
+  padding: 3px;
+  text-align: center;
+  width: 24px;
+  border: 1px solid transparent;
+}
+.tui-calendar td[colspan='3'] {
+  width: inherit;
+}
+.tui-calendar td.tui-prev-month,
+.tui-calendar td.tui-next-month {
+  color: #d0d0d0;
+}
+.tui-calendar td.tui-weekend {
+  background-color: #fafafa;
+}
+.tui-calendar td.tui-today {
+  color: #f00;
+  border: 1px solid #017bce;
+}
+.tui-calendar td.tui-actived {
+  background-color: #017bce;
+  color: #fff;
+}
+.tui-calendar td.tui-prev-month-btn {
+  cursor: pointer;
+}
+.tui-calendar td.tui-prev-month-btn:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f104";
+}
+.tui-calendar td.tui-prev-month-btn:hover {
+  background-color: #f5f5f5;
+}
+.tui-calendar td.tui-prev-year-btn {
+  cursor: pointer;
+}
+.tui-calendar td.tui-prev-year-btn:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f100";
+}
+.tui-calendar td.tui-prev-year-btn:hover {
+  background-color: #f5f5f5;
+}
+.tui-calendar td.tui-next-month-btn {
+  cursor: pointer;
+}
+.tui-calendar td.tui-next-month-btn:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f105";
+}
+.tui-calendar td.tui-next-month-btn:hover {
+  background-color: #f5f5f5;
+}
+.tui-calendar td.tui-next-year-btn {
+  cursor: pointer;
+}
+.tui-calendar td.tui-next-year-btn:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 12px;
+  margin-right: 2px;
+  content: "\f101";
+}
+.tui-calendar td.tui-next-year-btn:hover {
+  background-color: #f5f5f5;
+}
+.tui-calendar .tui-week {
+  background-color: #017bce;
+  color: #fff;
+  font-size: 12px;
+}
+.tui-popup {
+  display: inline-block;
+  position: fixed;
+  padding: 0px;
+  outline: none;
+  z-index: 99999;
+  -webkit-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
+  box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: 1px solid #c0c0c0;
+  background-color: #fff;
+}
+.tui-popup .tui-calendar {
+  border: none;
+  outline: none;
+}
+.tui-input {
+  margin: 2px;
+  display: inline-block;
+  position: relative;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  outline: none;
+  width: 200px;
+  height: 30px;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+.tui-input .tui-placeholder {
+  color: #ccc;
+}
+.tui-input.tui-focus,
+.tui-input:focus {
+  border: 1px solid #71b2e6;
+  -webkit-box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+  -moz-box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+  box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+}
+.tui-input > input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: none;
+  outline: none;
+  padding: 4px 8px;
+  padding-top: 4px;
+  background-color: transparent;
+  font-size: 14px;
+  font-family: 'Microsoft YaHei';
+}
+.tui-input > label {
+  display: inline-block;
+  padding: 4px 8px;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  left: 0;
+  right: 34px;
+  top: 0;
+  bottom: 0;
+}
+.tui-input > span {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  position: absolute;
+  width: 34px;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-top-right-radius: 3px;
+  -moz-border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  color: #000;
+  border-left: 1px solid #cccccc;
+  text-align: center;
+}
+.tui-input > span:hover,
+.tui-input > span.tui-input-btn-hover {
+  background-color: #f5f5f5;
+}
+.tui-input > span:active,
+.tui-input > span.tui-input-btn-active {
+  background-color: #e0e0e0;
+}
+.tui-input > div {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 30px;
+  font-size: 14px;
+  position: absolute;
+  width: 34px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  cursor: default;
+  color: #feb000;
+  text-align: center;
+  background-color: #ffffff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.tui-input > div:before {
+  content: "\f071";
+}
+.tui-input > div[data-warning]:hover:after {
+  padding: 4px 8px;
+  color: #ddd;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  white-space: nowrap;
+  z-index: 2147483646;
+  background-color: #555;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+  content: attr(data-warning);
+}
+.tui-input[data-type=select] > span:before,
+.tui-input[data-type=multi-select] > span:before {
+  content: "\f078";
+}
+.tui-input[data-type=calendar] > span:before {
+  content: "\f073";
+}
+.tui-input[data-type=file] > span:before {
+  content: "\f114";
+}
+.tui-dialog-mask {
+  background-color: #444;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+}
+.tui-dialog {
+  -webkit-animation: fadein 0.1s linear;
+  -moz-animation: fadein 0.1s linear;
+  -o-animation: fadein 0.1s linear;
+  animation: fadein 0.1s linear;
+  outline: none;
+  display: block;
+  position: fixed;
+  background-color: white;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  min-width: 340px;
+  -webkit-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
+  -moz-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
+  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
+}
+.tui-dialog > div {
+  padding: 30px 20px;
+  background-color: #fcfcfc;
+  border-top: 1px solid #dddddd;
+  border-bottom: 1px solid #dddddd;
+}
+.tui-dialog > .tui-dlg-title-bar {
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  padding: 5px 20px;
+  border: 0;
+  height: 40px;
+  line-height: 40px;
+  font-weight: bold;
+  font-size: 16px;
+  font-family: 'Microsoft YaHei';
+}
+.tui-dialog > .tui-dlg-title-bar .tui-dlg-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  padding: 0;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  outline: none;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.tui-dialog > .tui-dlg-title-bar .tui-dlg-close:hover {
+  background-color: #eee;
+}
+.tui-dialog > .tui-dlg-title-bar .tui-dlg-close:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: "\f00d";
+}
+.tui-dialog > .tui-dlg-btn-bar {
+  -webkit-border-bottom-left-radius: 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -moz-border-bottom-left-radius: 6px;
+  -moz-border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  overflow: hidden;
+  padding: 5px 20px;
+  border: 0;
+  background-color: #f0f0f0;
+  min-height: 40px;
+  text-align: right;
+}
+.tui-dialog .tui-dlg-msg {
+  text-align: center;
+}
+.tui-dialog .tui-dlg-warp {
+  text-align: center;
+}
+.tui-dialog .tui-dlg-warp:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 3em;
+  margin: -8px 0;
+  margin-right: 20px;
+  vertical-align: middle;
+}
+.tui-dialog .tui-dlg-warp.tui-dlg-info:before {
+  content: "\f00c";
+  color: #33d500;
+}
+.tui-dialog .tui-dlg-warp.tui-dlg-warn:before {
+  content: "\f12a";
+  color: #feb000;
+}
+.tui-dialog .tui-dlg-warp.tui-dlg-err:before {
+  content: "\f00d";
+  color: red;
+}
+.tui-dialog .tui-dlg-warp.tui-dlg-ask:before {
+  content: "\f128";
+  color: #339bf5;
+}
+.tui-dialog .tui-dlg-warp.tui-dlg-wait:before {
+  content: "\f013";
+  -webkit-animation: spin 2s infinite linear;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+  color: #aaa;
+}
+.tui-btn-group {
+  margin-left: 2px;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+.tui-btn-group > * {
+  float: left;
+  margin-left: 0;
+  margin-right: 0;
+  border-left: none;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+.tui-btn-group > *.tui-button {
+  min-width: 0px;
+}
+.tui-btn-group > *:first-child {
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-top-left-radius: 3px;
+  -moz-border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-left: 1px solid #cccccc;
+}
+.tui-btn-group > *:last-child {
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-top-right-radius: 3px;
+  -moz-border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.tui-btn-group:after {
+  display: block;
+  content: "";
+  clear: left;
+}
+.tui-scrollbar {
+  font-size: 9px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  position: relative;
+  width: 16px;
+  background-color: #f0f0f0;
+  vertical-align: middle;
+  cursor: default;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.tui-scrollbar span {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+.tui-scrollbar .tui-scroll-head {
+  top: 0;
+  height: 16px;
+  padding-top: 4px;
+  line-height: 16px;
+}
+.tui-scrollbar .tui-scroll-head:before {
+  display: inline-block;
+  position: relative;
+  content: "";
+  width: 0;
+  height: 0;
+  border: 4px solid transparent;
+  border-bottom: 4px solid #999999;
+  top: -2px;
+  left: auto;
+}
+.tui-scrollbar .tui-scroll-head:hover:before,
+.tui-scrollbar .tui-scroll-head.tui-actived:before {
+  border-bottom-color: #333333;
+}
+.tui-scrollbar .tui-scroll-thumb {
+  left: 4px;
+  right: 4px;
+  background-color: #999999;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+}
+.tui-scrollbar .tui-scroll-thumb:hover,
+.tui-scrollbar .tui-scroll-thumb.tui-actived {
+  background-color: #666666;
+}
+.tui-scrollbar .tui-scroll-foot {
+  bottom: 0;
+  height: 16px;
+  line-height: 16px;
+  padding-bottom: 4px;
+}
+.tui-scrollbar .tui-scroll-foot:before {
+  display: inline-block;
+  position: relative;
+  content: "";
+  width: 0;
+  height: 0;
+  border: 4px solid transparent;
+  border-top: 4px solid #999999;
+  top: 2px;
+  left: auto;
+}
+.tui-scrollbar .tui-scroll-foot:hover:before,
+.tui-scrollbar .tui-scroll-foot.tui-actived:before {
+  border-top-color: #333333;
+}
+.tui-scrollbar[data-direction=horizontal] {
+  height: 16px;
+  width: auto;
+}
+.tui-scrollbar[data-direction=horizontal] span {
+  top: 0;
+  bottom: 0;
+  left: auto;
+  right: auto;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-head {
+  left: 0;
+  width: 16px;
+  line-height: 16px;
+  padding-left: 4px;
+  padding-top: 0;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-head:before {
+  display: inline-block;
+  position: relative;
+  content: "";
+  width: 0;
+  height: 0;
+  border: 4px solid transparent;
+  border-right: 4px solid #999999;
+  left: -2px;
+  top: auto;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-head:hover:before,
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-head.tui-actived:before {
+  border-right-color: #333333;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-thumb {
+  top: 4px;
+  bottom: 4px;
+  left: auto;
+  right: auto;
+  background-color: #999999;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 0;
+  border-right: 0;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-thumb:hover,
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-thumb.tui-actived {
+  background-color: #666666;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-foot {
+  right: 0;
+  width: 16px;
+  line-height: 16px;
+  padding-right: 4px;
+  padding-bottom: 0;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-foot:before {
+  display: inline-block;
+  position: relative;
+  content: "";
+  width: 0;
+  height: 0;
+  border: 4px solid transparent;
+  border-left: 4px solid #999999;
+  left: 2px;
+  top: auto;
+}
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-foot:hover:before,
+.tui-scrollbar[data-direction=horizontal] .tui-scroll-foot.tui-actived:before {
+  border-left-color: #333333;
+}
