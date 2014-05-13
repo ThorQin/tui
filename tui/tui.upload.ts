@@ -1,11 +1,5 @@
 ﻿/// <reference path="tui.core.ts" />
 module tui {
-	var getUID = (function () {
-		var id = 0;
-		return function () {
-			return 'TuiAjaxUpload' + id++;
-		};
-	})();
 
 	function getBox(el): { left: number; top: number; right: number; bottom: number; } {
 		var left, right, top, bottom;
@@ -31,10 +25,6 @@ module tui {
 			width: from.offsetWidth + 'px',
 			height: from.offsetHeight + 'px'
 		});
-	}
-
-	function removeNode(el) {
-		el.parentNode && el.parentNode.removeChild(el);
 	}
 
 	function fileFromPath(file): string {
@@ -128,7 +118,7 @@ module tui {
 		}
 
 		private createIframe() {
-			var id = getUID();
+			var id = tui.uuid();
 			var iframe = <HTMLIFrameElement>toElement('<iframe src="javascript:false;" name="' + id + '" />');
 			iframe.setAttribute('id', id);
 			iframe.style.display = 'none';
@@ -246,7 +236,7 @@ module tui {
 			if (!this._input) {
 				return;
 			}
-			removeNode(this._input.parentNode);
+			tui.removeNode(this._input.parentNode);
 			this._input = null;
 			$(this._button).removeClass(this._settings.hoverClass);
 			$(this._button).removeClass(this._settings.focusClass);
@@ -276,7 +266,7 @@ module tui {
 					if (toDeleteFlag) {
 						// Fix busy state in FF3
 						setTimeout(() => {
-							removeNode(iframe);
+							tui.removeNode(iframe);
 						}, 0);
 					}
 					return;
@@ -324,7 +314,7 @@ module tui {
 				toDeleteFlag = true;
 				// Fix IE mixed content issue
 				iframe.src = "javascript:'<html></html>';";
-				removeNode(iframe);
+				tui.removeNode(iframe);
 			});
         }
 
@@ -343,7 +333,7 @@ module tui {
 			var form = this.createForm(iframe);
 			// assuming following structure
 			// div -> input type='file'
-			removeNode(this._input.parentNode);
+			tui.removeNode(this._input.parentNode);
 			$(this._button).removeClass(this._settings.hoverClass);
 			$(this._button).removeClass(this._settings.focusClass);
 			form.appendChild(this._input);
@@ -354,7 +344,7 @@ module tui {
 			form.appendChild(el);
 			form.submit();
 			// request set, clean up
-			removeNode(form);
+			tui.removeNode(form);
 			form = null;
 			this.deleteInput();
 			// Get response from iframe and fire onComplete event when ready

@@ -12,18 +12,96 @@ var tui;
             __extends(Table, _super);
             function Table(el) {
                 _super.call(this);
+                this.splitters = [];
+                this.columns = [];
                 var self = this;
                 if (el)
                     this.elem(el);
                 else
-                    this.elem("table", Table.CLASS);
+                    throw new Error("Must specify a table control");
+                this.addClass(Table.CLASS);
                 this[0]._ctrl = this;
-                this.attr("tabIndex", "0");
-                this[0].innerHTML = "";
+                if (tui.ieVer > 0 && tui.ieVer < 9)
+                    this.addClass("tui-table-ie8");
+                else
+                    this.createSplitters();
+                this.refresh();
             }
+            Table.prototype.headLine = function () {
+                var tb = this[0];
+                if (!tb)
+                    return null;
+                return tb.rows[0];
+            };
+
+            Table.prototype.createSplitters = function () {
+                var self = this;
+                this.splitters.length = 0;
+                var tb = this[0];
+                if (!tb)
+                    return;
+
+                var headLine = this.headLine();
+                if (!headLine)
+                    return;
+
+                for (var i = 0; i < this.splitters.length; i++) {
+                    tui.removeNode(this.splitters[i]);
+                }
+                if (this.resizable()) {
+                    for (var i = 0; i < headLine.cells.length; i++) {
+                        var cell = headLine.cells[i];
+                        var splitter = document.createElement("span");
+                        splitter["colIndex"] = i;
+                        splitter.className = "tui-table-splitter";
+                        this.columns[i] = { width: $(cell).width() };
+                        $(splitter).attr("unselectable", "on");
+                        if (i < headLine.cells.length - 1)
+                            headLine.cells[i + 1].appendChild(splitter);
+                        else
+                            headLine.cells[i].appendChild(splitter);
+                        $(headLine).css("position", "relative");
+                        this.splitters.push(splitter);
+                        $(splitter).mousedown(function (e) {
+                            var target = e.target;
+                            var span = document.createElement("span");
+                            span.className = "tui-table-splitter-move";
+                            var pos = tui.offsetToPage(target);
+                            span.style.left = pos.x + "px";
+                            span.style.top = pos.y + "px";
+                            span.style.height = $(tb).height() + "px";
+                            var mask = tui.mask();
+                            var srcX = e.clientX;
+                            mask.appendChild(span);
+                            mask.style.cursor = "col-resize";
+                            function dragEnd(e) {
+                                $(document).off("mousemove", onDrag);
+                                $(document).off("mouseup", dragEnd);
+                                tui.unmask();
+                                var colIndex = target["colIndex"];
+                                var tmpWidth = self.columns[colIndex].width + e.clientX - srcX;
+                                if (tmpWidth < 0)
+                                    tmpWidth = 0;
+                                self.columns[colIndex].width = tmpWidth;
+                                self.columns[colIndex].important = true;
+                                self.refresh();
+                                self.fire("resizecolumn", colIndex);
+                            }
+                            function onDrag(e) {
+                                span.style.left = pos.x + e.clientX - srcX + "px";
+                            }
+
+                            $(document).mousemove(onDrag);
+                            $(document).mouseup(dragEnd);
+                        });
+                    }
+                }
+            };
+
             Table.prototype.resizable = function (val) {
                 if (typeof val === "boolean") {
                     this.is("data-resizable", val);
+                    this.createSplitters();
                     this.refresh();
                     return this;
                 } else
@@ -31,6 +109,59 @@ var tui;
             };
 
             Table.prototype.refresh = function () {
+                if (!this.resizable())
+                    return;
+                var tb = this[0];
+                if (!tb)
+                    return;
+                var headLine = tb.rows[0];
+                if (!headLine)
+                    return;
+                if (tui.ieVer > 0 && tui.ieVer < 9)
+                    return;
+                var cellPadding = headLine.cells.length > 0 ? $(headLine.cells[0]).outerWidth() - $(headLine.cells[0]).width() : 0;
+                var defaultWidth = Math.floor(tb.offsetWidth / (headLine.cells.length > 0 ? headLine.cells.length : 1) - cellPadding);
+                var totalWidth = 0;
+                var computeWidth = tb.offsetWidth - cellPadding * (headLine.cells.length > 0 ? headLine.cells.length : 1);
+                for (var i = 0; i < this.columns.length; i++) {
+                    if (typeof this.columns[i].width !== "number") {
+                        this.columns[i].width = defaultWidth;
+                        totalWidth += defaultWidth;
+                    } else if (!this.columns[i].important) {
+                        totalWidth += this.columns[i].width;
+                    } else {
+                        if (this.columns[i].width > computeWidth)
+                            this.columns[i].width = computeWidth;
+                        if (this.columns[i].width < 1)
+                            this.columns[i].width = 1;
+                        computeWidth -= this.columns[i].width;
+                    }
+                }
+                for (var i = 0; i < this.columns.length; i++) {
+                    if (!this.columns[i].important) {
+                        this.columns[i].width = Math.floor(this.columns[i].width / totalWidth * computeWidth);
+                        if (this.columns[i].width < 1)
+                            this.columns[i].width = 1;
+                    } else {
+                        this.columns[i].important = false;
+                    }
+                    if (tb.rows.length > 0) {
+                        var row = tb.rows[0];
+                        $(row.cells[i]).css("width", this.columns[i].width + "px");
+                    }
+                }
+                var headLine = this.headLine();
+                for (var i = 0; i < this.splitters.length; i++) {
+                    var splitter = this.splitters[i];
+
+                    //var left = tui.offsetToPage(<HTMLElement>headLine.cells[i], tb).x;
+                    //splitter.style.left = left + (<any>headLine.cells[i]).offsetWidth + "px";
+                    //splitter.style.height = headLine.offsetHeight + "px";
+                    if (i < this.splitters.length - 1)
+                        $(splitter).css({ "left": "-3px", "right": "auto", "height": headLine.offsetHeight + "px" });
+                    else
+                        $(splitter).css({ "right": "-3px", "left": "auto", "height": headLine.offsetHeight + "px" });
+                }
             };
             Table.CLASS = "tui-table";
             return Table;
@@ -38,7 +169,7 @@ var tui;
         ctrl.Table = Table;
 
         /**
-        * Construct a grid.
+        * Construct a table control.
         * @param el {HTMLElement or element id or construct info}
         */
         function table(param) {

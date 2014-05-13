@@ -7,13 +7,6 @@
 /// <reference path="tui.core.ts" />
 var tui;
 (function (tui) {
-    var getUID = (function () {
-        var id = 0;
-        return function () {
-            return 'TuiAjaxUpload' + id++;
-        };
-    })();
-
     function getBox(el) {
         var left, right, top, bottom;
         var offset = $(el).offset();
@@ -38,10 +31,6 @@ var tui;
             width: from.offsetWidth + 'px',
             height: from.offsetHeight + 'px'
         });
-    }
-
-    function removeNode(el) {
-        el.parentNode && el.parentNode.removeChild(el);
     }
 
     function fileFromPath(file) {
@@ -105,7 +94,7 @@ var tui;
             this.installBind();
         }
         UploadBinding.prototype.createIframe = function () {
-            var id = getUID();
+            var id = tui.uuid();
             var iframe = tui.toElement('<iframe src="javascript:false;" name="' + id + '" />');
             iframe.setAttribute('id', id);
             iframe.style.display = 'none';
@@ -227,7 +216,7 @@ var tui;
             if (!this._input) {
                 return;
             }
-            removeNode(this._input.parentNode);
+            tui.removeNode(this._input.parentNode);
             this._input = null;
             $(this._button).removeClass(this._settings.hoverClass);
             $(this._button).removeClass(this._settings.focusClass);
@@ -255,7 +244,7 @@ var tui;
                     if (toDeleteFlag) {
                         // Fix busy state in FF3
                         setTimeout(function () {
-                            removeNode(iframe);
+                            tui.removeNode(iframe);
                         }, 0);
                     }
                     return;
@@ -307,7 +296,7 @@ var tui;
 
                 // Fix IE mixed content issue
                 iframe.src = "javascript:'<html></html>';";
-                removeNode(iframe);
+                tui.removeNode(iframe);
             });
         };
 
@@ -329,7 +318,7 @@ var tui;
 
             // assuming following structure
             // div -> input type='file'
-            removeNode(this._input.parentNode);
+            tui.removeNode(this._input.parentNode);
             $(this._button).removeClass(this._settings.hoverClass);
             $(this._button).removeClass(this._settings.focusClass);
             form.appendChild(this._input);
@@ -341,7 +330,7 @@ var tui;
             form.submit();
 
             // request set, clean up
-            removeNode(form);
+            tui.removeNode(form);
             form = null;
             this.deleteInput();
 

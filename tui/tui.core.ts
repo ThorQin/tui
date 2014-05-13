@@ -47,6 +47,12 @@ module tui {
 			return str;
 	}
 
+	export var uuid = (function () {
+		var id = 0;
+		return function () {
+			return 'tid-' + id++;
+		};
+	})();
 
 	export interface EventHandler {
 		(data: {}): any;
@@ -181,6 +187,10 @@ module tui {
 		div.innerHTML = html;
 		var el = div.firstChild;
 		return div.removeChild(el);
+	}
+
+	export function removeNode(node: Node) {
+		node.parentNode && node.parentNode.removeChild(node);
 	}
 
 	/**

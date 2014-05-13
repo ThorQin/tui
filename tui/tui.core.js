@@ -1,4 +1,4 @@
-﻿/// <reference path="jquery.d.ts" />
+/// <reference path="jquery.d.ts" />
 if (typeof Array.prototype.indexOf !== "function") {
     Array.prototype.indexOf = function (searchElement, fromIndex) {
         var from = (typeof fromIndex === "number" ? fromIndex : 0);
@@ -49,6 +49,13 @@ var tui;
             return str;
     }
     tui.str = str;
+
+    tui.uuid = (function () {
+        var id = 0;
+        return function () {
+            return 'tid-' + id++;
+        };
+    })();
 
     /**
     * Base object, all other control extended from this base class.
@@ -191,6 +198,11 @@ var tui;
         return div.removeChild(el);
     }
     tui.toElement = toElement;
+
+    function removeNode(node) {
+        node.parentNode && node.parentNode.removeChild(node);
+    }
+    tui.removeNode = removeNode;
 
     /**
     * Get or set a HTMLElement's text content, return Element's text content.

@@ -17,6 +17,8 @@ module tui {
 	export function unmask() {
 		if (_maskDiv.parentNode)
 			_maskDiv.parentNode.removeChild(_maskDiv);
+		_maskDiv.innerHTML = "";
+		_maskDiv.style.cursor = "";
 		return _maskDiv;
 	}
 }

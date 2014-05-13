@@ -12,6 +12,10 @@ var tui;
             __extends(Grid, _super);
             function Grid(el) {
                 _super.call(this);
+                this._tableId = tui.uuid();
+                this._gridStyle = null;
+                this._columns = null;
+                this._value = null;
                 var self = this;
                 if (el)
                     this.elem(el);
@@ -20,7 +24,49 @@ var tui;
                 this[0]._ctrl = this;
                 this.attr("tabIndex", "0");
                 this[0].innerHTML = "";
+                if (document.createStyleSheet) {
+                    this._gridStyle = document.createStyleSheet();
+                } else {
+                    this._gridStyle = document.createElement("style");
+                    document.head.appendChild(this._gridStyle);
+                }
             }
+            Grid.prototype.columns = function (val) {
+                if (val) {
+                    this._columns = val;
+                    this.refresh();
+                    return this;
+                } else {
+                    if (!this._columns) {
+                        var valstr = this.attr("data-columns");
+                        this._columns = eval("(" + valstr + ")");
+                    }
+                    return this._columns;
+                }
+            };
+
+            Grid.prototype.resizable = function (val) {
+                if (typeof val === "boolean") {
+                    this.is("data-resizable", val);
+
+                    //this.createSplitters();
+                    this.refresh();
+                    return this;
+                } else
+                    return this.is("data-resizable");
+            };
+
+            Grid.prototype.value = function (value) {
+                if (value) {
+                    this._value = value;
+                    return this;
+                } else {
+                    return this._value;
+                }
+            };
+
+            Grid.prototype.refresh = function () {
+            };
             Grid.CLASS = "tui-grid";
             return Grid;
         })(ctrl.Control);

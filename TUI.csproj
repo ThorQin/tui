@@ -36,6 +36,7 @@
     <TypeScriptCompile Include="tui\tui.checkbox.ts" />
     <TypeScriptCompile Include="tui\tui.control.ts" />
     <TypeScriptCompile Include="tui\tui.core.ts" />
+    <TypeScriptCompile Include="tui\tui.dataprovider.ts" />
     <TypeScriptCompile Include="tui\tui.grid.ts" />
     <TypeScriptCompile Include="tui\tui.popup.ts" />
     <TypeScriptCompile Include="tui\tui.radiobox.ts" />
@@ -101,7 +102,7 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets')" />
   <PropertyGroup>
-    <PreBuildEvent>lessc "$(ProjectDir)tui/tui.less" &gt; "$(ProjectDir)tui/tui.min.css"</PreBuildEvent>
+    <PreBuildEvent>lessc "$(ProjectDir)tui/css/tui.less" &gt; "$(ProjectDir)tui/css/tui.min.css"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>
