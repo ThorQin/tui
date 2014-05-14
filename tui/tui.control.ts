@@ -289,7 +289,15 @@ module tui.ctrl {
 		hidden(): boolean;
 		hidden(val: boolean): T;
 		hidden(val?: boolean): any {
-			return this.is("data-hidden", val);
+			if (typeof val === "boolean") {
+				this.is("data-hidden", val);
+				if (val) {
+					this.addClass("tui-hidden");
+				} else
+					this.removeClass("tui-hidden");
+				return this;
+			} else
+				return this.is("data-hidden");
 		}
 
 		checked(): boolean;

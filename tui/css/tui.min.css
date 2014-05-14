@@ -798,6 +798,9 @@ div.tui-mask,
   min-height: 40px;
   text-align: right;
 }
+.tui-dialog > .tui-dlg-btn-bar .tui-button {
+  margin: 2px 4px;
+}
 .tui-dialog .tui-dlg-msg {
   text-align: center;
 }
@@ -831,7 +834,7 @@ div.tui-mask,
 }
 .tui-dialog .tui-dlg-warp.tui-dlg-ask:before {
   content: "\f128";
-  color: #339bf5;
+  color: #feb000;
 }
 .tui-dialog .tui-dlg-warp.tui-dlg-wait:before {
   content: "\f013";
@@ -880,6 +883,15 @@ div.tui-mask,
   content: "";
   clear: left;
 }
+.tui-scroll-space {
+  display: inline-block;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  right: 0;
+  bottom: 0;
+  background-color: #f0f0f0;
+}
 .tui-scrollbar {
   font-size: 9px;
   margin: 0;
@@ -890,9 +902,9 @@ div.tui-mask,
   background-color: #f0f0f0;
   vertical-align: middle;
   cursor: default;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 .tui-scrollbar span {
   display: inline-block;
@@ -1132,4 +1144,63 @@ div.tui-mask,
 .tui-table-fixed.tui-table-ie8 td,
 .tui-table[data-resizable=true].tui-table-ie8 td {
   position: static;
+}
+.tui-grid {
+  vertical-align: middle;
+  position: relative;
+  border: 1px solid #cccccc;
+  background-color: #ffffff;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+.tui-grid .tui-grid-head {
+  display: block;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  height: 30px;
+  background-color: #f0f0f0;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.tui-grid .tui-scrollbar[data-direction=horizontal] {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 16px;
+  -webkit-border-top-right-radius: 0px;
+  -moz-border-top-right-radius: 0px;
+  border-top-right-radius: 0px;
+  -webkit-border-bottom-right-radius: 0px;
+  -moz-border-bottom-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  -webkit-border-top-left-radius: 0px;
+  -moz-border-top-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
+.tui-grid .tui-scrollbar[data-direction=vertical] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 16px;
+  -webkit-border-bottom-left-radius: 0px;
+  -moz-border-bottom-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  -webkit-border-bottom-right-radius: 0px;
+  -moz-border-bottom-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  -webkit-border-top-left-radius: 0px;
+  -moz-border-top-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
+.tui-grid .tui-scroll-space {
+  -webkit-border-bottom-right-radius: 5px;
+  -moz-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }

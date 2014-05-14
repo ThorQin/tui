@@ -4,8 +4,8 @@ module tui.ctrl {
 	export class Table extends Control<Table> {
 		static CLASS: string = "tui-table";
 
-		private splitters: HTMLSpanElement[] = [];
-		private columns: { width?: number; important?: boolean; }[] = [];
+		private _splitters: HTMLSpanElement[] = [];
+		private _columns: { width?: number; important?: boolean; }[] = [];
 		
 		constructor(el?: HTMLTableElement) {
 			super();
@@ -32,7 +32,7 @@ module tui.ctrl {
 
 		private createSplitters() {
 			var self = this;
-			this.splitters.length = 0;
+			this._splitters.length = 0;
 			var tb: HTMLTableElement = this[0];
 			if (!tb)
 				return;
@@ -41,8 +41,8 @@ module tui.ctrl {
 			if (!headLine)
 				return;
 			
-			for (var i = 0; i < this.splitters.length; i++) {
-				tui.removeNode(this.splitters[i]);
+			for (var i = 0; i < this._splitters.length; i++) {
+				tui.removeNode(this._splitters[i]);
 			}
 			if (this.resizable()) {
 				for (var i = 0; i < headLine.cells.length; i++) {
@@ -50,14 +50,14 @@ module tui.ctrl {
 					var splitter: HTMLSpanElement = document.createElement("span");
 					splitter["colIndex"] = i;
 					splitter.className = "tui-table-splitter";
-					this.columns[i] = { width: $(cell).width() };
+					this._columns[i] = { width: $(cell).width() };
 					$(splitter).attr("unselectable", "on");
 					if (i < headLine.cells.length - 1)
 						headLine.cells[i + 1].appendChild(splitter);
 					else
 						headLine.cells[i].appendChild(splitter);
 					$(headLine).css("position", "relative");
-					this.splitters.push(splitter);
+					this._splitters.push(splitter);
 					$(splitter).mousedown(function (e) {
 						var target: HTMLSpanElement = <HTMLSpanElement>e.target;
 						var span = document.createElement("span");
@@ -75,11 +75,11 @@ module tui.ctrl {
 							$(document).off("mouseup", dragEnd);
 							tui.unmask();
 							var colIndex = target["colIndex"];
-							var tmpWidth = self.columns[colIndex].width + e.clientX - srcX;
+							var tmpWidth = self._columns[colIndex].width + e.clientX - srcX;
 							if (tmpWidth < 0)
 								tmpWidth = 0;
-							self.columns[colIndex].width = tmpWidth;
-							self.columns[colIndex].important = true;
+							self._columns[colIndex].width = tmpWidth;
+							self._columns[colIndex].important = true;
 							self.refresh();
 							self.fire("resizecolumn", colIndex);
 						}
@@ -121,41 +121,44 @@ module tui.ctrl {
 			var defaultWidth = Math.floor(tb.offsetWidth / (headLine.cells.length > 0 ? headLine.cells.length : 1) - cellPadding);
 			var totalWidth = 0;
 			var computeWidth = tb.offsetWidth - cellPadding * (headLine.cells.length > 0 ? headLine.cells.length : 1);
-			for (var i = 0; i < this.columns.length; i++) {
-				if (typeof this.columns[i].width !== "number") {
-					this.columns[i].width = defaultWidth;
+			for (var i = 0; i < this._columns.length; i++) {
+				if (typeof this._columns[i].width !== "number") {
+					this._columns[i].width = defaultWidth;
 					totalWidth += defaultWidth;
-				} else if (!this.columns[i].important) {
-					totalWidth += this.columns[i].width;
+				} else if (!this._columns[i].important) {
+					totalWidth += this._columns[i].width;
 				} else {
 					
-					if (this.columns[i].width > computeWidth)
-						this.columns[i].width = computeWidth;
-					if (this.columns[i].width < 1)
-						this.columns[i].width = 1;
-					computeWidth -= this.columns[i].width;
+					if (this._columns[i].width > computeWidth)
+						this._columns[i].width = computeWidth;
+					if (this._columns[i].width < 1)
+						this._columns[i].width = 1;
+					computeWidth -= this._columns[i].width;
 				}
 			}
-			for (var i = 0; i < this.columns.length; i++) {
-				if (!this.columns[i].important) {
-					this.columns[i].width = Math.floor(this.columns[i].width / totalWidth * computeWidth);
-					if (this.columns[i].width < 1)
-						this.columns[i].width = 1;
+			for (var i = 0; i < this._columns.length; i++) {
+				if (!this._columns[i].important) {
+					if (totalWidth === 0)
+						this._columns[i].width = 0;
+					else
+						this._columns[i].width = Math.floor(this._columns[i].width / totalWidth * computeWidth);
+					if (this._columns[i].width < 1)
+						this._columns[i].width = 1;
 				} else {
-					this.columns[i].important = false;
+					this._columns[i].important = false;
 				}
 				if (tb.rows.length > 0) {
 					var row: HTMLTableRowElement = <HTMLTableRowElement>tb.rows[0];
-					$(row.cells[i]).css("width", this.columns[i].width + "px");
+					$(row.cells[i]).css("width", this._columns[i].width + "px");
 				}
 			}
 			var headLine = this.headLine();
-			for (var i = 0; i < this.splitters.length; i++) {
-				var splitter = this.splitters[i];
+			for (var i = 0; i < this._splitters.length; i++) {
+				var splitter = this._splitters[i];
 				//var left = tui.offsetToPage(<HTMLElement>headLine.cells[i], tb).x;
 				//splitter.style.left = left + (<any>headLine.cells[i]).offsetWidth + "px";
 				//splitter.style.height = headLine.offsetHeight + "px";
-				if (i < this.splitters.length - 1)
+				if (i < this._splitters.length - 1)
 					$(splitter).css({ "left": "-3px", "right":"auto", "height": headLine.offsetHeight + "px" });
 				else
 					$(splitter).css({ "right": "-3px", "left": "auto", "height": headLine.offsetHeight + "px" });

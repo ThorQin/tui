@@ -4,6 +4,8 @@
 @tooltipLayer: 2147483646;
 @warnColor:#feb000;
 @buttonRadius:3px;
+@winColor: #fff;
+@captionColor: #f0f0f0;
 
 .tui-spin {
   -webkit-animation: spin 2s infinite linear;
@@ -239,7 +241,7 @@ div.tui-mask {
 	cursor:default;
 }
 
-.tui-hidden {
+*[data-hidden=true], .tui-hidden {
 	display:none;
 }
 
@@ -252,7 +254,7 @@ div.tui-mask {
 	//.shadow(0px, 1px, 2px);
 	text-decoration: none;
 	color: #000;
-	.btn-color(#f5f5f5, #f0f0f0);
+	.btn-color(#f5f5f5, @captionColor);
 	border: 1px solid @borderColor;
 	vertical-align:middle;
 	text-align:center;
@@ -419,7 +421,7 @@ div.tui-mask {
 	@buttonWidth: 34px;
 	@radius: 3px;
 	@borderFocusColor: rgb(113, 178, 230);
-	@buttonBackColor: #f0f0f0;
+	@buttonBackColor: @captionColor;
 	@buttonHoverColor: #f5f5f5;
 	@buttonActiveColor: #e0e0e0;
 	@inputBackColor: #fff;
@@ -531,7 +533,6 @@ div.tui-mask {
 }
 .tui-dialog {
 	@radius: 6px;
-	@captionColor: #f0f0f0;
 	@lineColor: #ddd;
 	@captionHeight: 40px;
 	@backColor:#fcfcfc;
@@ -594,6 +595,9 @@ div.tui-mask {
 		background-color:@captionColor;
 		min-height:@captionHeight;
 		text-align:right;
+		.tui-button {
+			margin:2px 4px;
+		}
 	}
 
 	.tui-dlg-msg {
@@ -622,7 +626,7 @@ div.tui-mask {
 		}
 		&.tui-dlg-ask:before {
 			.fa-question;
-			color:#339bf5;
+			color:@warnColor;//#339bf5;
 		}
 		&.tui-dlg-wait:before {
 			.fa-gear;
@@ -661,16 +665,27 @@ div.tui-mask {
 	}
 }
 
+@scrollWidth: 16px;
+@scrollBackColor: @captionColor;
+.tui-scroll-space {
+	display:inline-block;
+	position:absolute;
+	width:@scrollWidth;
+	height:@scrollWidth;
+	right:0;
+	bottom:0;
+	background-color:@scrollBackColor;
+}
 .tui-scrollbar {
 	@iconColor:#999;
 	@iconActiveColor:#333;
-	@backColor:#f0f0f0;
+	@backColor:@scrollBackColor;
 	@thumbColor:@iconColor;
 	@thumbActiveColor:#666;
-	@btnSize:16px;
+	//@btnSize:@scrollWidth;
 	@borderSize:4px;
 	@space:4px;
-	@radius:3px;
+	@radius:5px;
 	@buttonPadding:4px;
 
 	font-size:9px;
@@ -678,11 +693,11 @@ div.tui-mask {
 	padding:0;
 	display:inline-block;
 	position:relative;
-	width:@btnSize;
+	width:@scrollWidth;
 	background-color:@backColor;
 	vertical-align:middle;
 	cursor:default;
-	.border-radius(3px);
+	.border-radius(@radius);
 	span {
 		display:inline-block;
 		position:absolute;
@@ -695,9 +710,9 @@ div.tui-mask {
 	}
 	.tui-scroll-head {
 		top:0;
-		height:@btnSize;
+		height:@scrollWidth;
 		padding-top:@buttonPadding;
-		line-height:@btnSize;
+		line-height:@scrollWidth;
 		&:before {
 			display:inline-block;
 			position:relative;
@@ -717,7 +732,7 @@ div.tui-mask {
 		left:@space;
 		right:@space;
 		background-color:@thumbColor;
-		.border-radius(@radius);
+		.border-radius(3px);
 		border-left:@space solid transparent;
 		border-right:@space solid transparent;
 		&:hover,&.tui-actived {
@@ -726,8 +741,8 @@ div.tui-mask {
 	}
 	.tui-scroll-foot {
 		bottom:0;
-		height:@btnSize;
-		line-height:@btnSize;
+		height:@scrollWidth;
+		line-height:@scrollWidth;
 		padding-bottom:@buttonPadding;
 		&:before {
 			display:inline-block;
@@ -747,7 +762,7 @@ div.tui-mask {
 	}
 
 	&[data-direction=horizontal] {
-		height:@btnSize;
+		height:@scrollWidth;
 		width:auto;
 
 		span {
@@ -758,8 +773,8 @@ div.tui-mask {
 		}
 		.tui-scroll-head {
 			left:0;
-			width:@btnSize;
-			line-height:@btnSize;
+			width:@scrollWidth;
+			line-height:@scrollWidth;
 			padding-left:@buttonPadding;
 			padding-top:0;
 			&:before {
@@ -793,8 +808,8 @@ div.tui-mask {
 		}
 		.tui-scroll-foot {
 			right:0;
-			width:@btnSize;
-			line-height:@btnSize;
+			width:@scrollWidth;
+			line-height:@scrollWidth;
 			padding-right:@buttonPadding;
 			padding-bottom:0;
 			&:before {
@@ -815,9 +830,9 @@ div.tui-mask {
 	}
 }
 
-
+@tableRadius:5px;
 .tui-table {
-	.border-radius(5px);
+	.border-radius(@tableRadius);
 	padding:0px;
 	border:none;
 	//border:1px solid @borderColor;
@@ -833,7 +848,7 @@ div.tui-mask {
 			padding:8px 8px;
 		}
 		th {
-			background-color:#f0f0f0;
+			background-color:@captionColor;
 			color:#000;
 			font-weight:normal;
 		}
@@ -901,5 +916,52 @@ div.tui-mask {
 	}
 }
 
+.tui-grid {
+	@lineHeight: 30px;
+	vertical-align:middle;
+	position:relative;
+	border:1px solid @borderColor;
+	background-color:@winColor;
+	.border-radius(@tableRadius);
+	.tui-grid-head {
+		display:block;
+		position:absolute;
+		left:0px;
+		top:0px;
+		right:0px;
+		height:@lineHeight;
+		background-color:@captionColor;
+		.top-radius(@tableRadius);
+	}
+	.tui-scrollbar[data-direction=horizontal] {
+		position:absolute;
+		left:0;
+		bottom:0;
+		right:@scrollWidth;
+		.right-radius(0px);
+		.top-left-radius(0px);
+	}
+	.tui-scrollbar[data-direction=vertical] {
+		position:absolute;
+		top:0;
+		right:0;
+		bottom:@scrollWidth;
+		.bottom-radius(0px);
+		.top-left-radius(0px);
+	}
+	.tui-scroll-space {
+		.bottom-right-radius(@tableRadius);
+	}
+	.tui-grid-cell {
 
+	}
+	.tui-grid-header-cell {
 
+	}
+	.tui-grid-line {
+
+	}
+	.tui-grid-header {
+
+	}
+}

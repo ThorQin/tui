@@ -180,7 +180,15 @@ var tui;
             };
 
             Control.prototype.hidden = function (val) {
-                return this.is("data-hidden", val);
+                if (typeof val === "boolean") {
+                    this.is("data-hidden", val);
+                    if (val) {
+                        this.addClass("tui-hidden");
+                    } else
+                        this.removeClass("tui-hidden");
+                    return this;
+                } else
+                    return this.is("data-hidden");
             };
 
             Control.prototype.checked = function (val) {

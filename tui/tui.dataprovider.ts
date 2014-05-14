@@ -1,12 +1,25 @@
 ﻿/// <reference path="tui.core.ts" />
-module tui {
+module tui.data {
 
-	export interface IDataProvider<T> {
+	export interface IQueryInfo {
+		begin: number;
+		cacheSize: number;
+		sortKey: string;
+		sortDesc: boolean;
+		update: (data: any[], length: number, begin: number) => void;
+	}
+
+	export interface IUpdateInfo {
+		length: number;
+		begin: number;
+		data: any[];
+	}
+
+	export interface IDataProvider {
 		length(): number;
 		at(index: number): any;
-		slice(start: number, end?: number): any[];
-		sort(key: any, desc?: boolean): T;
-		onfill? (callback: (index: number, line: any) => void);
+		sort(key: any, desc: boolean, func?: (a: any, b: any) => number): IDataProvider;
+		onupdate? (callback: (updateInfo: IUpdateInfo) => void);
 	}
 
 	export interface IQueryResult {
@@ -15,7 +28,7 @@ module tui {
 		data: any[];
 	}
 
-	export class ArrayProvider implements IDataProvider<ArrayProvider> {
+	export class ArrayProvider implements IDataProvider {
 		private _src: any[];
 		private _data: any[];
 		private _header: string[];
@@ -42,17 +55,14 @@ module tui {
 			else
 				return null;
 		}
-		slice(start: number, end?: number): any[] {
-			if (this._data)
-				return this._data.slice(start, end);
-			else
-				return [];
-		}
-		sort(compareFn?: (a: any, b: any) => number, desc?: boolean): ArrayProvider;
-		sort(key: any, desc: boolean = false): ArrayProvider {
+	
+		sort(key: any, desc: boolean, func?: (a: any, b: any) => number): ArrayProvider {
 			if (this._src) {
-				if (typeof key === "function") {
-					this._data = this._src.sort(key);
+				if (typeof func === "function") {
+					this._data = this._src.sort(func);
+				} else if (key === null && func === null) {
+					this._data = this._src;
+					return this;
 				} else {
 					if (this._header) {
 						key = this._header.indexOf(key);
@@ -67,34 +77,93 @@ module tui {
 						}
 					});
 				}
-				return this;
-			} else if (key === null) {
-				this._data = this._src;
-				return this;
+			} else {
+				this._data = null;
 			}
+			return this;
 		}
 	}
 
+	
 
-	export class RemoteCursorProvider implements IDataProvider<RemoteCursorProvider> {
+	export class RemoteCursorProvider implements IDataProvider {
 		private _header: string[];
 		private _length: number;
+		private _invalid: boolean;
 		private _data: any[];
+		private _cacheSize: number;
+		private _begin: number;
+		private _sortKey: string;
+		private _desc: boolean;
+		private _queryCallback: (queryInfo: IQueryInfo) => void;
+		private _updateCallback: (updateInfo: IUpdateInfo) => void;
 
-		constructor(result: IQueryResult) {
-
+		constructor(cacheSize: number = 100) {
+			this._cacheSize = cacheSize;
+			this._invalid = true;
+			this._data = [];
+			this._begin = 0;
+			this._length = 0;
+			this._sortKey = null;
 		}
+
 		length(): number {
+			if (this._invalid) {
+				this.doQuery(0);
+				return 0;
+			}
 			return this._length;
 		}
-		at(index: number): any {
-		}
-		slice(start: number, end?: number): any[] {
 
+		at(index: number): any {
+			if (index < 0 || index >= this.length()) {
+				return null;
+			} else if (this._invalid ||
+				index < this._begin ||
+				index >= this._begin + this._data.length) {
+				this.doQuery(index);
+				return null;
+			} else
+				return this._data[index - this._begin];
 		}
-		sort(key: any, desc?: boolean): RemoteCursorProvider {
+
+		sort(key: any, desc: boolean, func?: (a: any, b: any) => number): RemoteCursorProvider {
+			this._sortKey = key;
+			this._desc = desc;
+			this._invalid = true;
+			return this;
 		}
-		onfill(callback: (index: number, line: any) => void) {
+
+		private doQuery(begin: number) {
+			if (typeof this._queryCallback === "function") {
+				this._queryCallback({
+					begin: begin,
+					cacheSize: this._cacheSize,
+					sortKey: this._sortKey,
+					sortDesc: this._desc,
+					update: (data: any[], length: number, begin: number) => {
+						this._data = data;
+						this._length = length;
+						this._begin = begin;
+						if (typeof this._updateCallback === "function") {
+							this._updateCallback({
+								length: this._length,
+								begin: this._begin,
+								data: this._data
+							});
+						}
+					}
+				});
+			}
+		}
+
+		onupdate(callback: (updateInfo: IUpdateInfo) => void) {
+			this._updateCallback = callback;
+		}
+
+		// Cursor own functions
+		onquery(callback: (queryInfo: IQueryInfo) => void) {
+			this._queryCallback = callback;
 		}
 	}
 }
