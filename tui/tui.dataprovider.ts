@@ -1,5 +1,6 @@
 ﻿/// <reference path="tui.core.ts" />
-module tui.data {
+
+module tui {
 
 	export interface IQueryInfo {
 		begin: number;

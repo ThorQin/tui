@@ -14,15 +14,21 @@ var tui;
                 _super.call(this);
                 this._tableId = tui.uuid();
                 this._gridStyle = null;
+                // Grid data related
                 this._columns = null;
+                this._emptyColumns = [];
                 this._data = null;
-                // Scrolling relatived
+                this._emptyData = new tui.ArrayProvider([]);
+                this._splitters = [];
+                // Scrolling related
                 this._scrollTop = 0;
                 this._scrollLeft = 0;
                 this._bufferedLines = [];
                 this._bufferedBegin = 0;
                 this._bufferedEnd = 0;
                 this._dispLines = 0;
+                // Drawing related flags
+                this._selectrows = [];
                 var self = this;
                 if (el)
                     this.elem(el);
@@ -51,6 +57,15 @@ var tui;
                 this[0].appendChild(this._space);
                 this.refresh();
             }
+            // Make sure not access null object
+            Grid.prototype.myData = function () {
+                return this._data || this._emptyData;
+            };
+
+            Grid.prototype.myColumns = function () {
+                return this.columns() || this._emptyColumns;
+            };
+
             Grid.prototype.headHeight = function () {
                 if (this.hasHead())
                     return this._headHeight;
@@ -76,9 +91,9 @@ var tui;
                 this._dispLines = Math.ceil((innerHeight - this.headHeight()) / this._lineHeight);
                 var vHidden = this._vscroll.hidden();
                 if (totalHeight > innerHeight) {
+                    this._vscroll.hidden(false);
                     this._vscroll[0].style.bottom = hScrollbarHeight + "px";
                     this._vscroll.total(totalHeight - innerHeight).value(this._scrollTop).step(this._lineHeight).page(innerHeight / totalHeight * (totalHeight - innerHeight));
-                    this._vscroll.hidden(false);
                 } else {
                     this._vscroll.hidden(true);
                     this._vscroll.total(0);
@@ -92,20 +107,21 @@ var tui;
 
             Grid.prototype.computeHScroll = function (mark) {
                 mark.isHScrollComputed = true;
+                var columns = this.myColumns();
                 var vScrollbarWidth = this._vscroll.hidden() ? 0 : this._vscroll[0].offsetWidth;
                 var innerWidth = this._boxWidth - vScrollbarWidth;
                 var hHidden = this._hscroll.hidden();
                 if (this.hasHScroll()) {
                     this._contentWidth = 0;
-                    var cols = (this._columns.length < 1 ? 1 : this._columns.length);
+                    var cols = (columns.length < 1 ? 1 : columns.length);
                     var defaultWidth = Math.floor((innerWidth - this._borderWidth * cols) / cols);
-                    for (var i = 0; i < this._columns.length; i++) {
-                        this._contentWidth += Grid.colSize(this._columns[i].width, defaultWidth) + this._borderWidth;
+                    for (var i = 0; i < columns.length; i++) {
+                        this._contentWidth += Grid.colSize(columns[i].width, defaultWidth) + this._borderWidth;
                     }
                     if (this._contentWidth > innerWidth) {
+                        this._hscroll.hidden(false);
                         this._hscroll[0].style.right = vScrollbarWidth + "px";
                         this._hscroll.total(this._contentWidth - innerWidth).value(this._scrollLeft).step(10).page(innerWidth / this._contentWidth * (this._contentWidth - innerWidth));
-                        this._hscroll.hidden(false);
                     } else {
                         this._hscroll.hidden(true);
                         this._hscroll.total(0);
@@ -132,11 +148,11 @@ var tui;
                 this[0].appendChild(line);
                 this._lineHeight = line.offsetHeight;
                 this._borderWidth = $(cell).outerWidth() - $(cell).width();
-                cell.className = "tui-grid-header-cell";
-                line.className = "tui-grid-header";
+                cell.className = "tui-grid-head-cell";
+                line.className = "tui-grid-head";
                 this._headHeight = line.offsetHeight;
                 this[0].removeChild(line);
-                this._contentHeight = this._lineHeight * this._data.length();
+                this._contentHeight = this._lineHeight * this.myData().length();
                 var mark = { isHScrollComputed: false };
                 this._hscroll.hidden(true);
                 this._vscroll.hidden(true);
@@ -154,59 +170,57 @@ var tui;
             // Do not need call this function standalone,
             // it's always to be called by computeScroll function
             Grid.prototype.computeColumns = function () {
+                var columns = this.myColumns();
                 var vScrollbarWidth = this._vscroll.hidden() ? 0 : this._vscroll[0].offsetWidth;
                 var innerWidth = this._boxWidth - vScrollbarWidth;
-
-                //_realWidth = new Array();
-                var cols = (this._columns.length < 1 ? 1 : this._columns.length);
+                var cols = (columns.length < 1 ? 1 : columns.length);
                 var defaultWidth = Math.floor((innerWidth - this._borderWidth * cols) / cols);
                 if (this.hasHScroll()) {
                     if (defaultWidth < 100)
                         defaultWidth = 100;
-                    for (var i = 0; i < this._columns.length; i++) {
-                        delete this._columns[i]["_important"];
-                        this._columns[i].width = Grid.colSize(this._columns[i].width, defaultWidth);
+                    for (var i = 0; i < columns.length; i++) {
+                        delete columns[i]["_important"];
+                        columns[i].width = Grid.colSize(columns[i].width, defaultWidth);
                     }
                 } else {
                     var totalNoBorderWidth = this._contentWidth - this._borderWidth * cols;
                     var totalNoImportantWidth = totalNoBorderWidth;
                     var totalNeedComputed = 0;
-                    var percent = [];
                     var important = null;
-                    for (var i = 0; i < this._columns.length; i++) {
-                        if (typeof this._columns[i].width !== "number" || isNaN(this._columns[i].width))
-                            this._columns[i].width = defaultWidth;
-                        else if (this._columns[i].width < 0)
-                            this._columns[i].width = 0;
-                        if (this._columns[i]["_important"]) {
+                    for (var i = 0; i < columns.length; i++) {
+                        if (typeof columns[i].width !== "number" || isNaN(columns[i].width))
+                            columns[i].width = defaultWidth;
+                        else if (columns[i].width < 0)
+                            columns[i].width = 0;
+                        if (columns[i]["_important"]) {
                             important = i;
-                            delete this._columns[i]["_important"];
-                            this._columns[i].width = Math.round(this._columns[i].width);
-                            if (this._columns[i].width > totalNoBorderWidth) {
-                                this._columns[i].width = totalNoBorderWidth;
+                            delete columns[i]["_important"];
+                            columns[i].width = Math.round(columns[i].width);
+                            if (columns[i].width > totalNoBorderWidth) {
+                                columns[i].width = totalNoBorderWidth;
                             }
-                            totalNoImportantWidth -= this._columns[i].width;
+                            totalNoImportantWidth -= columns[i].width;
                         } else
-                            totalNeedComputed += Math.round(this._columns[i].width);
+                            totalNeedComputed += Math.round(columns[i].width);
                     }
-                    for (var i = 0; i < this._columns.length; i++) {
+                    for (var i = 0; i < columns.length; i++) {
                         if (i !== important) {
                             if (totalNeedComputed === 0)
-                                this._columns[i].width = 0;
+                                columns[i].width = 0;
                             else
-                                this._columns[i].width = Math.floor(Math.round(this._columns[i].width) / totalNeedComputed * totalNoImportantWidth);
+                                columns[i].width = Math.floor(Math.round(columns[i].width) / totalNeedComputed * totalNoImportantWidth);
                         }
                     }
                     var total = 0;
-                    for (var i = 0; i < this._columns.length; i++) {
-                        total += this._columns[i].width;
+                    for (var i = 0; i < columns.length; i++) {
+                        total += columns[i].width;
                     }
-                    if (total < totalNoBorderWidth && this._columns.length > 0)
-                        this._columns[this._columns.length - 1].width += totalNoBorderWidth - total;
+                    if (total < totalNoBorderWidth && columns.length > 0)
+                        columns[columns.length - 1].width += totalNoBorderWidth - total;
                 }
                 var cssText = "";
-                for (var i = 0; i < this._columns.length; i++) {
-                    var wd = this._columns[i].width;
+                for (var i = 0; i < columns.length; i++) {
+                    var wd = columns[i].width;
                     cssText += (".tui-grid-" + this._tableId + "-" + i + "{width:" + wd + "px}");
                 }
                 if (document.createStyleSheet)
@@ -215,13 +229,222 @@ var tui;
                     this._gridStyle.innerHTML = cssText;
             };
 
-            Grid.prototype.drawHead = function () {
+            Grid.prototype.bindSplitter = function (cell, col, colIndex) {
+                var self = this;
+                var splitter = document.createElement("span");
+                splitter.className = "tui-grid-splitter";
+                splitter.setAttribute("unselectable", "on");
+                $(splitter).mousedown(function (e) {
+                    var l = splitter.offsetLeft;
+                    var srcX = e.clientX;
+                    splitter.style.height = self[0].clientHeight + "px";
+                    splitter.style.bottom = "";
+                    $(splitter).addClass("tui-splitter-move");
+                    var mask = tui.mask();
+                    mask.style.cursor = "col-resize";
+                    function onDragEnd(e) {
+                        $(document).off("mousemove", onDrag);
+                        $(document).off("mouseup", onDragEnd);
+                        tui.unmask();
+                        splitter.style.bottom = "0";
+                        splitter.style.height = "";
+                        $(splitter).removeClass("tui-splitter-move");
+                        col.width = col.width + e.clientX - srcX;
+                        col["_important"] = true;
+                        var currentTime = tui.today().getTime();
+                        if (col["_lastClickTime"]) {
+                            if (currentTime - col["_lastClickTime"] < 500) {
+                                self.autofitColumn(colIndex, false, true);
+                                self.fire("resizecolumn", { col: colIndex });
+                                return;
+                            }
+                        }
+                        col["_lastClickTime"] = currentTime;
+                        self.refresh();
+                        self.fire("resizecolumn", { col: colIndex });
+                    }
+                    function onDrag(e) {
+                        splitter.style.left = l + e.clientX - srcX + "px";
+                    }
+                    $(document).on("mousemove", onDrag);
+                    $(document).on("mouseup", onDragEnd);
+                });
+                this._splitters.push(splitter);
+                this._headline.appendChild(splitter);
+                return splitter;
             };
 
-            Grid.prototype.drawLine = function () {
+            Grid.prototype.bindSort = function (cell, col, colIndex) {
+                var self = this;
+                if (col.sort) {
+                    $(cell).addClass("tui-grid-sortable");
+                    $(cell).mousedown(function (event) {
+                        if (!tui.isLButton(event.button))
+                            return;
+                        if (self._sortColumn !== colIndex)
+                            self.sort(colIndex);
+                        else if (!self._sortDesc)
+                            self.sort(colIndex, true);
+                        else
+                            self.sort(null);
+                    });
+                }
+                if (self._sortColumn === colIndex) {
+                    if (self._sortDesc)
+                        $(cell).addClass("tui-grid-cell-sort-desc");
+                    else
+                        $(cell).addClass("tui-grid-cell-sort-asc");
+                }
+            };
+
+            Grid.prototype.moveSplitter = function () {
+                for (var i = 0; i < this._splitters.length; i++) {
+                    var splitter = this._splitters[i];
+                    var cell = this._headline.childNodes[i * 2];
+                    splitter.style.left = cell.offsetLeft + cell.offsetWidth - Math.round(splitter.offsetWidth / 2) + "px";
+                }
+            };
+
+            Grid.prototype.drawCell = function (cell, contentSpan, col, value, rowIndex, colIndex) {
+                if (["center", "left", "right"].indexOf(col.headAlign) >= 0)
+                    cell.style.textAlign = col.headAlign;
+                if (typeof value === "object" && value.nodeName) {
+                    contentSpan.innerHTML = "";
+                    contentSpan.appendChild(value);
+                } else {
+                    contentSpan.innerHTML = value;
+                }
+                if (typeof col.format === "function") {
+                    col.format({
+                        cell: cell,
+                        value: value,
+                        rowIndex: rowIndex,
+                        colIndex: colIndex
+                    });
+                }
+                if (this._sortColumn === colIndex)
+                    $(cell).addClass("tui-grid-sort-cell");
+                else
+                    $(cell).removeClass("tui-grid-sort-cell");
+            };
+
+            Grid.prototype.drawHead = function () {
+                var columns = this.myColumns();
+                this._headline.innerHTML = "";
+                this._splitters.length = 0;
+                for (var i = 0; i < columns.length; i++) {
+                    var col = columns[i];
+                    var cell = document.createElement("span");
+                    cell.setAttribute("unselectable", "on");
+                    cell.className = "tui-grid-head-cell tui-grid-" + this._tableId + "-" + i;
+                    this._headline.appendChild(cell);
+                    var contentSpan = document.createElement("span");
+                    contentSpan.className = "tui-grid-cell-content";
+                    cell.appendChild(contentSpan);
+                    this.drawCell(cell, contentSpan, col, col.name, -1, i);
+                    this.bindSort(cell, col, i);
+                    if (this.resizable()) {
+                        var splitter = this.bindSplitter(cell, col, i);
+                        if (typeof columns[i].fixed === "boolean" && columns[i].fixed)
+                            $(splitter).addClass("tui-hidden");
+                    }
+                }
+                this.moveSplitter();
+            };
+
+            Grid.prototype.isRowSelected = function (rowIndex) {
+                return this._selectrows.indexOf(rowIndex) >= 0;
+            };
+
+            Grid.prototype.drawLine = function (line, index, bindEvent) {
+                if (typeof bindEvent === "undefined") { bindEvent = false; }
+                var self = this;
+                var columns = this.myColumns();
+                var data = this.myData();
+                var lineData = data.at(index);
+                if (line.childNodes.length !== columns.length) {
+                    line.innerHTML = "";
+                    for (var i = 0; i < columns.length; i++) {
+                        var cell = document.createElement("span");
+                        if (this.rowselectable())
+                            cell.setAttribute("unselectable", "on");
+                        cell.className = "tui-grid-cell tui-grid-" + this._tableId + "-" + i;
+                        var contentSpan = document.createElement("span");
+                        contentSpan.className = "tui-grid-cell-content";
+                        cell.appendChild(contentSpan);
+                        line.appendChild(cell);
+                    }
+                }
+                for (var i = 0; i < line.childNodes.length; i++) {
+                    var cell = line.childNodes[i];
+                    var col = columns[i];
+                    var value = (typeof col.key !== tui.undef && col.key !== null ? lineData[col.key] : "");
+                    this.drawCell(cell, cell.firstChild, col, value, index, i);
+                }
+                if (this.isRowSelected(index)) {
+                    $(line).addClass("tui-grid-line-selected");
+                } else
+                    $(line).removeClass("tui-grid-line-selected");
+
+                if (!bindEvent)
+                    return;
+                $(line).on("contextmenu", function (e) {
+                    var index = line["_rowIndex"];
+                    self.fire("rowcontextmenu", { "event": e, "index": index, "line": line });
+                });
+                $(line).mousedown(function (e) {
+                    var index = line["_rowIndex"];
+                    self.fire("rowmousedown", { "event": e, "index": index, "line": line });
+                });
+                $(line).mouseup(function (e) {
+                    var index = line["_rowIndex"];
+                    self.fire("rowmouseup", { "event": e, "index": index, "line": line });
+                });
+                $(line).click(function (e) {
+                    var index = line["_rowIndex"];
+                    self.fire("rowclick", { "event": e, "index": index, "line": line });
+                });
+                $(line).dblclick(function (e) {
+                    var index = line["_rowIndex"];
+                    self.fire("rowdblclick", { "event": e, "index": index, "line": line });
+                });
+            };
+
+            Grid.prototype.moveLine = function (line, index, base) {
+                line.style.top = (base + index * this._lineHeight) + "px";
+                line.style.left = -this._scrollLeft + "px";
             };
 
             Grid.prototype.drawLines = function () {
+                this._headline.style.left = -this._scrollLeft + "px";
+                var base = this.headHeight() - this._scrollTop % this._lineHeight;
+                var begin = Math.floor(this._scrollTop / this._lineHeight);
+                var newBuffer = [];
+                var data = this.myData();
+                for (var i = begin; i < begin + this._dispLines + 1 && i < data.length(); i++) {
+                    if (i >= this._bufferedBegin && i < this._bufferedEnd) {
+                        // Is buffered.
+                        var l = this._bufferedLines[i - this._bufferedBegin];
+                        this.moveLine(l, i - begin, base);
+                        newBuffer.push(l);
+                    } else {
+                        var line = document.createElement("div");
+                        line.className = "tui-grid-line";
+                        this[0].appendChild(line);
+                        newBuffer.push(line);
+                        line["_rowIndex"] = i;
+                        this.drawLine(line, i, true);
+                        this.moveLine(l, i - begin, base);
+                    }
+                }
+                var end = i;
+                for (var i = this._bufferedBegin; i < this._bufferedEnd; i++) {
+                    if (i < begin || i >= end)
+                        this[0].removeChild(this._bufferedLines[i - this._bufferedBegin]);
+                }
+                this._bufferedLines = newBuffer;
+                this._bufferedBegin = begin;
+                this._bufferedEnd = end;
             };
 
             Grid.prototype.clearBufferLines = function () {
@@ -233,6 +456,94 @@ var tui;
                 }
                 this._bufferedLines = [];
                 this._bufferedEnd = this._bufferedBegin = 0;
+            };
+
+            Grid.prototype.select = function (rows) {
+                if (rows && typeof rows.length === "number" && rows.length >= 0) {
+                    this._selectrows.length = 0;
+                    for (var i = 0; i < rows.length; i++) {
+                        this._selectrows.push(rows[i]);
+                    }
+                }
+                return this._selectrows;
+            };
+
+            /**
+            * Sort by specifed column
+            * @param {Number} colIndex
+            * @param {Boolean} desc
+            */
+            Grid.prototype.sort = function (colIndex, desc) {
+                if (typeof desc === "undefined") { desc = false; }
+                var columns = this.myColumns();
+                if (this._sortColumn !== colIndex) {
+                    if (colIndex === null) {
+                        this._sortColumn = null;
+                        this.myData().sort(null, desc);
+                    } else if (typeof colIndex === "number" && !isNaN(colIndex) && colIndex >= 0 && colIndex < columns.length && columns[colIndex].sort) {
+                        this._sortColumn = colIndex;
+                        if (typeof columns[colIndex].sort === "function")
+                            this.myData().sort(columns[colIndex].key, this._sortDesc, columns[colIndex].sort);
+                        else
+                            this.myData().sort(columns[colIndex].key, this._sortDesc);
+                    }
+                }
+                this._sortDesc = !!desc;
+                this.refresh();
+                return { colIndex: this._sortColumn, desc: this._sortDesc };
+            };
+
+            /**
+            * Adjust column width to adapt column content
+            * @param {Number} columnIndex
+            * @param {Boolean} expandOnly only expand column width
+            */
+            Grid.prototype.autofitColumn = function (columnIndex, expandOnly, displayedOnly) {
+                if (typeof expandOnly === "undefined") { expandOnly = false; }
+                if (typeof displayedOnly === "undefined") { displayedOnly = true; }
+                if (typeof (columnIndex) !== "number")
+                    return;
+                var columns = this.myColumns();
+                if (columnIndex < 0 && columnIndex >= columns.length)
+                    return;
+                var col = columns[columnIndex];
+                var maxWidth = 0;
+                if (expandOnly)
+                    maxWidth = col.width || 0;
+                var cell = document.createElement("span");
+                cell.className = "tui-grid-cell";
+                cell.style.position = "absolute";
+                cell.style.visibility = "hidden";
+                cell.style.width = "auto";
+                document.body.appendChild(cell);
+                var key = columnIndex;
+                if (typeof col.key === "string" && col.key || typeof col.key === "number" && !isNaN(col.key))
+                    key = col.key;
+                var data = this.myData();
+                var begin = displayedOnly ? this._bufferedBegin : 0;
+                var end = displayedOnly ? this._bufferedEnd : data.length();
+                for (var i = begin; i < end; i++) {
+                    var v = data.at(i)[key];
+                    if (typeof v === "object" && v.nodeName) {
+                        cell.innerHTML = "";
+                        cell.appendChild(v);
+                    } else {
+                        cell.innerHTML = v;
+                    }
+                    if (typeof col.format === "function")
+                        col.format({
+                            cell: cell,
+                            value: v,
+                            rowIndex: i,
+                            colIndex: columnIndex
+                        });
+                    if (maxWidth < cell.offsetWidth - this._borderWidth)
+                        maxWidth = cell.offsetWidth - this._borderWidth;
+                }
+                document.body.removeChild(cell);
+                col.width = maxWidth;
+                col["_important"] = true;
+                this.refresh();
             };
 
             Grid.prototype.hasHScroll = function (val) {
@@ -267,11 +578,18 @@ var tui;
                 }
             };
 
+            Grid.prototype.rowselectable = function (val) {
+                if (typeof val === "boolean") {
+                    this.is("data-rowselectable", val);
+                    this.refresh();
+                    return this;
+                } else
+                    return this.is("data-rowselectable");
+            };
+
             Grid.prototype.resizable = function (val) {
                 if (typeof val === "boolean") {
                     this.is("data-resizable", val);
-
-                    //this.createSplitters();
                     this.refresh();
                     return this;
                 } else
@@ -281,6 +599,7 @@ var tui;
             Grid.prototype.data = function (data) {
                 if (data) {
                     this._data = data;
+                    this.refresh();
                     return this;
                 } else {
                     return this._data;

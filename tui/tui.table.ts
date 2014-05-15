@@ -61,7 +61,7 @@ module tui.ctrl {
 					$(splitter).mousedown(function (e) {
 						var target: HTMLSpanElement = <HTMLSpanElement>e.target;
 						var span = document.createElement("span");
-						span.className = "tui-table-splitter-move";
+						span.className = "tui-splitter-move";
 						var pos = tui.offsetToPage(target);
 						span.style.left = pos.x + "px";
 						span.style.top = pos.y + "px";

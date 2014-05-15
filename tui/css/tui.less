@@ -241,9 +241,6 @@ div.tui-mask {
 	cursor:default;
 }
 
-*[data-hidden=true], .tui-hidden {
-	display:none;
-}
 
 // TUI button
 .tui-button {
@@ -682,7 +679,6 @@ div.tui-mask {
 	@backColor:@scrollBackColor;
 	@thumbColor:@iconColor;
 	@thumbActiveColor:#666;
-	//@btnSize:@scrollWidth;
 	@borderSize:4px;
 	@space:4px;
 	@radius:5px;
@@ -831,13 +827,11 @@ div.tui-mask {
 }
 
 @tableRadius:5px;
+@cellPadding:8px;
 .tui-table {
 	.border-radius(@tableRadius);
 	padding:0px;
 	border:none;
-	//border:1px solid @borderColor;
-	//border-collapse: collapse;
-	//*border-collapse: expression('collapse', cellSpacing='0px');
 	border-spacing:0px;
 	background-color:#fff;
 	tr {
@@ -845,7 +839,7 @@ div.tui-mask {
 			// Column border
 			border-right:1px solid @borderColor;
 			border-bottom:1px solid @borderColor;
-			padding:8px 8px;
+			padding:8px @cellPadding;
 		}
 		th {
 			background-color:@captionColor;
@@ -879,7 +873,7 @@ div.tui-mask {
 		}
 	}
 }
-.tui-table-splitter-move {
+.tui-splitter-move {
 	display:inline-block;
 	position:absolute;
 	width:5px;
@@ -917,22 +911,15 @@ div.tui-mask {
 }
 
 .tui-grid {
-	@lineHeight: 30px;
+	@lineHeight: 34px;
 	vertical-align:middle;
 	position:relative;
 	border:1px solid @borderColor;
 	background-color:@winColor;
 	.border-radius(@tableRadius);
-	.tui-grid-head {
-		display:block;
-		position:absolute;
-		left:0px;
-		top:0px;
-		right:0px;
-		height:@lineHeight;
-		background-color:@captionColor;
-		.top-radius(@tableRadius);
-	}
+	overflow:hidden;
+	outline:none;
+	
 	.tui-scrollbar[data-direction=horizontal] {
 		position:absolute;
 		left:0;
@@ -940,6 +927,7 @@ div.tui-mask {
 		right:@scrollWidth;
 		.right-radius(0px);
 		.top-left-radius(0px);
+		z-index:2;
 	}
 	.tui-scrollbar[data-direction=vertical] {
 		position:absolute;
@@ -948,20 +936,80 @@ div.tui-mask {
 		bottom:@scrollWidth;
 		.bottom-radius(0px);
 		.top-left-radius(0px);
+		z-index:2;
 	}
 	.tui-scroll-space {
 		.bottom-right-radius(@tableRadius);
+		z-index:2;
 	}
-	.tui-grid-cell {
+	.tui-grid-line,.tui-grid-head {
+		display:block;
+		position:absolute;
+		left:0px;
+		right:0px;
+		height:@lineHeight;
+		line-height:@lineHeight;
+		border-bottom:1px solid @borderColor;
+		white-space: nowrap;
+		z-index:0;
+	}
+	.tui-grid-head {
+		top:0;
+		background-color:@captionColor;
+		.top-radius(@tableRadius);
+		z-index:1;
+	}
+	.tui-grid-cell,.tui-grid-head-cell {
+		display:inline-block;
+		position:relative;
 
+		height:@lineHeight;
+		line-height:@lineHeight;
+		padding:0 @cellPadding;
+		border-right: 1px solid @borderColor;
+		.tui-grid-cell-content {
+			display:block;
+			overflow:hidden;
+			text-overflow:ellipsis;
+			white-space:nowrap;
+		}
+		white-space:nowrap;
 	}
-	.tui-grid-header-cell {
+	.tui-grid-head-cell {
+		&.tui-grid-sortable {
+			cursor:pointer;
+		}
+		&.tui-grid-cell-sort-asc .tui-grid-cell-content:before {
+			.icon-base;
+			.fa-arrow-up;
+			margin-right:5px;
+		}
+		&.tui-grid-cell-sort-desc .tui-grid-cell-content:before {
+			.icon-base;
+			.fa-arrow-down;
+			margin-right:5px;
+		}
+	}
+	
+	.tui-grid-splitter {
+		display:inline-block;
+		.transparent;
+		position:absolute;
+		width:5px;
+		top:0;
+		right:0;
+		bottom:0;
+		cursor:col-resize;
+		&.tui-splitter-move {
+			background-color:black;
+			.opacity(0.5);
+		}
+	}
+}
 
-	}
-	.tui-grid-line {
 
-	}
-	.tui-grid-header {
 
-	}
+
+*[data-hidden=true], .tui-hidden {
+	display:none;
 }

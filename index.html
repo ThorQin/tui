@@ -25,6 +25,7 @@
 	<script src="tui/tui.dialog.js"></script>
 	<script src="tui/tui.scrollbar.js"></script>
 	<script src="tui/tui.table.js"></script>
+	<script src="tui/tui.dataprovider.js"></script>
 	<script src="tui/tui.grid.js"></script>
 	<script src="app.js"></script>
 	<script>
@@ -183,7 +184,12 @@
 			</tr>
 		</table>
 	</div>
-	<div class="tui-grid" style="display:inline-block;width:500px;height:300px;"></div>
+	<div class="tui-grid" style="display:inline-block;width:500px;height:300px;"
+		 data-columns="[{'name':'某个列 1', 'sort':true },
+			 {'name':'column 2', 'sort':true },
+			 {'name':'column 3' }]"
+		 data-resizable="true"
+		 data-has-hscroll="true"></div>
 
 </body>
 </html>
