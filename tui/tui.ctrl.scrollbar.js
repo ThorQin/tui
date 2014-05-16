@@ -6,7 +6,7 @@
 };
 var tui;
 (function (tui) {
-    /// <reference path="tui.control.ts" />
+    /// <reference path="tui.ctrl.control.ts" />
     (function (ctrl) {
         var Scrollbar = (function (_super) {
             __extends(Scrollbar, _super);
@@ -58,9 +58,9 @@ var tui;
                     moveParam.step = Math.round(moveParam.step);
                     if (val === moveParam.pos)
                         return;
-                    if (moveParam.op === "-") {
+                    if (!moveParam.isIncrease) {
                         val -= moveParam.step;
-                        if (val <= moveParam.pos || val <= 0) {
+                        if (val - (moveParam.isPage ? moveParam.step / 2 : 0) <= moveParam.pos || val <= 0) {
                             achieve = true;
                             if (val < 0)
                                 val = 0;
@@ -69,7 +69,7 @@ var tui;
                         self.value(val);
                     } else {
                         val += moveParam.step;
-                        if (val >= moveParam.pos || val >= total) {
+                        if (val + (moveParam.isPage ? moveParam.step / 2 : 0) >= moveParam.pos || val >= total) {
                             achieve = true;
                             if (val > total)
                                 val = total;
@@ -105,9 +105,18 @@ var tui;
                     }
                     if (_this.total() <= 0)
                         return;
-                    var pos = (self.direction() === "vertical" ? e.offsetY : e.offsetX);
-                    var v = self.calculateValue(pos) - self.page() / 2;
-                    moveParam = { pos: v, step: self.page(), op: (v < self.value() ? "-" : "+") };
+                    var dir = self.direction();
+                    var pos, thumbLen;
+
+                    if (dir === "vertical") {
+                        pos = (typeof e.offsetY === "number" ? e.offsetY : e["originalEvent"].layerY);
+                        thumbLen = _this._btnThumb.offsetHeight;
+                    } else {
+                        pos = (typeof e.offsetX === "number" ? e.offsetX : e["originalEvent"].layerX);
+                        thumbLen = _this._btnThumb.offsetWidth;
+                    }
+                    var v = _this.posToValue(pos - thumbLen / 2);
+                    moveParam = { pos: v, step: self.page(), isIncrease: v > self.value(), isPage: true };
                     if (!moveThumb()) {
                         scrollTimer = setTimeout(function () {
                             scrollTimer = null;
@@ -127,7 +136,7 @@ var tui;
                     if (self.total() <= 0)
                         return;
                     $(self._btnHead).addClass("tui-actived");
-                    moveParam = { pos: 0, step: self.step(), op: "-" };
+                    moveParam = { pos: 0, step: self.step(), isIncrease: false, isPage: false };
                     if (!moveThumb()) {
                         scrollTimer = setTimeout(function () {
                             scrollTimer = null;
@@ -144,7 +153,7 @@ var tui;
                     if (self.total() <= 0)
                         return;
                     $(self._btnFoot).addClass("tui-actived");
-                    moveParam = { pos: self.total(), step: self.step(), op: "+" };
+                    moveParam = { pos: self.total(), step: self.step(), isIncrease: true, isPage: false };
                     if (!moveThumb()) {
                         scrollTimer = setTimeout(function () {
                             scrollTimer = null;
@@ -186,7 +195,7 @@ var tui;
                         diff = e.clientX - beginX;
                         pos = beginLeft + diff;
                     }
-                    self.value(self.calculateValue(pos));
+                    self.value(self.posToValue(pos));
                     if (oldValue !== self.value())
                         self.fire("scroll", { value: self.value(), type: "drag" });
                 }
@@ -312,7 +321,20 @@ var tui;
                 }
             };
 
-            Scrollbar.prototype.calculateValue = function (pos) {
+            Scrollbar.prototype.logicLenToRealLen = function (logicLen) {
+                var len = 0;
+                var total = this.total();
+                if (total <= 0)
+                    return 0;
+                if (this.direction() === "vertical") {
+                    len = this[0].clientHeight - this._btnHead.offsetHeight - this._btnFoot.offsetHeight - this._btnThumb.offsetHeight;
+                } else {
+                    len = this[0].clientWidth - this._btnHead.offsetWidth - this._btnFoot.offsetWidth - this._btnThumb.offsetWidth;
+                }
+                return logicLen / total * len;
+            };
+
+            Scrollbar.prototype.posToValue = function (pos) {
                 var total = this.total();
                 if (total <= 0) {
                     return 0;
@@ -327,43 +349,48 @@ var tui;
                     val = (pos - this._btnHead.offsetWidth) / len * total;
                 }
                 val = Math.round(val);
-                if (val < 0)
-                    val = 0;
-                if (val > total)
-                    val = total;
                 return val;
             };
 
-            Scrollbar.prototype.refresh = function () {
-                var val = this.value();
+            Scrollbar.prototype.valueToPos = function (value) {
                 var total = this.total();
                 var step = this.step();
                 var page = this.page();
                 var vertical = (this.direction() === "vertical");
-                if (total <= 0) {
-                    this._btnThumb.style.display = "none";
-                    return;
-                } else
-                    this._btnThumb.style.display = "";
                 var minSize = (vertical ? this._btnHead.offsetHeight : this._btnHead.offsetWidth);
+                if (total <= 0) {
+                    return { pos: 0, thumbLen: 0 };
+                }
                 var len = (vertical ? this[0].clientHeight - this._btnHead.offsetHeight - this._btnFoot.offsetHeight : this[0].clientWidth - this._btnHead.offsetWidth - this._btnFoot.offsetWidth);
                 var thumbLen = Math.round(page / total * len);
                 if (thumbLen < minSize)
                     thumbLen = minSize;
                 if (thumbLen > len - 10)
                     thumbLen = len - 10;
-                var scale = (val / total);
+                var scale = (value / total);
                 if (scale < 0)
                     scale = 0;
                 if (scale > 1)
                     scale = 1;
                 var pos = minSize + Math.round(scale * (len - thumbLen)) - 1;
+                return {
+                    "pos": pos, "thumbLen": thumbLen
+                };
+            };
+
+            Scrollbar.prototype.refresh = function () {
+                var pos = this.valueToPos(this.value());
+                var vertical = (this.direction() === "vertical");
                 if (vertical) {
-                    this._btnThumb.style.height = (thumbLen > 0 ? thumbLen : 0) + "px";
-                    this._btnThumb.style.top = pos + "px";
+                    this._btnThumb.style.height = (pos.thumbLen > 0 ? pos.thumbLen : 0) + "px";
+                    this._btnThumb.style.top = pos.pos + "px";
+                    this._btnThumb.style.left = "";
+                    this._btnThumb.style.width = "";
                 } else {
-                    this._btnThumb.style.width = (thumbLen > 0 ? thumbLen : 0) + "px";
-                    this._btnThumb.style.left = pos + "px";
+                    this._btnThumb.style.width = (pos.thumbLen > 0 ? pos.thumbLen : 0) + "px";
+                    this._btnThumb.style.left = pos.pos + "px";
+                    this._btnThumb.style.top = "";
+                    this._btnThumb.style.height = "";
                 }
             };
             Scrollbar.CLASS = "tui-scrollbar";
@@ -384,4 +411,4 @@ var tui;
     })(tui.ctrl || (tui.ctrl = {}));
     var ctrl = tui.ctrl;
 })(tui || (tui = {}));
-//# sourceMappingURL=tui.scrollbar.js.map
+//# sourceMappingURL=tui.ctrl.scrollbar.js.map

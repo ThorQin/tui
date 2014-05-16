@@ -31,20 +31,20 @@
     <TypeScriptCompile Include="tui\jquery.d.ts" />
     <TypeScriptCompile Include="tui\lang\en-us.ts" />
     <TypeScriptCompile Include="tui\lang\zh-cn.ts" />
-    <TypeScriptCompile Include="tui\tui.button.ts" />
-    <TypeScriptCompile Include="tui\tui.calendar.ts" />
-    <TypeScriptCompile Include="tui\tui.checkbox.ts" />
-    <TypeScriptCompile Include="tui\tui.control.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.button.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.calendar.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.checkbox.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.control.ts" />
     <TypeScriptCompile Include="tui\tui.core.ts" />
     <TypeScriptCompile Include="tui\tui.dataprovider.ts" />
-    <TypeScriptCompile Include="tui\tui.grid.ts" />
-    <TypeScriptCompile Include="tui\tui.popup.ts" />
-    <TypeScriptCompile Include="tui\tui.radiobox.ts" />
-    <TypeScriptCompile Include="tui\tui.input.ts" />
-    <TypeScriptCompile Include="tui\tui.scrollbar.ts" />
-    <TypeScriptCompile Include="tui\tui.table.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.grid.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.popup.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.radiobox.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.input.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.scrollbar.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.table.ts" />
     <TypeScriptCompile Include="tui\tui.time.ts" />
-    <TypeScriptCompile Include="tui\tui.dialog.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.dialog.ts" />
     <TypeScriptCompile Include="tui\tui.upload.ts" />
   </ItemGroup>
   <ItemGroup>

@@ -6,7 +6,7 @@
 };
 var tui;
 (function (tui) {
-    /// <reference path="tui.control.ts" />
+    /// <reference path="tui.ctrl.control.ts" />
     (function (ctrl) {
         var Grid = (function (_super) {
             __extends(Grid, _super);
@@ -29,6 +29,7 @@ var tui;
                 this._dispLines = 0;
                 // Drawing related flags
                 this._selectrows = [];
+                this._columnKeyMap = null;
                 var self = this;
                 if (el)
                     this.elem(el);
@@ -55,6 +56,42 @@ var tui;
                 this._space = document.createElement("span");
                 this._space.className = "tui-scroll-space";
                 this[0].appendChild(this._space);
+
+                this._vscroll.on("scroll", function (data) {
+                    self._scrollTop = data["value"];
+                    self.drawLines();
+                });
+                this._hscroll.on("scroll", function (data) {
+                    self._scrollLeft = data["value"];
+                    self.drawLines();
+                });
+                var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+                $(this[0]).on(mousewheelevt, function (ev) {
+                    var e = ev.originalEvent;
+                    var delta = e.detail ? e.detail * (-120) : e.wheelDelta;
+                    var step = Math.round(self._vscroll.page() / 2);
+
+                    //delta returns +120 when wheel is scrolled up, -120 when scrolled down
+                    var scrollSize = step > self._vscroll.step() ? step : self._vscroll.step();
+                    if (delta <= -120) {
+                        if (self._vscroll.value() < self._vscroll.total()) {
+                            self._vscroll.value(self._vscroll.value() + scrollSize);
+                            self._scrollTop = self._vscroll.value();
+                            self.drawLines();
+                            ev.stopPropagation();
+                            ev.preventDefault();
+                        }
+                    } else {
+                        if (self._vscroll.value() > 0) {
+                            self._vscroll.value(self._vscroll.value() - scrollSize);
+                            self._scrollTop = self._vscroll.value();
+                            self.drawLines();
+                            ev.stopPropagation();
+                            ev.preventDefault();
+                        }
+                    }
+                });
+
                 this.refresh();
             }
             // Make sure not access null object
@@ -67,7 +104,7 @@ var tui;
             };
 
             Grid.prototype.headHeight = function () {
-                if (this.hasHead())
+                if (!this.noHead())
                     return this._headHeight;
                 else
                     return 0;
@@ -329,7 +366,7 @@ var tui;
             };
 
             Grid.prototype.drawHead = function () {
-                if (!this.hasHead()) {
+                if (this.noHead()) {
                     $(this._headline).addClass("tui-hidden");
                     return;
                 }
@@ -383,7 +420,13 @@ var tui;
                 for (var i = 0; i < line.childNodes.length; i++) {
                     var cell = line.childNodes[i];
                     var col = columns[i];
-                    var value = (typeof col.key !== tui.undef && col.key !== null ? lineData[col.key] : "");
+                    var key = null;
+                    if (typeof col.key !== tui.undef && col.key !== null) {
+                        key = this._columnKeyMap[col.key];
+                        if (typeof key === tui.undef)
+                            key = col.key;
+                    }
+                    var value = (key !== null ? lineData[key] : "");
                     this.drawCell(cell, cell.firstChild, col, value, index, i);
                 }
                 if (this.isRowSelected(index)) {
@@ -481,17 +524,17 @@ var tui;
             Grid.prototype.sort = function (colIndex, desc) {
                 if (typeof desc === "undefined") { desc = false; }
                 var columns = this.myColumns();
-                if (this._sortColumn !== colIndex) {
-                    if (colIndex === null) {
-                        this._sortColumn = null;
-                        this.myData().sort(null, desc);
-                    } else if (typeof colIndex === "number" && !isNaN(colIndex) && colIndex >= 0 && colIndex < columns.length && columns[colIndex].sort) {
-                        this._sortColumn = colIndex;
-                        if (typeof columns[colIndex].sort === "function")
-                            this.myData().sort(columns[colIndex].key, this._sortDesc, columns[colIndex].sort);
-                        else
-                            this.myData().sort(columns[colIndex].key, this._sortDesc);
-                    }
+                if (colIndex === null) {
+                    this._sortColumn = null;
+                    this.myData().sort(null, desc);
+                    this._sortDesc = false;
+                } else if (typeof colIndex === "number" && !isNaN(colIndex) && colIndex >= 0 && colIndex < columns.length && columns[colIndex].sort) {
+                    this._sortColumn = colIndex;
+                    this._sortDesc = desc;
+                    if (typeof columns[colIndex].sort === "function")
+                        this.myData().sort(columns[colIndex].key, this._sortDesc, columns[colIndex].sort);
+                    else
+                        this.myData().sort(columns[colIndex].key, this._sortDesc);
                 }
                 this._sortDesc = !!desc;
                 this.refresh();
@@ -560,13 +603,13 @@ var tui;
                     return this.is("data-has-hscroll");
             };
 
-            Grid.prototype.hasHead = function (val) {
+            Grid.prototype.noHead = function (val) {
                 if (typeof val === "boolean") {
-                    this.is("data-has-head", val);
+                    this.is("data-no-head", val);
                     this.refresh();
                     return this;
                 } else
-                    return this.is("data-has-head");
+                    return this.is("data-no-head");
             };
 
             Grid.prototype.columns = function (val) {
@@ -616,6 +659,7 @@ var tui;
                     return;
                 this.computeScroll();
                 this.clearBufferLines();
+                this._columnKeyMap = this.myData().columnKeyMap();
                 this.drawHead();
                 this.drawLines();
             };
@@ -637,4 +681,4 @@ var tui;
     })(tui.ctrl || (tui.ctrl = {}));
     var ctrl = tui.ctrl;
 })(tui || (tui = {}));
-//# sourceMappingURL=tui.grid.js.map
+//# sourceMappingURL=tui.ctrl.grid.js.map

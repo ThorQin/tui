@@ -7,7 +7,7 @@ module tui {
 		cacheSize: number;
 		sortKey: string;
 		sortDesc: boolean;
-		update: (data: any[], length: number, begin: number) => void;
+		update: (data: any[], length: number, begin: number, head?: string[]) => void;
 	}
 
 	export interface IUpdateInfo {
@@ -19,29 +19,31 @@ module tui {
 	export interface IDataProvider {
 		length(): number;
 		at(index: number): any;
+		columnKeyMap(): {};
 		sort(key: any, desc: boolean, func?: (a: any, b: any) => number): IDataProvider;
 		onupdate? (callback: (updateInfo: IUpdateInfo) => void);
 	}
 
 	export interface IQueryResult {
 		length: number;
-		header?: string[];
+		head?: string[];
 		data: any[];
 	}
 
 	export class ArrayProvider implements IDataProvider {
 		private _src: any[];
 		private _data: any[];
-		private _header: string[];
+		private _head: string[];
+		private _headCache: {} = {};
 
 		constructor(result: IQueryResult);
 		constructor(data: any[]);
 		constructor(data: any) {
 			if (data && data instanceof Array) {
 				this._src = this._data = data;
-			} else if (data && (data.header && data.data )) {
+			} else if (data && (data.head && data.data )) {
 				this._src = this._data = data.data;
-				this._header = data.header;
+				this._head = data.head;
 			}
 		}
 		length(): number {
@@ -56,19 +58,30 @@ module tui {
 			else
 				return null;
 		}
-	
-		sort(key: any, desc: boolean, func?: (a: any, b: any) => number): ArrayProvider {
+		columnKeyMap(): {} {
+			if (this._head) {
+				var map = {};
+				for (var i = 0; i < this._head.length; i++) {
+					map[this._head[i]] = i;
+				}
+				return map;
+			} else
+				return {};
+		}
+		sort(key: any, desc: boolean, func: (a: any, b: any) => number = null): ArrayProvider {
 			if (this._src) {
 				if (typeof func === "function") {
-					this._data = this._src.sort(func);
+					this._data = this._src.concat();
+					this._data.sort(func);
 				} else if (key === null && func === null) {
 					this._data = this._src;
 					return this;
 				} else {
-					if (this._header) {
-						key = this._header.indexOf(key);
+					if (this._head && typeof key === "string") {
+						key = this._head.indexOf(key);
 					}
-					this._data = this._src.sort(function (a: any, b: any): number {
+					this._data = this._src.concat();
+					this._data.sort(function (a: any, b: any): number {
 						if (a[key] > b[key]) {
 							return desc ? -1 : 1;
 						} else if (a[key] < b[key]) {
@@ -88,7 +101,7 @@ module tui {
 	
 
 	export class RemoteCursorProvider implements IDataProvider {
-		private _header: string[];
+		private _head: string[];
 		private _length: number;
 		private _invalid: boolean;
 		private _data: any[];
@@ -127,8 +140,17 @@ module tui {
 			} else
 				return this._data[index - this._begin];
 		}
-
-		sort(key: any, desc: boolean, func?: (a: any, b: any) => number): RemoteCursorProvider {
+		columnKeyMap(): {} {
+			if (this._head) {
+				var map = {};
+				for (var i = 0; i < this._head.length; i++) {
+					map[this._head[i]] = i;
+				}
+				return map;
+			} else
+				return {};
+		}
+		sort(key: any, desc: boolean, func: (a: any, b: any) => number = null): RemoteCursorProvider {
 			this._sortKey = key;
 			this._desc = desc;
 			this._invalid = true;
@@ -142,10 +164,13 @@ module tui {
 					cacheSize: this._cacheSize,
 					sortKey: this._sortKey,
 					sortDesc: this._desc,
-					update: (data: any[], length: number, begin: number) => {
+					update: (data: any[], length: number, begin: number, head?: string[]) => {
 						this._data = data;
 						this._length = length;
 						this._begin = begin;
+						if (typeof head !== tui.undef) {
+							this._head = head;
+						}
 						if (typeof this._updateCallback === "function") {
 							this._updateCallback({
 								length: this._length,

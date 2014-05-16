@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.control.ts" />
+﻿/// <reference path="tui.ctrl.control.ts" />
 module tui.ctrl {
 
 	export class Scrollbar extends Control<Scrollbar> {
@@ -29,7 +29,12 @@ module tui.ctrl {
 
 			var scrollTimer = null;
 			var scrollInterval = null;
-			var moveParam = null;
+			var moveParam: {
+				pos: number;
+				step: number;
+				isIncrease: boolean;
+				isPage: boolean;
+			} = null;
 
 			function stopMove() {
 				if (scrollTimer) {
@@ -50,9 +55,9 @@ module tui.ctrl {
 				moveParam.step = Math.round(moveParam.step);
 				if (val === moveParam.pos)
 					return;
-				if (moveParam.op === "-") {
+				if (!moveParam.isIncrease) {
 					val -= moveParam.step;
-					if (val <= moveParam.pos || val <= 0) {
+					if (val - (moveParam.isPage? moveParam.step / 2:0) <= moveParam.pos || val <= 0) {
 						achieve = true;
 						if (val < 0)
 							val = 0;
@@ -61,7 +66,7 @@ module tui.ctrl {
 					self.value(val);
 				} else {
 					val += moveParam.step;
-					if (val >= moveParam.pos || val >= total) {
+					if (val + (moveParam.isPage ? moveParam.step / 2 : 0) >= moveParam.pos || val >= total) {
 						achieve = true;
 						if (val > total)
 							val = total;
@@ -78,6 +83,7 @@ module tui.ctrl {
 				$(self._btnHead).removeClass("tui-actived");
 				$(self._btnFoot).removeClass("tui-actived");
 				$(tui.unmask()).off("mouseup", releaseButton);
+				$(document).off("mouseup", releaseButton);
 			};
 
 			$(this[0]).mousedown((e) => {
@@ -94,15 +100,25 @@ module tui.ctrl {
 				}
 				if (this.total() <= 0)
 					return;
-				var pos = (self.direction() === "vertical" ? e.offsetY : e.offsetX);
-				var v = self.calculateValue(pos) - self.page() / 2;
-				moveParam = { pos: v, step: self.page(), op: (v < self.value() ? "-" : "+") };
+				var dir = self.direction();
+				var pos: number, thumbLen: number;
+
+				if (dir === "vertical") {
+					pos = (typeof e.offsetY === "number" ? e.offsetY : e["originalEvent"].layerY);
+					thumbLen = this._btnThumb.offsetHeight;
+				} else {
+					pos = (typeof e.offsetX === "number" ? e.offsetX : e["originalEvent"].layerX);
+					thumbLen = this._btnThumb.offsetWidth;
+				}
+				var v = this.posToValue(pos - thumbLen / 2);
+				moveParam = { pos: v, step: self.page(), isIncrease: v > self.value(), isPage: true };
 				if (!moveThumb()) {
 					scrollTimer = setTimeout(function () {
 						scrollTimer = null;
 						scrollInterval = setInterval(moveThumb, 20);
 					}, 300);
 					$(tui.mask()).on("mouseup", releaseButton);
+					$(document).on("mouseup", releaseButton);
 				}
 				e.stopPropagation();
 				e.preventDefault();
@@ -115,13 +131,14 @@ module tui.ctrl {
 				if (self.total() <= 0)
 					return;
 				$(self._btnHead).addClass("tui-actived");
-				moveParam = { pos: 0, step: self.step(), op: "-" };
+				moveParam = { pos: 0, step: self.step(), isIncrease: false, isPage: false };
 				if (!moveThumb()) {
 					scrollTimer = setTimeout(function () {
 						scrollTimer = null;
 						scrollInterval = setInterval(moveThumb, 20);
 					}, 300);
 					$(tui.mask()).on("mouseup", releaseButton);
+					$(document).on("mouseup", releaseButton);
 				}
 			});
 
@@ -131,13 +148,14 @@ module tui.ctrl {
 				if (self.total() <= 0)
 					return;
 				$(self._btnFoot).addClass("tui-actived");
-				moveParam = { pos: self.total(), step: self.step(), op: "+" };
+				moveParam = { pos: self.total(), step: self.step(), isIncrease: true, isPage: false };
 				if (!moveThumb()) {
 					scrollTimer = setTimeout(function () {
 						scrollTimer = null;
 						scrollInterval = setInterval(moveThumb, 20);
 					}, 300);
 					$(tui.mask()).on("mouseup", releaseButton);
+					$(document).on("mouseup", releaseButton);
 				}
 			});
 
@@ -171,15 +189,14 @@ module tui.ctrl {
 					diff = e.clientX - beginX;
 					pos = beginLeft + diff;
 				}
-				self.value(self.calculateValue(pos));
+				self.value(self.posToValue(pos));
 				if (oldValue !== self.value())
 					self.fire("scroll", { value: self.value(), type:"drag"});
 			}
 
 			function dragEnd(e) {
-				$(document).off("mousemove", dragThumb);
+				$(tui.unmask()).off("mousemove", dragThumb);
 				$(document).off("mouseup", dragEnd);
-				tui.unmask();
 				$(self._btnThumb).removeClass("tui-actived");
 				self.fire("dragend", { value: self.value() });
 			}
@@ -192,8 +209,7 @@ module tui.ctrl {
 				beginLeft = self._btnThumb.offsetLeft;
 				beginTop = self._btnThumb.offsetTop;
 				$(self._btnThumb).addClass("tui-actived");
-				tui.mask();
-				$(document).on("mousemove", dragThumb);
+				$(tui.mask()).on("mousemove", dragThumb);
 				$(document).on("mouseup", dragEnd);
 				self.fire("dragbegin", { value: self.value() });
 			});
@@ -310,7 +326,20 @@ module tui.ctrl {
 			}
 		}
 
-		private calculateValue(pos) {
+		private logicLenToRealLen(logicLen: number): number {
+			var len = 0;
+			var total = this.total();
+			if (total <= 0)
+				return 0;
+			if (this.direction() === "vertical") {
+				len = this[0].clientHeight - this._btnHead.offsetHeight - this._btnFoot.offsetHeight - this._btnThumb.offsetHeight;
+			} else {
+				len = this[0].clientWidth - this._btnHead.offsetWidth - this._btnFoot.offsetWidth - this._btnThumb.offsetWidth;
+			}
+			return logicLen / total * len;
+		}
+
+		private posToValue(pos) {
 			var total: number = this.total();
 			if (total <= 0) {
 				return 0;
@@ -325,25 +354,18 @@ module tui.ctrl {
 				val = (pos - this._btnHead.offsetWidth) / len * total;
 			}
 			val = Math.round(val);
-			if (val < 0)
-				val = 0;
-			if (val > total)
-				val = total;
 			return val;
 		}
 
-		refresh() {
-			var val = this.value();
+		private valueToPos(value): { pos: number; thumbLen: number; } {
 			var total = this.total();
 			var step = this.step();
 			var page = this.page();
 			var vertical: boolean = (this.direction() === "vertical");
-			if (total <= 0) {
-				this._btnThumb.style.display = "none";
-				return;
-			} else
-				this._btnThumb.style.display = "";
 			var minSize = (vertical ? this._btnHead.offsetHeight : this._btnHead.offsetWidth);
+			if (total <= 0) {
+				return { pos: 0, thumbLen: 0 };
+			}
 			var len = (vertical ?
 				this[0].clientHeight - this._btnHead.offsetHeight - this._btnFoot.offsetHeight :
 				this[0].clientWidth - this._btnHead.offsetWidth - this._btnFoot.offsetWidth);
@@ -352,18 +374,30 @@ module tui.ctrl {
 				thumbLen = minSize;
 			if (thumbLen > len - 10)
 				thumbLen = len - 10;
-			var scale = (val / total);
+			var scale = (value / total);
 			if (scale < 0)
 				scale = 0;
 			if (scale > 1)
 				scale = 1;
 			var pos = minSize + Math.round(scale * (len - thumbLen)) - 1;
+			return {
+				"pos": pos, "thumbLen": thumbLen
+			};
+		}
+
+		refresh() {
+			var pos = this.valueToPos(this.value());
+			var vertical: boolean = (this.direction() === "vertical");
 			if (vertical) {
-				this._btnThumb.style.height = (thumbLen > 0 ? thumbLen : 0) + "px";
-				this._btnThumb.style.top = pos + "px";
+				this._btnThumb.style.height = (pos.thumbLen > 0 ? pos.thumbLen : 0) + "px";
+				this._btnThumb.style.top = pos.pos + "px";
+				this._btnThumb.style.left = "";
+				this._btnThumb.style.width = "";
 			} else {
-				this._btnThumb.style.width = (thumbLen > 0 ? thumbLen : 0) + "px";
-				this._btnThumb.style.left = pos + "px";
+				this._btnThumb.style.width = (pos.thumbLen > 0 ? pos.thumbLen : 0) + "px";
+				this._btnThumb.style.left = pos.pos + "px";
+				this._btnThumb.style.top = "";
+				this._btnThumb.style.height = "";
 			}
 		}
 	}

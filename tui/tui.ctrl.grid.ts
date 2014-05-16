@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.control.ts" />
+﻿/// <reference path="tui.ctrl.control.ts" />
 module tui.ctrl {
 
 	export interface IColumnFormatInfo {
@@ -30,7 +30,7 @@ module tui.ctrl {
 		private _columns: GridColumn[] = null;
 		private _emptyColumns: GridColumn[] = [];
 		private _data: tui.IDataProvider = null;
-		private _emptyData = new tui.ArrayProvider([]);
+		private _emptyData: tui.IDataProvider = new tui.ArrayProvider([]);
 		private _sortColumn: number;
 		private _sortDesc: boolean;
 
@@ -53,13 +53,14 @@ module tui.ctrl {
 		// Scrolling related
 		private _scrollTop = 0;
 		private _scrollLeft = 0;
-		private _bufferedLines = [];
+		private _bufferedLines: HTMLDivElement[] = [];
 		private _bufferedBegin = 0;
 		private _bufferedEnd = 0;	// _bufferedEnd = _bufferedBegin + buffered count
 		private _dispLines = 0;		// How many lines can be displayed in grid viewable area
 
 		// Drawing related flags
 		private _selectrows: number[] = [];
+		private _columnKeyMap: {} = null;
 
 		constructor(el?: HTMLElement) {
 			super();
@@ -89,11 +90,46 @@ module tui.ctrl {
 			this._space = document.createElement("span");
 			this._space.className = "tui-scroll-space";
 			this[0].appendChild(this._space);
+
+			this._vscroll.on("scroll", function (data) {
+				self._scrollTop = data["value"];
+				self.drawLines();
+			});
+			this._hscroll.on("scroll", function (data) {
+				self._scrollLeft = data["value"];
+				self.drawLines();
+			});
+			var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+			$(this[0]).on(mousewheelevt, function (ev) {
+				var e = <any>ev.originalEvent;
+				var delta = e.detail ? e.detail * (-120) : e.wheelDelta;
+				var step = Math.round(self._vscroll.page() / 2);
+				//delta returns +120 when wheel is scrolled up, -120 when scrolled down
+				var scrollSize = step > self._vscroll.step() ? step : self._vscroll.step();
+				if (delta <= -120) {
+					if (self._vscroll.value() < self._vscroll.total()) {
+						self._vscroll.value(self._vscroll.value() + scrollSize);
+						self._scrollTop = self._vscroll.value();
+						self.drawLines();
+						ev.stopPropagation();
+						ev.preventDefault();
+					}
+				} else {
+					if (self._vscroll.value() > 0) {
+						self._vscroll.value(self._vscroll.value() - scrollSize);
+						self._scrollTop = self._vscroll.value();
+						self.drawLines();
+						ev.stopPropagation();
+						ev.preventDefault();
+					}
+				}
+			});
+			
 			this.refresh();
 		}
 
 		// Make sure not access null object
-		private myData() {
+		private myData(): tui.IDataProvider {
 			return this._data || this._emptyData;
 		}
 
@@ -102,7 +138,7 @@ module tui.ctrl {
 		}
 
 		private headHeight() {
-			if (this.hasHead())
+			if (!this.noHead())
 				return this._headHeight;
 			else
 				return 0;
@@ -371,6 +407,11 @@ module tui.ctrl {
 		}
 
 		private drawHead() {
+			if (this.noHead()) {
+				$(this._headline).addClass("tui-hidden");
+				return;
+			}
+			$(this._headline).removeClass("tui-hidden");
 			var columns = this.myColumns();
 			this._headline.innerHTML = "";
 			this._splitters.length = 0;
@@ -419,7 +460,13 @@ module tui.ctrl {
 			for (var i = 0; i < line.childNodes.length; i++) {
 				var cell = <HTMLSpanElement>line.childNodes[i];
 				var col = columns[i];
-				var value = (typeof col.key !== tui.undef && col.key !== null ? lineData[col.key] : "");
+				var key = null;
+				if (typeof col.key !== tui.undef && col.key !== null) {
+					key = this._columnKeyMap[col.key]
+					if (typeof key === tui.undef)
+						key = col.key;
+				}
+				var value = (key !== null ? lineData[key] : "");
 				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, value, index, i);
 			}
 			if (this.isRowSelected(index)) {
@@ -465,17 +512,17 @@ module tui.ctrl {
 			for (var i = begin; i < begin + this._dispLines + 1 && i < data.length(); i++) {
 				if (i >= this._bufferedBegin && i < this._bufferedEnd) {
 					// Is buffered.
-					var l = this._bufferedLines[i - this._bufferedBegin];
-					this.moveLine(l, i - begin, base);
-					newBuffer.push(l);
+					var line = this._bufferedLines[i - this._bufferedBegin];
+					this.moveLine(line, i - begin, base);
+					newBuffer.push(line);
 				} else {
 					var line = document.createElement("div");
 					line.className = "tui-grid-line";
-					this[0].appendChild(line);
+					this[0].insertBefore(line, this._headline);
 					newBuffer.push(line);
 					line["_rowIndex"] = i;
 					this.drawLine(line, i, true);
-					this.moveLine(l, i - begin, base);
+					this.moveLine(line, i - begin, base);
 				}
 			}
 			var end = i;
@@ -516,21 +563,21 @@ module tui.ctrl {
 		 */
 		sort(colIndex: number, desc: boolean = false) {
 			var columns = this.myColumns();
-			if (this._sortColumn !== colIndex) {
-				if (colIndex === null) {
-					this._sortColumn = null;
-					this.myData().sort(null, desc);
-				} else if (typeof colIndex === "number" &&
-					!isNaN(colIndex) &&
-					colIndex >= 0 &&
-					colIndex < columns.length &&
-					columns[colIndex].sort) {
-					this._sortColumn = colIndex;
-					if (typeof columns[colIndex].sort === "function")
-						this.myData().sort(columns[colIndex].key, this._sortDesc, columns[colIndex].sort);
-					else
-						this.myData().sort(columns[colIndex].key, this._sortDesc);
-				}
+			if (colIndex === null) {
+				this._sortColumn = null;
+				this.myData().sort(null, desc);
+				this._sortDesc = false;
+			} else if (typeof colIndex === "number" &&
+				!isNaN(colIndex) &&
+				colIndex >= 0 &&
+				colIndex < columns.length &&
+				columns[colIndex].sort) {
+				this._sortColumn = colIndex;
+				this._sortDesc = desc;
+				if (typeof columns[colIndex].sort === "function")
+					this.myData().sort(columns[colIndex].key, this._sortDesc, columns[colIndex].sort);
+				else
+					this.myData().sort(columns[colIndex].key, this._sortDesc);
 			}
 			this._sortDesc = !!desc;
 			this.refresh();
@@ -600,15 +647,15 @@ module tui.ctrl {
 				return this.is("data-has-hscroll");
 		}
 
-		hasHead(): boolean;
-		hasHead(val: boolean): Table;
-		hasHead(val?: boolean): any {
+		noHead(): boolean;
+		noHead(val: boolean): Table;
+		noHead(val?: boolean): any {
 			if (typeof val === "boolean") {
-				this.is("data-has-head", val);
+				this.is("data-no-head", val);
 				this.refresh();
 				return this;
 			} else
-				return this.is("data-has-head");
+				return this.is("data-no-head");
 		}
 
 		columns(): GridColumn[];
@@ -666,6 +713,7 @@ module tui.ctrl {
 				return;
 			this.computeScroll();
 			this.clearBufferLines();
+			this._columnKeyMap = this.myData().columnKeyMap();
 			this.drawHead();
 			this.drawLines();
 		}

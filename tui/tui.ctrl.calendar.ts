@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.control.ts" />
+﻿/// <reference path="tui.ctrl.control.ts" />
 /// <reference path="tui.time.ts" />
 module tui.ctrl {
 

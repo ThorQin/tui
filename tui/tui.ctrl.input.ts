@@ -1,7 +1,7 @@
 ﻿/// <reference path="tui.core.ts" />
-/// <reference path="tui.popup.ts" />
 /// <reference path="tui.upload.ts" />
-/// <reference path="tui.calendar.ts" />
+/// <reference path="tui.ctrl.popup.ts" />
+/// <reference path="tui.ctrl.calendar.ts" />
 module tui.ctrl {
 	export class Input extends Control<Input> {
 		static CLASS: string = "tui-input";

@@ -3,11 +3,12 @@ var tui;
 (function (tui) {
     var ArrayProvider = (function () {
         function ArrayProvider(data) {
+            this._headCache = {};
             if (data && data instanceof Array) {
                 this._src = this._data = data;
-            } else if (data && (data.header && data.data)) {
+            } else if (data && (data.head && data.data)) {
                 this._src = this._data = data.data;
-                this._header = data.header;
+                this._head = data.head;
             }
         }
         ArrayProvider.prototype.length = function () {
@@ -22,19 +23,31 @@ var tui;
             else
                 return null;
         };
-
+        ArrayProvider.prototype.columnKeyMap = function () {
+            if (this._head) {
+                var map = {};
+                for (var i = 0; i < this._head.length; i++) {
+                    map[this._head[i]] = i;
+                }
+                return map;
+            } else
+                return {};
+        };
         ArrayProvider.prototype.sort = function (key, desc, func) {
+            if (typeof func === "undefined") { func = null; }
             if (this._src) {
                 if (typeof func === "function") {
-                    this._data = this._src.sort(func);
+                    this._data = this._src.concat();
+                    this._data.sort(func);
                 } else if (key === null && func === null) {
                     this._data = this._src;
                     return this;
                 } else {
-                    if (this._header) {
-                        key = this._header.indexOf(key);
+                    if (this._head && typeof key === "string") {
+                        key = this._head.indexOf(key);
                     }
-                    this._data = this._src.sort(function (a, b) {
+                    this._data = this._src.concat();
+                    this._data.sort(function (a, b) {
                         if (a[key] > b[key]) {
                             return desc ? -1 : 1;
                         } else if (a[key] < b[key]) {
@@ -80,8 +93,18 @@ var tui;
             } else
                 return this._data[index - this._begin];
         };
-
+        RemoteCursorProvider.prototype.columnKeyMap = function () {
+            if (this._head) {
+                var map = {};
+                for (var i = 0; i < this._head.length; i++) {
+                    map[this._head[i]] = i;
+                }
+                return map;
+            } else
+                return {};
+        };
         RemoteCursorProvider.prototype.sort = function (key, desc, func) {
+            if (typeof func === "undefined") { func = null; }
             this._sortKey = key;
             this._desc = desc;
             this._invalid = true;
@@ -96,10 +119,13 @@ var tui;
                     cacheSize: this._cacheSize,
                     sortKey: this._sortKey,
                     sortDesc: this._desc,
-                    update: function (data, length, begin) {
+                    update: function (data, length, begin, head) {
                         _this._data = data;
                         _this._length = length;
                         _this._begin = begin;
+                        if (typeof head !== tui.undef) {
+                            _this._head = head;
+                        }
                         if (typeof _this._updateCallback === "function") {
                             _this._updateCallback({
                                 length: _this._length,

@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.control.ts" />
+﻿/// <reference path="tui.ctrl.control.ts" />
 module tui.ctrl {
 
 	export class Table extends Control<Table> {

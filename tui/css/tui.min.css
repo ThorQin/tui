@@ -194,6 +194,7 @@ div.tui-mask,
   right: 0;
   bottom: 0;
   cursor: default;
+  z-index: 2147483647;
 }
 .tui-button {
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
@@ -557,7 +558,7 @@ div.tui-mask,
   position: fixed;
   padding: 0px;
   outline: none;
-  z-index: 99999;
+  z-index: 2147483645;
   -webkit-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
   -moz-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
   box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
@@ -710,6 +711,7 @@ div.tui-mask,
   background-color: #444;
   opacity: 0.5;
   filter: alpha(opacity=50);
+  z-index: 2147483644;
 }
 .tui-dialog {
   -webkit-animation: fadein 0.1s linear;
@@ -727,6 +729,7 @@ div.tui-mask,
   -webkit-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
   -moz-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
+  z-index: 2147483644;
 }
 .tui-dialog > div {
   padding: 30px 20px;
@@ -926,7 +929,7 @@ div.tui-mask,
   width: 0;
   height: 0;
   border: 4px solid transparent;
-  border-bottom: 4px solid #999999;
+  border-bottom: 4px solid #bbbbbb;
   top: -2px;
   left: auto;
 }
@@ -935,14 +938,14 @@ div.tui-mask,
   border-bottom-color: #333333;
 }
 .tui-scrollbar .tui-scroll-thumb {
-  left: 4px;
-  right: 4px;
-  background-color: #999999;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
+  left: 1px;
+  right: 1px;
+  background-color: #bbbbbb;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
+  border-left: 3px solid #f0f0f0;
+  border-right: 3px solid #f0f0f0;
 }
 .tui-scrollbar .tui-scroll-thumb:hover,
 .tui-scrollbar .tui-scroll-thumb.tui-actived {
@@ -961,7 +964,7 @@ div.tui-mask,
   width: 0;
   height: 0;
   border: 4px solid transparent;
-  border-top: 4px solid #999999;
+  border-top: 4px solid #bbbbbb;
   top: 2px;
   left: auto;
 }
@@ -993,7 +996,7 @@ div.tui-mask,
   width: 0;
   height: 0;
   border: 4px solid transparent;
-  border-right: 4px solid #999999;
+  border-right: 4px solid #bbbbbb;
   left: -2px;
   top: auto;
 }
@@ -1002,13 +1005,13 @@ div.tui-mask,
   border-right-color: #333333;
 }
 .tui-scrollbar[data-direction=horizontal] .tui-scroll-thumb {
-  top: 4px;
-  bottom: 4px;
+  top: 1px;
+  bottom: 1px;
   left: auto;
   right: auto;
-  background-color: #999999;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
+  background-color: #bbbbbb;
+  border-top: 3px solid #f0f0f0;
+  border-bottom: 3px solid #f0f0f0;
   border-left: 0;
   border-right: 0;
 }
@@ -1030,7 +1033,7 @@ div.tui-mask,
   width: 0;
   height: 0;
   border: 4px solid transparent;
-  border-left: 4px solid #999999;
+  border-left: 4px solid #bbbbbb;
   left: 2px;
   top: auto;
 }
@@ -1167,7 +1170,6 @@ div.tui-mask,
   -webkit-border-top-left-radius: 0px;
   -moz-border-top-left-radius: 0px;
   border-top-left-radius: 0px;
-  z-index: 2;
 }
 .tui-grid .tui-scrollbar[data-direction=vertical] {
   position: absolute;
@@ -1183,13 +1185,11 @@ div.tui-mask,
   -webkit-border-top-left-radius: 0px;
   -moz-border-top-left-radius: 0px;
   border-top-left-radius: 0px;
-  z-index: 2;
 }
 .tui-grid .tui-scroll-space {
   -webkit-border-bottom-right-radius: 5px;
   -moz-border-bottom-right-radius: 5px;
   border-bottom-right-radius: 5px;
-  z-index: 2;
 }
 .tui-grid .tui-grid-line,
 .tui-grid .tui-grid-head {
@@ -1201,7 +1201,6 @@ div.tui-mask,
   line-height: 34px;
   border-bottom: 1px solid #cccccc;
   white-space: nowrap;
-  z-index: 0;
 }
 .tui-grid .tui-grid-head {
   top: 0;
@@ -1212,7 +1211,6 @@ div.tui-mask,
   -webkit-border-top-right-radius: 5px;
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
-  z-index: 1;
 }
 .tui-grid .tui-grid-cell,
 .tui-grid .tui-grid-head-cell {
@@ -1270,6 +1268,9 @@ div.tui-mask,
   background-color: black;
   opacity: 0.5;
   filter: alpha(opacity=50);
+}
+.tui-grid .tui-hidden {
+  display: none;
 }
 *[data-hidden=true],
 .tui-hidden {

@@ -14,19 +14,19 @@
 	<script src="tui/lang/zh-cn.js"></script>
 	<script src="tui/lang/en-us.js"></script>
 	<script src="tui/tui.time.js"></script>
-	<script src="tui/tui.control.js"></script>
-	<script src="tui/tui.button.js"></script>
-	<script src="tui/tui.checkbox.js"></script>
-	<script src="tui/tui.radiobox.js"></script>
-	<script src="tui/tui.popup.js"></script>
-	<script src="tui/tui.calendar.js"></script>
+	<script src="tui/tui.ctrl.control.js"></script>
+	<script src="tui/tui.ctrl.button.js"></script>
+	<script src="tui/tui.ctrl.checkbox.js"></script>
+	<script src="tui/tui.ctrl.radiobox.js"></script>
+	<script src="tui/tui.ctrl.popup.js"></script>
+	<script src="tui/tui.ctrl.calendar.js"></script>
 	<script src="tui/tui.upload.js"></script>
-	<script src="tui/tui.input.js"></script>
-	<script src="tui/tui.dialog.js"></script>
-	<script src="tui/tui.scrollbar.js"></script>
-	<script src="tui/tui.table.js"></script>
+	<script src="tui/tui.ctrl.input.js"></script>
+	<script src="tui/tui.ctrl.dialog.js"></script>
+	<script src="tui/tui.ctrl.scrollbar.js"></script>
+	<script src="tui/tui.ctrl.table.js"></script>
 	<script src="tui/tui.dataprovider.js"></script>
-	<script src="tui/tui.grid.js"></script>
+	<script src="tui/tui.ctrl.grid.js"></script>
 	<script src="app.js"></script>
 	<script>
 		//tui.lang = "zh-cn";
@@ -76,8 +76,28 @@
 					dlg.close();
 				}, 1000);
 			});
-			tui.ctrl.scrollbar("scl").on("scroll", function (data) {
-				$("#info").html(data.value);
+
+			var result = {
+				length: 100,
+				head: ["a", "b", "c", "d"],
+				data: [
+					[0, 0, 0, 0],
+					[3, 1, 3, 4],
+					[1, 2, 3, 4],
+					[2, 3, 3, 4],
+					[4, 4, 3, 4],
+					[5, 5, 3, 4],
+					[8, 6, 3, 4],
+					[7, 7, 3, 4],
+					[6, 8, 3, 4],
+					[10, 9, 3, 4],
+					[9, 10, 3, 4]
+				]
+			};
+
+			var grid = tui.ctrl.grid("gridTest").data(new tui.ArrayProvider(result));
+			tui.on("btnGrid", function (data) {
+				grid.hasHScroll(data.ctrl._ctrl.checked());
 			});
 		});
 	</script>
@@ -142,7 +162,7 @@
 		asdfasdf
 	</div>
 
-	<span id="scl" class="tui-scrollbar" data-direction="horizontal" style="width:200px" data-total="100" data-page="20"></span>
+	<span id="scl" class="tui-scrollbar" data-direction="horizontal" style="width:800px" data-total="200" data-page="20"></span>
 	<span class="tui-scrollbar" style="height:200px" data-total="100"></span>
 
 	<div class="tui-inline">
@@ -184,12 +204,13 @@
 			</tr>
 		</table>
 	</div>
-	<div class="tui-grid" style="display:inline-block;width:500px;height:300px;"
-		 data-columns="[{'name':'某个列 1', 'sort':true },
-			 {'name':'column 2', 'sort':true },
-			 {'name':'column 3' }]"
+	<div id="gridTest" 
+		 class="tui-grid" style="display:inline-block;width:500px;height:300px;"
+		 data-columns="[{'name':'某个列 1', 'sort':true, 'key': 0 },
+			 {'name':'column 2', 'sort':true, 'key': 1 },
+			 {'name':'column 3', 'key': 3 }]"
 		 data-resizable="true"
-		 data-has-hscroll="true"></div>
-
+		 data-has-hscroll="false"></div>
+	<a id="btnGrid" class="tui-checkbox">水平滚动条</a>
 </body>
 </html>
