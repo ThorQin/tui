@@ -154,3 +154,9 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+
+tui/*.map
+tui/*.js
+tui/css/tui.min.css
+tui/lang/*.map
+tui/lang/*.js
