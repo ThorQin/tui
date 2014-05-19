@@ -18,16 +18,10 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="index.html" />
-    <Content Include="packages.config" />
-    <None Include="Scripts\jquery-2.1.0.intellisense.js" />
-    <Content Include="Scripts\jquery-2.1.0.js" />
-    <Content Include="Scripts\jquery-2.1.0.min.js" />
-    <None Include="upload.ashx" />
+    <Content Include="Demo\index.html" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="app.ts" />
     <TypeScriptCompile Include="tui\jquery.d.ts" />
     <TypeScriptCompile Include="tui\lang\en-us.ts" />
     <TypeScriptCompile Include="tui\lang\zh-cn.ts" />
@@ -49,8 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="tui\css\tui.less" />
-    <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="tui\css\awesome4.less" />
+    <Content Include="Demo\upload.ashx" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
@@ -60,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Scripts\typings\jquery\" />
+    <Folder Include="Scripts\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
