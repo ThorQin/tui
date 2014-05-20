@@ -60,6 +60,7 @@ module tui.ctrl {
 
 		// Drawing related flags
 		private _selectrows: number[] = [];
+		private _activerow: number = null;
 		private _columnKeyMap: {} = null;
 
 		constructor(el?: HTMLElement) {
@@ -122,6 +123,91 @@ module tui.ctrl {
 						ev.stopPropagation();
 						ev.preventDefault();
 					}
+				}
+			});
+			$(this[0]).mousedown(function (e) {
+				tui.focusWithoutScroll(self[0]);
+				e.preventDefault();
+			});
+			$(this[0]).keydown(function (e) {
+				if (self.fire("keydown", {event:e}) === false)
+					return;
+				var data = self.myData();
+				var k = e.keyCode;
+				if ([33, 34, 37, 38, 39, 40].indexOf(k) >= 0) {
+					if (k === 37) {
+						!self._hscroll.hidden() && self._hscroll.value(self._hscroll.value() - self._hscroll.step());
+						self._scrollLeft = self._hscroll.value();
+						self.drawLines();
+					} else if (k === 38) {
+						if (!self.rowselectable() || data.length() <= 0) {
+							!self._vscroll.hidden() && self._vscroll.value(self._vscroll.value() - self._vscroll.step());
+							self._scrollTop = self._vscroll.value();
+							self.drawLines();
+						} else {
+							if (self._activerow === null) {
+								self.activerow(0);
+								self.scrollTo(self._activerow);
+							} else {
+								if (self._activerow > 0)
+									self.activerow(self._activerow - 1);
+								self.scrollTo(self._activerow);
+							}
+						}
+					} else if (k === 39) {
+						!self._hscroll.hidden() && self._hscroll.value(self._hscroll.value() + self._hscroll.step());
+						self._scrollLeft = self._hscroll.value();
+						self.drawLines();
+					} else if (k === 40) {
+						if (!self.rowselectable() || data.length() <= 0) {
+							!self._vscroll.hidden() && self._vscroll.value(self._vscroll.value() + self._vscroll.step());
+							self._scrollTop = self._vscroll.value();
+							self.drawLines();
+						} else {
+							if (self._activerow === null) {
+								self.activerow(0);
+								self.scrollTo(self._activerow);
+							} else {
+								if (self._activerow < data.length() - 1)
+									self.activerow(self._activerow + 1);
+								self.scrollTo(self._activerow);
+							}
+						}
+					} else if (k === 33) {
+						if (!self.rowselectable() || data.length() <= 0) {
+							!self._vscroll.hidden() && self._vscroll.value(self._vscroll.value() - self._vscroll.page());
+							self._scrollTop = self._vscroll.value();
+							self.drawLines();
+						} else {
+							if (self._activerow === null) {
+								self.activerow(0);
+								self.scrollTo(self._activerow);
+							} else {
+								if (self._activerow > 0)
+									self.activerow(self._activerow - self._dispLines);
+								self.scrollTo(self._activerow);
+							}
+						}
+					} else if (k === 34) {
+						if (!self.rowselectable() || data.length() <= 0) {
+							!self._vscroll.hidden() && self._vscroll.value(self._vscroll.value() + self._vscroll.page());
+							self._scrollTop = self._vscroll.value();
+							self.drawLines();
+						} else {
+							if (self._activerow === null) {
+								self.activerow(self._dispLines);
+								self.scrollTo(self._activerow);
+							} else {
+								if (self._activerow < data.length() - 1)
+									self.activerow(self._activerow + self._dispLines);
+								self.scrollTo(self._activerow);
+							}
+						}
+					}
+					e.preventDefault();
+					e.stopPropagation();
+					if (tui.ieVer > 0)
+						self[0].setActive();
 				}
 			});
 			
@@ -466,7 +552,7 @@ module tui.ctrl {
 					if (typeof key === tui.undef)
 						key = col.key;
 				}
-				var value = (key !== null ? lineData[key] : "");
+				var value = (key !== null && lineData ? lineData[key] : " ");
 				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, value, index, i);
 			}
 			if (this.isRowSelected(index)) {
@@ -482,6 +568,8 @@ module tui.ctrl {
 			});
 			$(line).mousedown(function (e) {
 				var index = line["_rowIndex"];
+				if (self.rowselectable())
+					self.activerow(index);
 				self.fire("rowmousedown", { "event": e, "index": index, "line": line });
 			});
 			$(line).mouseup( function (e) {
@@ -552,8 +640,22 @@ module tui.ctrl {
 				for (var i = 0; i < rows.length; i++) {
 					this._selectrows.push(rows[i]);
 				}
+				this.clearBufferLines();
+				this.drawLines();
 			}
 			return this._selectrows;
+		}
+
+		activerow(rowIndex?: number): number {
+			if (typeof rowIndex === "number" || rowIndex === null) {
+				if (rowIndex < 0)
+					rowIndex = 0;
+				if (rowIndex >= this.myData().length())
+					rowIndex = this.myData().length() - 1;
+				this._activerow = rowIndex;
+				this.select([rowIndex]);
+			}
+			return this._activerow;
 		}
 
 		/**
@@ -580,6 +682,8 @@ module tui.ctrl {
 					this.myData().sort(columns[colIndex].key, this._sortDesc);
 			}
 			this._sortDesc = !!desc;
+			this._scrollTop = 0;
+			this.activerow(null);
 			this.refresh();
 			return { colIndex: this._sortColumn, desc: this._sortDesc };
 		}
@@ -685,6 +789,25 @@ module tui.ctrl {
 				return this.is("data-rowselectable");
 		}
 
+		scrollTo(rowIndex: number) {
+			if (typeof rowIndex !== "number" || isNaN(rowIndex) || rowIndex < 0 || rowIndex >= this.myData().length())
+				return;
+			var v = this._vscroll.value();
+			if (v > rowIndex * this._lineHeight) {
+				this._vscroll.value(rowIndex * this._lineHeight);
+				this._scrollTop = this._vscroll.value();
+				this.drawLines();
+			} else {
+				var h = (rowIndex - this._dispLines + 1) * this._lineHeight;
+				var diff = (this._boxHeight - this.headHeight() - this._hscroll[0].offsetHeight - this._dispLines * this._lineHeight);
+				if (v < h - diff) {
+					this._vscroll.value(h - diff);
+					this._scrollTop = this._vscroll.value();
+					this.drawLines();
+				}
+			}
+		}
+
 		resizable(): boolean;
 		resizable(val: boolean): Table;
 		resizable(val?: boolean): any {
@@ -700,7 +823,18 @@ module tui.ctrl {
 		data(data: tui.IDataProvider): Table;
 		data(data?: tui.IDataProvider): any {
 			if (data) {
+				var self = this;
+				this._data && this._data.onupdate && this._data.onupdate(null);
 				this._data = data;
+				this._data.onupdate((updateInfo) => {
+					var b = updateInfo.begin;
+					var e = b + updateInfo.data.length;
+					self.refresh();
+					//if (b >= self._bufferedBegin && b <= self._bufferedEnd ||
+					//	e >= self._bufferedBegin && e <= self._bufferedEnd) {
+					//	self.refresh();
+					//}
+				});
 				this.refresh();
 				return this;
 			} else {

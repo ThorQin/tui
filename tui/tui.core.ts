@@ -443,6 +443,41 @@ module tui {
 		return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 
+	export class BackupedScrollPosition {
+		private backupInfo: {obj:HTMLElement; left: number; top:number; }[] = [];
+		constructor(target: HTMLElement) {
+			var obj = target;
+			while (obj && obj !== document.body) {
+				obj = <HTMLElement>obj.parentElement;
+				if (obj)
+					this.backupInfo.push({obj: obj, left: obj.scrollLeft, top: obj.scrollTop});
+			}
+		}
+		restore() {
+			for (var i = 0; i < this.backupInfo.length; i++) {
+				var item = this.backupInfo[i];
+				item.obj.scrollLeft = item.left;
+				item.obj.scrollTop = item.top;
+			}
+		}
+	}
+
+	export function backupScrollPosition(target: HTMLElement): BackupedScrollPosition {
+		return new BackupedScrollPosition(target);
+	}
+
+	export function focusWithoutScroll(target: HTMLElement) {
+		if (tui.ieVer > 0)
+			target.setActive();
+		else if (tui.ffVer > 0)
+			target.focus();
+		else {
+			var backup = tui.backupScrollPosition(target);
+			target.focus();
+			backup.restore();
+		}
+	}
+
 	/**
 	 * Get IE version
 	 * @return {Number}

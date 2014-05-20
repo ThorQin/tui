@@ -7,7 +7,7 @@ module tui {
 		cacheSize: number;
 		sortKey: string;
 		sortDesc: boolean;
-		update: (data: any[], length: number, begin: number, head?: string[]) => void;
+		update: (info: { data: any[]; length: number; begin: number; head?: string[];}) => void;
 	}
 
 	export interface IUpdateInfo {
@@ -111,6 +111,7 @@ module tui {
 		private _desc: boolean;
 		private _queryCallback: (queryInfo: IQueryInfo) => void;
 		private _updateCallback: (updateInfo: IUpdateInfo) => void;
+		private _queryTimer: number = null;
 
 		constructor(cacheSize: number = 100) {
 			this._cacheSize = cacheSize;
@@ -124,7 +125,6 @@ module tui {
 		length(): number {
 			if (this._invalid) {
 				this.doQuery(0);
-				return 0;
 			}
 			return this._length;
 		}
@@ -136,9 +136,12 @@ module tui {
 				index < this._begin ||
 				index >= this._begin + this._data.length) {
 				this.doQuery(index);
-				return null;
-			} else
+			}
+			if (index >= this._begin ||
+				index < this._begin + this._data.length)
 				return this._data[index - this._begin];
+			else
+				return null;
 		}
 		columnKeyMap(): {} {
 			if (this._head) {
@@ -157,29 +160,49 @@ module tui {
 			return this;
 		}
 
+		private _firstQuery = true;
+
 		private doQuery(begin: number) {
-			if (typeof this._queryCallback === "function") {
-				this._queryCallback({
-					begin: begin,
-					cacheSize: this._cacheSize,
-					sortKey: this._sortKey,
-					sortDesc: this._desc,
-					update: (data: any[], length: number, begin: number, head?: string[]) => {
-						this._data = data;
-						this._length = length;
-						this._begin = begin;
-						if (typeof head !== tui.undef) {
-							this._head = head;
-						}
-						if (typeof this._updateCallback === "function") {
-							this._updateCallback({
-								length: this._length,
-								begin: this._begin,
-								data: this._data
-							});
-						}
+			if (typeof this._queryCallback !== "function") {
+				return;
+			}
+			if (this._queryTimer !== null)
+				clearTimeout(this._queryTimer);
+			var self = this;
+			var cacheBegin = begin - Math.round(this._cacheSize / 2);
+			if (cacheBegin < 0)
+				cacheBegin = 0;
+			var queryInfo = {
+				begin: cacheBegin,
+				cacheSize: this._cacheSize,
+				sortKey: this._sortKey,
+				sortDesc: this._desc,
+				update: (info: { data: any[]; length: number; begin: number; head?: string[]; }) => {
+					self._data = info.data;
+					self._length = info.length;
+					self._begin = info.begin;
+					self._invalid = false;
+					if (typeof info.head !== tui.undef) {
+						self._head = info.head;
 					}
-				});
+					if (typeof self._updateCallback === "function") {
+						self._updateCallback({
+							length: self._length,
+							begin: self._begin,
+							data: self._data
+						});
+					}
+				}
+			};
+			if (this._firstQuery) {
+				this._firstQuery = false;
+				this._queryCallback(queryInfo);
+			} else {
+				this._queryTimer = setTimeout(() => {
+					this._firstQuery = true;
+					this._queryTimer = null;
+					this._queryCallback(queryInfo);
+				}, 50);
 			}
 		}
 

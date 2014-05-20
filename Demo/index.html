@@ -4,30 +4,29 @@
 	<meta charset="utf-8" />
 	<!--<meta http-equiv="X-UA-Compatible" content="IE=IE8">-->
 	<title>TUI library</title>
-	<link rel="stylesheet" href="tui/css/tui.min.css" type="text/css" />
-	<link href="font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link rel="stylesheet" href="../tui/css/tui.min.css" type="text/css" />
+	<link href="../Scripts/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
 	<!--[if lt IE 9]>
 		<script src="/tui/html5shiv.min.js"></script>
 	<![endif]-->
-	<script src="Scripts/jquery-1.11.0.js"></script>
-	<script src="tui/tui.core.js"></script>
-	<script src="tui/lang/zh-cn.js"></script>
-	<script src="tui/lang/en-us.js"></script>
-	<script src="tui/tui.time.js"></script>
-	<script src="tui/tui.ctrl.control.js"></script>
-	<script src="tui/tui.ctrl.button.js"></script>
-	<script src="tui/tui.ctrl.checkbox.js"></script>
-	<script src="tui/tui.ctrl.radiobox.js"></script>
-	<script src="tui/tui.ctrl.popup.js"></script>
-	<script src="tui/tui.ctrl.calendar.js"></script>
-	<script src="tui/tui.upload.js"></script>
-	<script src="tui/tui.ctrl.input.js"></script>
-	<script src="tui/tui.ctrl.dialog.js"></script>
-	<script src="tui/tui.ctrl.scrollbar.js"></script>
-	<script src="tui/tui.ctrl.table.js"></script>
-	<script src="tui/tui.dataprovider.js"></script>
-	<script src="tui/tui.ctrl.grid.js"></script>
-	<script src="app.js"></script>
+	<script src="../Scripts/jquery-1.11.0.js"></script>
+	<script src="../tui/tui.core.js"></script>
+	<script src="../tui/lang/zh-cn.js"></script>
+	<script src="../tui/lang/en-us.js"></script>
+	<script src="../tui/tui.time.js"></script>
+	<script src="../tui/tui.ctrl.control.js"></script>
+	<script src="../tui/tui.ctrl.button.js"></script>
+	<script src="../tui/tui.ctrl.checkbox.js"></script>
+	<script src="../tui/tui.ctrl.radiobox.js"></script>
+	<script src="../tui/tui.ctrl.popup.js"></script>
+	<script src="../tui/tui.ctrl.calendar.js"></script>
+	<script src="../tui/tui.upload.js"></script>
+	<script src="../tui/tui.ctrl.input.js"></script>
+	<script src="../tui/tui.ctrl.dialog.js"></script>
+	<script src="../tui/tui.ctrl.scrollbar.js"></script>
+	<script src="../tui/tui.ctrl.table.js"></script>
+	<script src="../tui/tui.dataprovider.js"></script>
+	<script src="../tui/tui.ctrl.grid.js"></script>
 	<script>
 		//tui.lang = "zh-cn";
 		$(function () {
@@ -95,7 +94,33 @@
 				]
 			};
 
-			var grid = tui.ctrl.grid("gridTest").data(new tui.ArrayProvider(result));
+			function buildRows(index, length) {
+				var result = [];
+				for (var i = 0; i < length; i++) {
+					result.push([index + i, 'col b', 'col c', 'col d']);
+				}
+				return result;
+			}
+
+			//var grid = tui.ctrl.grid("gridTest").data(new tui.ArrayProvider(result));
+			var cursor = new tui.RemoteCursorProvider();
+			var sum = 0;
+			cursor.onquery(function (queryInfo) {
+				
+				setTimeout(function () {
+					var info = {
+						data: buildRows(queryInfo.begin, queryInfo.cacheSize),
+						length: 1000000,
+						begin: queryInfo.begin,
+						head: ["a", "b", "c", "d"]
+					};
+					queryInfo.update(info);
+				}, 50);
+				
+				console.log(sum++);
+			});
+			var grid = tui.ctrl.grid("gridTest").data(cursor);
+
 			tui.on("btnGrid", function (data) {
 				grid.hasHScroll(data.ctrl._ctrl.checked());
 			});
@@ -204,13 +229,31 @@
 			</tr>
 		</table>
 	</div>
-	<div id="gridTest" 
+
+	<div id="gridTest"
 		 class="tui-grid" style="display:inline-block;width:500px;height:300px;"
-		 data-columns="[{'name':'某个列 1', 'sort':true, 'key': 0 },
-			 {'name':'column 2', 'sort':true, 'key': 1 },
-			 {'name':'column 3', 'key': 3 }]"
+		 data-columns="[{'name':'序号列 1', 'sort':true, 'key': 0, 'width':200 },
+			{'name':'column 2', 'sort':true, 'key': 1 },
+			{'name':'column 2', 'sort':true, 'key': 2 },
+			{'name':'column 2', 'sort':true, 'key': 1 },
+			{'name':'column 2', 'sort':true, 'key': 2 },
+			{'name':'column 2', 'sort':true, 'key': 1 },
+			{'name':'column 3', 'key': 3 }]"
 		 data-resizable="true"
+		 data-rowselectable="true"
 		 data-has-hscroll="false"></div>
 	<a id="btnGrid" class="tui-checkbox">水平滚动条</a>
+
+	<div id="testdiv" style="display:inline-block;border:1px solid #ccc">
+		<div id="childdiv" style="width:100px;height:100px;">
+		test
+		</div>
+	</div>
+	<br>
+	<div style="width:100px;height:100px;border:1px solid red">
+		test 1
+	</div>
+
+
 </body>
 </html>

@@ -63,12 +63,12 @@ module tui.ctrl {
 					var pop = tui.ctrl.popup();
 					var calendar = tui.ctrl.calendar();
 					calendar.time(self.value());
-					calendar.focus();
 					calendar.on("picked", (e) => {
 						self.value(e["time"]);
 						pop.close();
 					});
 					pop.show(calendar[0], this._button, "Rb");
+					calendar.focus();
 				} else if (this.type() === "select" || this.type() === "multi-select") {
 					// TODO: MODIFY
 				} else if (this.type() === "file") {

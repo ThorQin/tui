@@ -402,6 +402,8 @@ div.tui-mask {
 .tui-popup {
 	display:inline-block;
 	position:fixed;
+	left:0;
+	top:0;
 	padding:0px;
 	outline:none;
 	z-index:@popupLayer;
@@ -916,7 +918,7 @@ div.tui-mask {
 }
 
 .tui-grid {
-	@lineHeight: 34px;
+	@lineHeight: 38px;
 	vertical-align:middle;
 	position:relative;
 	border:1px solid @borderColor;
@@ -972,6 +974,8 @@ div.tui-mask {
 			overflow:hidden;
 			text-overflow:ellipsis;
 			white-space:nowrap;
+			height:@lineHeight;
+			line-height:@lineHeight;
 		}
 		white-space:nowrap;
 	}
@@ -990,6 +994,11 @@ div.tui-mask {
 			margin-right:5px;
 		}
 	}
+	.tui-grid-cell {
+		&.tui-grid-sort-cell {
+			background-color:#f8f8f8;
+		}
+	}
 	
 	.tui-grid-splitter {
 		display:inline-block;
@@ -1003,6 +1012,25 @@ div.tui-mask {
 		&.tui-splitter-move {
 			background-color:black;
 			.opacity(0.5);
+		}
+	}
+	.tui-grid-line.tui-grid-line-selected {
+		background-color:#bbb;
+		.tui-grid-cell {
+			&.tui-grid-sort-cell {
+				background-color:#bbb;
+			}
+		}
+	}
+	&.tui-focus {
+		.tui-grid-line.tui-grid-line-selected {
+			background-color:#017bce;
+			.tui-grid-cell {
+				color:#fff;
+				&.tui-grid-sort-cell {
+					background-color:#017bce;
+				}
+			}
 		}
 	}
 	.tui-hidden {

@@ -33,11 +33,26 @@ module tui.ctrl {
 		elem(el?: any, clsName?: string): HTMLElement {
 			if (el && el.nodeName || el === null) {
 				this[0] = el;
+				this.bindMainElementEvent();
 			} else if (typeof el === "string" && typeof clsName === "string") {
 				this[0] = document.createElement(el);
 				this[0].className = clsName;
+				this.bindMainElementEvent();
 			}
 			return this[0];
+		}
+
+		private bindMainElementEvent() {
+			if (!this[0]) {
+				return;
+			}
+			var self = this;
+			$(this[0]).focus(() => {
+				self.addClass("tui-focus");
+			});
+			$(this[0]).blur(() => {
+				self.removeClass("tui-focus");
+			});
 		}
 
 		private _exposedEvents = {};
