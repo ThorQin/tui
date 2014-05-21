@@ -31,9 +31,9 @@ module tui {
 	}
 
 	export class ArrayProvider implements IDataProvider {
-		private _src: any[];
-		private _data: any[];
-		private _head: string[];
+		private _src: any[] = null;
+		private _data: any[] = null;
+		private _head: string[] = null;
 		private _headCache: {} = {};
 
 		constructor(result: IQueryResult);
@@ -41,10 +41,14 @@ module tui {
 		constructor(data: any) {
 			if (data && data instanceof Array) {
 				this._src = this._data = data;
-			} else if (data && (data.head && data.data )) {
+			} else if (data && data.data) {
 				this._src = this._data = data.data;
-				this._head = data.head;
-			}
+				if (data.head)
+					this._head = data.head;
+				else
+					this._head = null;
+			} else
+				throw new Error("TUI Grid: Unsupported data format!");
 		}
 		length(): number {
 			if (this._data)
@@ -95,6 +99,38 @@ module tui {
 				this._data = null;
 			}
 			return this;
+		}
+
+		/**
+		 * ArrayDataProvider peculiar, get or set sorted data set
+		 */
+		data(result: IQueryResult): ArrayProvider;
+		data(data: any[]): ArrayProvider;
+		data(): any[];
+		data(data?: any): any {
+			if (data) {
+				if (data instanceof Array) {
+					this._src = this._data = data;
+					return this;
+				} else if (data.data) {
+					this._src = this._data = data.data;
+					if (data.head)
+						this._head = data.head;
+					else
+						this._head = null;
+					return this;
+				} else
+					throw new Error("TUI Grid: Unsupported data format!");
+			} else {
+				return this._data;
+			}
+		}
+
+		/**
+		 * ArrayDataProvider peculiar, get source data set
+		 */
+		src(): any[]{
+			return this._src;
 		}
 	}
 

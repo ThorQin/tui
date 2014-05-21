@@ -132,7 +132,7 @@ module tui.ctrl {
 				box.w = 0;
 				box.h = 0;
 			} else if (this._bindElem) {
-				box = tui.offsetToPage(this._bindElem);
+				box = tui.fixedPosition(this._bindElem);
 				box.w = this._bindElem.offsetWidth;
 				box.h = this._bindElem.offsetHeight;
 			}

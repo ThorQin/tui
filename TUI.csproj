@@ -30,6 +30,7 @@
     <TypeScriptCompile Include="tui\tui.ctrl.checkbox.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.control.ts" />
     <TypeScriptCompile Include="tui\tui.core.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.list.ts" />
     <TypeScriptCompile Include="tui\tui.dataprovider.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.grid.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.popup.ts" />

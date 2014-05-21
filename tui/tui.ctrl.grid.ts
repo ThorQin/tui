@@ -4,6 +4,7 @@ module tui.ctrl {
 	export interface IColumnFormatInfo {
 		cell: HTMLSpanElement;	// Drawing cell
 		value: any;				// Cell content either is HTML node or text content
+		row: any;				// Row data
 		rowIndex: number;		// Drawing row, if row index is -1 means this line a head line
 		colIndex: number;		// Column index
 	}
@@ -128,6 +129,9 @@ module tui.ctrl {
 			$(this[0]).mousedown(function (e) {
 				tui.focusWithoutScroll(self[0]);
 				e.preventDefault();
+			});
+			$(this[0]).keyup(function (e) {
+				self.fire("keyup", {event:e});
 			});
 			$(this[0]).keydown(function (e) {
 				if (self.fire("keydown", {event:e}) === false)
@@ -434,7 +438,6 @@ module tui.ctrl {
 				$(document).on("mouseup", onDragEnd);
 			});
 			this._splitters.push(splitter);
-			this._headline.appendChild(splitter);
 			return splitter;
 		}
 
@@ -464,12 +467,12 @@ module tui.ctrl {
 		private moveSplitter() {
 			for (var i = 0; i < this._splitters.length; i++) {
 				var splitter = this._splitters[i];
-				var cell = <HTMLSpanElement>this._headline.childNodes[i*2];
+				var cell = <HTMLSpanElement>this._headline.childNodes[i];//*2];
 				splitter.style.left = cell.offsetLeft + cell.offsetWidth - Math.round(splitter.offsetWidth / 2) + "px";
 			}
 		}
 
-		private drawCell(cell: HTMLSpanElement, contentSpan: HTMLSpanElement, col: GridColumn, value: any, rowIndex: number, colIndex: number) {
+		private drawCell(cell: HTMLSpanElement, contentSpan: HTMLSpanElement, col: GridColumn, value: any, row: any, rowIndex: number, colIndex: number) {
 			if (["center", "left", "right"].indexOf(col.headAlign) >= 0)
 				cell.style.textAlign = col.headAlign;
 			if (typeof value === "object" && value.nodeName) {
@@ -479,9 +482,10 @@ module tui.ctrl {
 				contentSpan.innerHTML = value;
 			}
 			if (typeof col.format === "function") {
-				col.format({
+				col.format.call(this, {
 					cell: cell,
 					value: value,
+					row: row,
 					rowIndex: rowIndex,
 					colIndex: colIndex
 				});
@@ -510,13 +514,17 @@ module tui.ctrl {
 				var contentSpan = document.createElement("span");
 				contentSpan.className = "tui-grid-cell-content";
 				cell.appendChild(contentSpan);
-				this.drawCell(cell, contentSpan, col, col.name, -1, i);
+				this.drawCell(cell, contentSpan, col, col.name, null, -1, i);
 				this.bindSort(cell, col, i);
 				if (this.resizable()) {
 					var splitter = this.bindSplitter(cell, col, i);
 					if (typeof columns[i].fixed === "boolean" && columns[i].fixed)
 						$(splitter).addClass("tui-hidden");
 				}
+			}
+			for (var i = 0; i < this._splitters.length; i++) {
+				var splitter = this._splitters[i];
+				this._headline.appendChild(splitter);
 			}
 			this.moveSplitter();
 		}
@@ -529,7 +537,7 @@ module tui.ctrl {
 			var self = this;
 			var columns = this.myColumns();
 			var data = this.myData();
-			var lineData = data.at(index);
+			var rowData = data.at(index);
 			if (line.childNodes.length !== columns.length) {
 				line.innerHTML = "";
 				for (var i = 0; i < columns.length; i++) {
@@ -552,8 +560,8 @@ module tui.ctrl {
 					if (typeof key === tui.undef)
 						key = col.key;
 				}
-				var value = (key !== null && lineData ? lineData[key] : " ");
-				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, value, index, i);
+				var value = (key !== null && rowData ? rowData[key] : " ");
+				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, value, rowData, index, i);
 			}
 			if (this.isRowSelected(index)) {
 				$(line).addClass("tui-grid-line-selected");
@@ -564,25 +572,25 @@ module tui.ctrl {
 				return;
 			$(line).on("contextmenu", function (e) {
 				var index = line["_rowIndex"];
-				self.fire("rowcontextmenu", {"event": e, "index": index, "line": line });
+				self.fire("rowcontextmenu", {"event": e, "index": index, "row": line });
 			});
 			$(line).mousedown(function (e) {
 				var index = line["_rowIndex"];
 				if (self.rowselectable())
 					self.activerow(index);
-				self.fire("rowmousedown", { "event": e, "index": index, "line": line });
+				self.fire("rowmousedown", { "event": e, "index": index, "row": line });
 			});
 			$(line).mouseup( function (e) {
 				var index = line["_rowIndex"];
-				self.fire("rowmouseup", { "event": e, "index": index, "line": line });
+				self.fire("rowmouseup", { "event": e, "index": index, "row": line });
 			});
 			$(line).click(function (e) {
 				var index = line["_rowIndex"];
-				self.fire("rowclick", { "event": e, "index": index, "line": line });
+				self.fire("rowclick", { "event": e, "index": index, "row": line });
 			});
 			$(line).dblclick(function (e) {
 				var index = line["_rowIndex"];
-				self.fire("rowdblclick", { "event": e, "index": index, "line": line });
+				self.fire("rowdblclick", { "event": e, "index": index, "row": line });
 			});
 		}
 
@@ -717,7 +725,8 @@ module tui.ctrl {
 			var begin = displayedOnly ? this._bufferedBegin : 0;
 			var end = displayedOnly ? this._bufferedEnd : data.length();
 			for (var i = begin; i < end; i++) {
-				var v = data.at(i)[key];
+				var rowData = data.at(i);
+				var v = rowData[key];
 				if (typeof v === "object" && v.nodeName) {
 					cell.innerHTML = "";
 					cell.appendChild(v);
@@ -728,6 +737,7 @@ module tui.ctrl {
 					col.format({
 						cell: cell,
 						value: v,
+						row: rowData,
 						rowIndex: i,
 						colIndex: columnIndex
 					});
@@ -741,7 +751,7 @@ module tui.ctrl {
 		}
 
 		hasHScroll(): boolean;
-		hasHScroll(val: boolean): Table;
+		hasHScroll(val: boolean): Grid;
 		hasHScroll(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-has-hscroll", val);
@@ -752,7 +762,7 @@ module tui.ctrl {
 		}
 
 		noHead(): boolean;
-		noHead(val: boolean): Table;
+		noHead(val: boolean): Grid;
 		noHead(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-no-head", val);
@@ -763,7 +773,7 @@ module tui.ctrl {
 		}
 
 		columns(): GridColumn[];
-		columns(val?: GridColumn[]): Table;
+		columns(val?: GridColumn[]): Grid;
 		columns(val?: GridColumn[]): any {
 			if (val) {
 				this._columns = val;
@@ -779,7 +789,7 @@ module tui.ctrl {
 		}
 
 		rowselectable(): boolean;
-		rowselectable(val: boolean): Table;
+		rowselectable(val: boolean): Grid;
 		rowselectable(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-rowselectable", val);
@@ -809,7 +819,7 @@ module tui.ctrl {
 		}
 
 		resizable(): boolean;
-		resizable(val: boolean): Table;
+		resizable(val: boolean): Grid;
 		resizable(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-resizable", val);
@@ -820,20 +830,27 @@ module tui.ctrl {
 		}
 
 		data(): tui.IDataProvider;
-		data(data: tui.IDataProvider): Table;
-		data(data?: tui.IDataProvider): any {
+		data(data: tui.IDataProvider): Grid;
+		data(data: any[]): Grid;
+		data(data: { data: any[]; head?: string[]; length?: number; }): Grid;
+		data(data?: any): any {
 			if (data) {
 				var self = this;
+				if (data instanceof Array || data.data && data.data instanceof Array) {
+					data = new ArrayProvider(data);
+				}
+				if (typeof data.length !== "function" ||
+					typeof data.sort !== "function" ||
+					typeof data.at !== "function" ||
+					typeof data.columnKeyMap !== "function") {
+					throw new Error("TUI Grid: need a data provider.");
+				}
 				this._data && this._data.onupdate && this._data.onupdate(null);
 				this._data = data;
-				this._data.onupdate((updateInfo) => {
+				typeof this._data.onupdate === "function" && this._data.onupdate((updateInfo) => {
 					var b = updateInfo.begin;
 					var e = b + updateInfo.data.length;
 					self.refresh();
-					//if (b >= self._bufferedBegin && b <= self._bufferedEnd ||
-					//	e >= self._bufferedBegin && e <= self._bufferedEnd) {
-					//	self.refresh();
-					//}
 				});
 				this.refresh();
 				return this;

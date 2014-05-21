@@ -222,70 +222,36 @@ module tui {
 			return null;
 	}
 
-	/**
-	 * Get object position related of the offsetParent or of the window if offsetParent is null.
-	 * @param target Target object to obtain position info
-	 * @param offsetParent Relative container which the destination object will be related to.
-	 * @param withPage If true then computed position is related html page(body) object otherwise is related to window
-	 */
-	export function offsetToPage(target: HTMLElement, offsetParent?: HTMLElement, withPage: boolean = false): { x: number; y: number; } {
-		var body: HTMLElement = top.document.body || top.document.getElementsByTagName("body")[0];
-		if (!offsetParent || !offsetParent.nodeName)
-			offsetParent = top.document.documentElement || body;
-		var extraLeft = 0;
-		var extraTop = 0;
+	export function fixedPosition(target: HTMLElement): { x: number; y: number; } {
+		var $target = $(target);
+		var offset = $target.offset();
+		var $doc = $(document);
+		return {
+			x: offset.left - $doc.scrollLeft(),
+			y: offset.top - $doc.scrollTop()
+		};
+	}
 
-		if (offsetParent.nodeName.toLowerCase() === "html") {
-			if (offsetParent.scrollLeft !== 0 && offsetParent.scrollLeft === body.scrollLeft) {
-				extraLeft = offsetParent.scrollLeft;
-			}
-			if (offsetParent.scrollTop !== 0 && offsetParent.scrollTop === body.scrollTop) {
-				extraTop = offsetParent.scrollTop;
-			}
-		}
-		if (withPage) {
-			extraLeft += offsetParent.scrollLeft;
-			extraTop += offsetParent.scrollTop;
-		}
-		var curleft = 0;
-		var curtop = 0;
-		function getFrame(obj) {
-			var frame = null;
-			while (obj) {
-				if (obj.nodeName === "#document") {
-					curleft -= (obj.documentElement ? obj.documentElement.clientLeft : 0);
-					curtop -= (obj.documentElement ? obj.documentElement.clientTop : 0);
-					frame = (obj.defaultView || obj.parentWindow).frameElement || null;
-					break;
-				}
-				obj = obj.parentNode;
-			}
-			return frame;
-		}
-		var obj: HTMLElement = target;
-		while (obj) {
-			if (obj === target) {
-				curleft += (obj.offsetLeft || 0);
-				curtop += (obj.offsetTop || 0);
-			} else {
-				curleft += ((obj.offsetLeft || 0) + (obj.clientLeft || 0) - (obj.scrollLeft || 0));
-				curtop += ((obj.offsetTop || 0) + (obj.clientTop || 0) - (obj.scrollTop || 0));
-			}
-			if (obj === offsetParent)
-				break;
-			if (obj.offsetParent && $(obj).css("position") !== "fixed" && obj.offsetParent.nodeName.toLowerCase() !== "html") {
-				obj = <HTMLElement>obj.offsetParent;
-			} else {
-				var box = obj.ownerDocument.documentElement || obj.ownerDocument.body;
-				var fixed = false;
-				if ($(obj).css("position") === "fixed")
-					fixed = true;
-				curleft += ((box.offsetLeft || 0) + (box.clientLeft || 0) - (fixed ? 0 : (box.scrollLeft || 0)));
-				curtop += ((box.offsetTop || 0) + (box.clientTop || 0) - (fixed ? 0 : (box.scrollTop || 0)));
-				obj = getFrame(obj);
-			}
-		}
-		return { x: curleft + extraLeft, y: curtop + extraTop };
+	export function debugElementPosition(target: HTMLElement);
+	export function debugElementPosition(target: string);
+	export function debugElementPosition(target: any) {
+		$(target).mousedown(function (e) {
+			var pos = tui.fixedPosition(this);
+			var anchor = document.createElement("span");
+			anchor.style.backgroundColor = "#ccc";
+			anchor.style.opacity = "0.5";
+			anchor.style.display = "inline-block";
+			anchor.style.position = "fixed";
+			anchor.style.left = pos.x + "px";
+			anchor.style.top = pos.y + "px";
+			anchor.style.width = this.offsetWidth + "px";
+			anchor.style.height = this.offsetHeight + "px";
+			document.body.appendChild(anchor);
+			$(anchor).mouseup(function (e) {
+				document.body.removeChild(anchor);
+			});
+			console.log(tui.format("x: {0}, y: {1}", pos.x, pos.y));
+		});
 	}
 
 	/**

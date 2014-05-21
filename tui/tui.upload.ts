@@ -3,7 +3,7 @@ module tui {
 
 	function getBox(el): { left: number; top: number; right: number; bottom: number; } {
 		var left, right, top, bottom;
-		var offset = $(el).offset();
+		var offset = $(el).position();
 		left = offset.left;
 		top = offset.top;
 		right = left + el.offsetWidth;
@@ -228,7 +228,7 @@ module tui {
 				$(this._button).removeClass(this._settings.focusClass);
 			});
 			div.appendChild(input);
-			document.body.appendChild(div);
+			this._button.offsetParent.appendChild(div);
 			this._input = input;
 		}
 

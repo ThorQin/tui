@@ -16,9 +16,9 @@ module tui.ctrl {
 				throw new Error("Must specify a table control");
 			this.addClass(Table.CLASS);
 			this[0]._ctrl = this;
-			if (tui.ieVer > 0 && tui.ieVer < 9)
-				this.addClass("tui-table-ie8");
-			else
+			//if (tui.ieVer > 0 && tui.ieVer < 9)
+			//	this.addClass("tui-table-ie8");
+			//else
 				this.createSplitters();
 			this.refresh();
 		}
@@ -36,7 +36,6 @@ module tui.ctrl {
 			var tb: HTMLTableElement = this[0];
 			if (!tb)
 				return;
-			
 			var headLine: HTMLTableRowElement = this.headLine();
 			if (!headLine)
 				return;
@@ -52,27 +51,22 @@ module tui.ctrl {
 					splitter.className = "tui-table-splitter";
 					this._columns[i] = { width: $(cell).width() };
 					$(splitter).attr("unselectable", "on");
-					if (i < headLine.cells.length - 1)
-						headLine.cells[i + 1].appendChild(splitter);
-					else
-						headLine.cells[i].appendChild(splitter);
-					$(headLine).css("position", "relative");
+					headLine.cells[i].appendChild(splitter);
 					this._splitters.push(splitter);
 					$(splitter).mousedown(function (e) {
 						var target: HTMLSpanElement = <HTMLSpanElement>e.target;
-						var span = document.createElement("span");
-						span.className = "tui-splitter-move";
-						var pos = tui.offsetToPage(target);
-						span.style.left = pos.x + "px";
-						span.style.top = pos.y + "px";
-						span.style.height = $(tb).height() + "px";
-						var mask = tui.mask();
+						var l = target.offsetLeft;
 						var srcX = e.clientX;
-						mask.appendChild(span);
+						target.style.height = self[0].clientHeight + "px";
+						target.style.bottom = "";
+						$(target).addClass("tui-splitter-move");
+						var mask = tui.mask();
 						mask.style.cursor = "col-resize";
-						function dragEnd(e) {
+						
+						function onDragEnd(e) {
 							$(document).off("mousemove", onDrag);
-							$(document).off("mouseup", dragEnd);
+							$(document).off("mouseup", onDragEnd);
+							$(target).removeClass("tui-splitter-move");
 							tui.unmask();
 							var colIndex = target["colIndex"];
 							var tmpWidth = self._columns[colIndex].width + e.clientX - srcX;
@@ -84,11 +78,11 @@ module tui.ctrl {
 							self.fire("resizecolumn", colIndex);
 						}
 						function onDrag(e) {
-							span.style.left = pos.x + e.clientX - srcX + "px";
+							target.style.left = l + e.clientX - srcX + "px";
 						}
 
 						$(document).mousemove(onDrag);
-						$(document).mouseup(dragEnd);
+						$(document).mouseup(onDragEnd);
 					});
 				}
 			}
@@ -115,8 +109,8 @@ module tui.ctrl {
 			var headLine: HTMLTableRowElement = <HTMLTableRowElement>tb.rows[0];
 			if (!headLine)
 				return;
-			if (tui.ieVer > 0 && tui.ieVer < 9)
-				return;
+			//if (tui.ieVer > 0 && tui.ieVer < 9)
+			//	return;
 			var cellPadding = headLine.cells.length > 0 ? $(headLine.cells[0]).outerWidth() - $(headLine.cells[0]).width() : 0;
 			var defaultWidth = Math.floor(tb.offsetWidth / (headLine.cells.length > 0 ? headLine.cells.length : 1) - cellPadding);
 			var totalWidth = 0;
@@ -155,13 +149,9 @@ module tui.ctrl {
 			var headLine = this.headLine();
 			for (var i = 0; i < this._splitters.length; i++) {
 				var splitter = this._splitters[i];
-				//var left = tui.offsetToPage(<HTMLElement>headLine.cells[i], tb).x;
-				//splitter.style.left = left + (<any>headLine.cells[i]).offsetWidth + "px";
-				//splitter.style.height = headLine.offsetHeight + "px";
-				if (i < this._splitters.length - 1)
-					$(splitter).css({ "left": "-3px", "right":"auto", "height": headLine.offsetHeight + "px" });
-				else
-					$(splitter).css({ "right": "-3px", "left": "auto", "height": headLine.offsetHeight + "px" });
+				var cell:any = headLine.cells[i];
+				splitter.style.left = cell.offsetLeft + cell.offsetWidth - Math.round(splitter.offsetWidth / 2) + "px";
+				splitter.style.height = headLine.offsetHeight + "px";
 			}
 		}
 	}
