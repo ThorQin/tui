@@ -121,13 +121,13 @@ module tui.ctrl {
 		private expandRow(row, rowIndex: number, event) {
 			row[this._expandColumnKey] = true;
 			this.fire("rowexpand", { event: event, row: row, index: rowIndex });
-			this.trimData();
+			this.formatData();
 		}
 
 		private foldRow(row, rowIndex: number, event) {
 			row[this._expandColumnKey] = false;
 			this.fire("rowfold", { event: event, row: row, index: rowIndex });
-			this.trimData();
+			this.formatData();
 		}
 
 		private columnKey(key: string): any {
@@ -138,8 +138,30 @@ module tui.ctrl {
 				return key;
 		}
 
-		private trimData() {
+		private formatData() {
+			var self = this;
+			var data: any = this._grid.data();
+			if (typeof data.process === "function") {
+				function addChildren(input: any[], output: any[], level: number) {
+					for (var i = 0; i < input.length; i++) {
+						var row = input[i];
+						output.push(row);
+						row[self._levelColumnKey] = level;
+						if (!!row[self._expandColumnKey] &&
+							row[self._childrenColumKey] && row[self._childrenColumKey].length > 0) {
+							addChildren(row[self._childrenColumKey], output, level + 1);
+						}
+					}
+				}
 
+				function processTree(input: any[]): any[]{
+					var output = [];
+					addChildren(input, output, 0);
+					return output;
+				}
+				data.process(processTree);
+			}
+			this.refresh();
 		}
 
 		select(rows?: number[]): number[] {
@@ -195,7 +217,7 @@ module tui.ctrl {
 			this._levelColumnKey = this.columnKey("level");
 			this._valueColumnKey = this.columnKey("value");
 			this._expandColumnKey = this.columnKey("expand");
-			this.refresh();
+			this.formatData();
 			return ret;
 		}
 

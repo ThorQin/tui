@@ -80,12 +80,46 @@
 						{ value: "这是一个条目3", checked: false },
 						{ value: "这是一个条目4", checked: false },
 						{ value: "这是一个条目5", checked: false },
-						{ value: "这是一个条目6", checked: false },
+						{
+							value: "这是一个条目6", checked: false,
+							expand:true,
+							children: [
+								{ value: "这是一个条目3", checked: false },
+								{ value: "这是一个条目4", checked: false },
+								{ value: "这是一个条目5", checked: false },
+								{ value: "这是一个条目6", checked: false },
+								{ value: "这是一个条目7", checked: false }
+							]
+						},
 						{ value: "这是一个条目7", checked: false }
 					]
 				},
-				{ value: "这是一个条目8", checked: false },
-				{ value: "这是一个条目9", checked: false },
+				{
+					value: "这是一个条目8", checked: false,
+					children: [
+						{ value: "这是一个条目3", checked: false },
+						{ value: "这是一个条目7", checked: false }
+					]
+				},
+				{
+					value: "这是一个条目9", checked: false,
+					children: [
+						{
+							value: "这是一个条目3", checked: false,
+							children: [
+								{ value: "这是一个条目3", checked: false },
+								{ value: "这是一个条目7", checked: false }
+							]
+						},
+						{
+							value: "这是一个条目7", checked: false,
+							children: [
+								{ value: "这是一个条目3", checked: false },
+								{ value: "这是一个条目7", checked: false }
+							]
+						}
+					]
+				},
 				{ value: "这是一个条目10", checked: false },
 				{ value: "这是一个条目11", checked: false },
 				{ value: "这是一个条目8", checked: false },

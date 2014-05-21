@@ -132,6 +132,10 @@ module tui {
 		src(): any[]{
 			return this._src;
 		}
+
+		process(func: (input: any[]) => any[]) {
+			this._data = func(this._src);
+		}
 	}
 
 	
