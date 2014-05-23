@@ -1,9 +1,15 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
 module tui.ctrl {
+	enum TriState {
+		Unchecked = 0,
+		HalfChecked = 1,
+		Checked = 2
+	}
 	export class List extends Control<List> {
 		static CLASS: string = "tui-list";
 
 		private _grid: Grid;
+		private _keyColumKey: string;
 		private _childrenColumKey: string;
 		private _checkedColumnKey: string;
 		private _expandColumnKey: string;
@@ -28,9 +34,10 @@ module tui.ctrl {
 					format: (info: IColumnFormatInfo) => {
 						var cell = info.cell.firstChild;
 						var isExpanded = !!info.row[this._expandColumnKey];
-						var hasCheckbox = (typeof info.row[this._checkedColumnKey] === "boolean");
+						var hasCheckbox = (typeof info.row[this._checkedColumnKey] !== tui.undef);
 						var isChecked = !!info.row[this._checkedColumnKey];
 						var hasChild = !!info.row[this._childrenColumKey];
+						var isHalfChecked = (this.triState() && info.row[this._checkedColumnKey] === TriState.HalfChecked);
 						var spaceSpan = document.createElement("span");
 						spaceSpan.className = "tui-list-space";
 						var foldIcon = document.createElement("span");
@@ -39,12 +46,12 @@ module tui.ctrl {
 							if (isExpanded) {
 								$(foldIcon).addClass("tui-list-fold-expand");
 								$(foldIcon).mousedown((e) => {
-									this.foldRow(info.row, info.rowIndex, e);
+									this.onFoldRow(info.row, info.rowIndex, e);
 								});
 							} else {
 								$(foldIcon).addClass("tui-list-fold-unexpand");
 								$(foldIcon).mousedown((e) => {
-									this.expandRow(info.row, info.rowIndex, e);
+									this.onExpandRow(info.row, info.rowIndex, e);
 								});
 							}
 						}
@@ -53,11 +60,14 @@ module tui.ctrl {
 							var checkIcon = document.createElement("span");
 							checkIcon.className = "tui-list-checkbox";
 							if (isChecked) {
-								$(checkIcon).addClass("tui-checked");
+								if (isHalfChecked)
+									$(checkIcon).addClass("tui-half-checked");
+								else
+									$(checkIcon).addClass("tui-checked");
 							}
 							cell.insertBefore(checkIcon, cell.firstChild);
 							$(checkIcon).mouseup((e) => {
-								this.checkRow(info.row, info.rowIndex, e);
+								this.onCheckRow(info.row, info.rowIndex, e);
 							});
 						}
 						cell.insertBefore(foldIcon, cell.firstChild);
@@ -110,21 +120,67 @@ module tui.ctrl {
 				}
 				this.fire("keyup", data);
 			});
+
+			if (!this.hasAttr("data-rowselectable"))
+				this.rowselectable(true);
 		}
 
-		private checkRow(row, rowIndex: number, event) {
-			row[this._checkedColumnKey] = !row[this._checkedColumnKey];
+		private checkChildren(children: any[], checkState: TriState) {
+			for (var i = 0; i < children.length; i++) {
+				children[i][this._checkedColumnKey] = checkState;
+				var myChildren = children[i][this._childrenColumKey];
+				myChildren && myChildren.length > 0 && this.checkChildren(myChildren, checkState);
+			}
+		}
+
+		private checkParent(parent: any) {
+			var children = parent[this._childrenColumKey];
+			var checkedCount: number = 0, uncheckedCount: number = 0;
+			for (var i = 0; i < children.length; i++) {
+				var row = children[i];
+				if (row[this._checkedColumnKey] === TriState.HalfChecked) {
+					uncheckedCount++;
+					checkedCount++;
+					break;
+				} else if (!!row[this._checkedColumnKey])
+					checkedCount++;
+				else
+					uncheckedCount++;
+			}
+			if (checkedCount === 0)
+				parent[this._checkedColumnKey] = TriState.Unchecked;
+			else if (uncheckedCount === 0)
+				parent[this._checkedColumnKey] = TriState.Checked;
+			else
+				parent[this._checkedColumnKey] = TriState.HalfChecked;
+			parent["__parent"] && this.checkParent(parent["__parent"]);
+		}
+
+		private onCheckRow(row, rowIndex: number, event) {
+			if (this.triState()) {
+				var checkState = row[this._checkedColumnKey];
+				if (checkState === TriState.HalfChecked || !checkState)
+					checkState = TriState.Checked;
+				else
+					checkState = TriState.Unchecked;
+				row[this._checkedColumnKey] = checkState;
+				var children = row[this._childrenColumKey];
+				children && children.length > 0 && this.checkChildren(children, checkState);
+				var parent = row["__parent"];
+				parent && this.checkParent(parent);
+			} else
+				row[this._checkedColumnKey] = !row[this._checkedColumnKey];
 			this.fire("rowcheck", { event: event, checked: row[this._checkedColumnKey], row: row, index: rowIndex });
 			this.refresh();
 		}
 
-		private expandRow(row, rowIndex: number, event) {
+		private onExpandRow(row, rowIndex: number, event) {
 			row[this._expandColumnKey] = true;
 			this.fire("rowexpand", { event: event, row: row, index: rowIndex });
 			this.formatData();
 		}
 
-		private foldRow(row, rowIndex: number, event) {
+		private onFoldRow(row, rowIndex: number, event) {
 			row[this._expandColumnKey] = false;
 			this.fire("rowfold", { event: event, row: row, index: rowIndex });
 			this.formatData();
@@ -136,6 +192,43 @@ module tui.ctrl {
 				return val;
 			else
 				return key;
+		}
+
+		private initTriState() {
+			var self = this;
+			var data: any = this._grid.data();
+			if (typeof data.process === "function") {
+				function checkChildren(input: any[], parentRow): TriState {
+					var checkedCount: number = 0, uncheckedCount: number = 0;
+					for (var i = 0; i < input.length; i++) {
+						var row = input[i];
+						if (row[self._childrenColumKey] && row[self._childrenColumKey].length > 0) {
+							var state: TriState = checkChildren(row[self._childrenColumKey], row);
+							row[self._checkedColumnKey] = state;
+						}
+						if (row[self._checkedColumnKey] === TriState.HalfChecked) {
+							uncheckedCount++;
+							checkedCount++;
+						} else if (!!row[self._checkedColumnKey])
+							checkedCount++;
+						else
+							uncheckedCount++;
+						row["__parent"] = parentRow;
+					}
+					if (checkedCount === 0)
+						return TriState.Unchecked;
+					else if (uncheckedCount === 0)
+						return TriState.Checked;
+					else
+						return TriState.HalfChecked;
+				}
+
+				function processTree(input: any[]): any[] {
+					checkChildren(input, null);
+					return input;
+				}
+				data.process(processTree);
+			}
 		}
 
 		private formatData() {
@@ -172,6 +265,70 @@ module tui.ctrl {
 			return this._grid.activerow(rowIndex);
 		}
 
+		private doCheck(keys: any[], checkState: TriState) {
+			var self = this;
+			var useTriState = this.triState();
+			var map = {};
+			if (keys) {
+				for (var i = 0; i < keys.length; i++) {
+					map[keys[i]] = true;
+				}
+			}
+			function checkChildren(keys: any[], children: any[]) {
+				for (var i = 0; i < children.length; i++) {
+					if (keys === null || map[children[i][self._keyColumKey]]) {
+						children[i][self._checkedColumnKey] = checkState;
+					}
+					var myChilren = children[i][self._childrenColumKey];
+					if (myChilren && myChilren.length > 0)
+						checkChildren(keys, myChilren);
+				}
+			}
+			var data: ArrayProvider = <ArrayProvider>this._grid.data();
+			if (typeof data.src === "function") {
+				checkChildren(keys, data.src());
+				if (useTriState) {
+					this.initTriState();
+				}
+				this.refresh();
+			}
+		}
+
+		checkItems(keys: any[]): List {
+			this.doCheck(keys, TriState.Checked);
+			return this;
+		}
+		checkAllItems(): List {
+			this.doCheck(null, TriState.Checked);
+			return this;
+		}
+		uncheckItems(keys: any[]): List {
+			this.doCheck(keys, TriState.Unchecked);
+			return this;
+		}
+		uncheckAllItems(): List {
+			this.doCheck(null, TriState.Unchecked);
+			return this;
+		}
+		checkedItems(): any[]{
+			var self = this;
+			var checkedItems = [];
+			function checkChildren(children: any[]) {
+				for (var i = 0; i < children.length; i++) {
+					if (!!children[i][self._checkedColumnKey])
+						checkedItems.push(children[i]);
+					var myChilren = children[i][self._childrenColumKey];
+					if (myChilren && myChilren.length > 0)
+						checkChildren(myChilren);
+				}
+			}
+			var data: ArrayProvider = <ArrayProvider>this._grid.data();
+			if (typeof data.src === "function") {
+				checkChildren(data.src());
+			}
+			return checkedItems;
+		}
+
 		/**
 		 * Adjust column width to adapt column content
 		 * @param {Number} columnIndex
@@ -199,25 +356,45 @@ module tui.ctrl {
 			return this._grid.rowselectable(val);
 		}
 
+		triState(): boolean;
+		triState(val: boolean): List;
+		triState(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-tri-state", val);
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-tri-state");
+		}
+
+
 		scrollTo(rowIndex: number) {
 			this._grid.scrollTo(rowIndex);
 		}
 
+		/**
+		 * Return binded data provider
+		 */
 		data(): tui.IDataProvider;
 		data(data: tui.IDataProvider): List;
 		data(data?: tui.IDataProvider): any {
 			var ret = this._grid.data(data);
-			var data = this._grid.data();
-			if (data)
-				this._columnKeyMap = data.columnKeyMap();
-			else
-				this._columnKeyMap = {};
-			this._childrenColumKey = this.columnKey("children");
-			this._checkedColumnKey = this.columnKey("checked");
-			this._levelColumnKey = this.columnKey("level");
-			this._valueColumnKey = this.columnKey("value");
-			this._expandColumnKey = this.columnKey("expand");
-			this.formatData();
+			if (data) {
+				var data = this._grid.data();
+				if (data)
+					this._columnKeyMap = data.columnKeyMap();
+				else
+					this._columnKeyMap = {};
+				this._keyColumKey = this.columnKey("key");
+				this._childrenColumKey = this.columnKey("children");
+				this._checkedColumnKey = this.columnKey("checked");
+				this._levelColumnKey = this.columnKey("level");
+				this._valueColumnKey = this.columnKey("value");
+				this._expandColumnKey = this.columnKey("expand");
+				if (this.triState())
+					this.initTriState();
+				this.formatData();
+			}
 			return ret;
 		}
 

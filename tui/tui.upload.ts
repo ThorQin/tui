@@ -1,6 +1,76 @@
 ﻿/// <reference path="tui.core.ts" />
 module tui {
 
+	var mimeTypeMap = {
+		"application/java-archive": ["jar"],
+		"application/msword": ["doc"],
+		"application/pdf": ["pdf"],
+		"application/pkcs10": ["p10"],
+		"application/pkcs7-mime": ["p7m"],
+		"application/pkcs7-signature": ["p7s"],
+		"application/postscript": ["ai"],
+		"application/vnd.ms-excel": ["xls"],
+		"application/vnd.ms-powerpoint": ["ppt"],
+		"application/vnd.ms-project": ["mpp"],
+		"application/vnd.ms-visio.viewer": ["vsd"],
+		"application/vnd.ms-xpsdocument": ["xps"],
+		"application/vnd.oasis.opendocument.presentation": ["odp"],
+		"application/vnd.oasis.opendocument.spreadsheet": ["ods"],
+		"application/vnd.oasis.opendocument.text": ["odt"],
+		"application/vnd.openxmlformats-officedocument.presentationml.presentation": ["pptx"],
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ["xlsx"],
+		"application/vnd.openxmlformats-officedocument.wordprocessingml.document": ["docx"],
+		"application/x-7z-compressed": ["7z"],
+		"application/x-bzip2": ["bz2"],
+		"application/x-gzip": ["gz"],
+		"application/x-javascript": ["js"],
+		"application/x-msdownload": ["exe"],
+		"application/x-msmetafile": ["wmf"],
+		"application/x-pkcs12": ["p12", "pfx"],
+		"application/x-pkcs7-certificates": ["p7b"],
+		"application/x-pkcs7-certreqresp": ["p7r"],
+		"application/x-rar-compressed": ["rar"],
+		"application/x-shockwave-flash": ["swf"],
+		"application/x-tar": ["tar"],
+		"application/x-x509-ca-cert": ["cer"],
+		"application/xhtml+xml": ["xhtml"],
+		"application/xml": ["xml"],
+		"application/zip": ["zip"],
+		"audio/mp4": ["m4a"],
+		"audio/mpeg": ["mp3"],
+		"audio/x-ms-wma": ["wma"],
+		"audio/x-pn-realaudio": ["rm"],
+		"image/bmp": ["bmp"],
+		"image/gif": ["gif"],
+		"image/jpeg": ["jpeg"],
+		"image/nbmp": ["nbmp"],
+		"image/png": ["png"],
+		"image/svg-xml": ["svg"],
+		"image/tiff": ["tiff"],
+		"image/x-icon": ["ico"],
+		"message/rfc822": ["eml"],
+		"text/css": ["css"],
+		"text/html": ["html"],
+		"text/plain": ["txt"],
+		"text/xml": ["xml"],
+		"video/3gpp": ["3gp"],
+		"video/3gpp2": ["3gp2"],
+		"video/avi": ["avi"],
+		"video/mp4": ["mp4"],
+		"video/mpeg": ["mpeg"],
+		"video/quicktime": ["mov"]
+	};
+	export function checkExtWithMimeType(ext: string, mimeType: string): boolean {
+		var exts: string[] = mimeTypeMap[mimeType];
+		if (typeof exts === tui.undef) {
+			return true;
+		}
+		if (exts.indexOf(ext.toLowerCase()) >= 0)
+			return true;
+		else
+			return false;
+	}
+
 	function getBox(el): { left: number; top: number; right: number; bottom: number; } {
 		var left, right, top, bottom;
 		var offset = $(el).position();
@@ -198,7 +268,18 @@ module tui {
 				// Get filename from input, required                
 				// as some browsers have path instead of it
 				var file = fileFromPath(input.value);
-				if (this.fire("change", { "file": file, "ext": getExt(file) }) === false) {
+				var fileExt = getExt(file);
+				
+				// Check accept mimetype, now we only check by submit event.
+
+				//if (this._settings.accept) {
+				//	if (!checkExtWithMimeType(fileExt, this._settings.accept)) {
+				//		this.clearInput();
+				//		this.fire("invalid", { "file": file, "ext": fileExt });
+				//		return;
+				//	}
+				//}
+				if (this.fire("change", { "file": file, "ext": fileExt }) === false) {
 					this.clearInput();
 					return;
 				}

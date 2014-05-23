@@ -84,52 +84,45 @@
 							value: "这是一个条目6", checked: false,
 							expand:true,
 							children: [
-								{ value: "这是一个条目3", checked: false },
-								{ value: "这是一个条目4", checked: false },
-								{ value: "这是一个条目5", checked: false },
-								{ value: "这是一个条目6", checked: false },
-								{ value: "这是一个条目7", checked: false }
+								{ value: "这是一个条目7", checked: false },
+								{ value: "这是一个条目8", checked: false },
+								{ value: "这是一个条目9", checked: false },
+								{ value: "这是一个条目10", checked: false },
+								{ value: "这是一个条目11", checked: false }
 							]
 						},
-						{ value: "这是一个条目7", checked: false }
+						{ value: "这是一个条目12", checked: false }
 					]
 				},
 				{
-					value: "这是一个条目8", checked: false,
+					value: "这是一个条目13", checked: false,
 					children: [
-						{ value: "这是一个条目3", checked: false },
-						{ value: "这是一个条目7", checked: false }
+						{ value: "这是一个条目14", checked: false },
+						{ value: "这是一个条目15", checked: false }
 					]
 				},
 				{
-					value: "这是一个条目9", checked: false,
+					value: "这是一个条目16", checked: false,
 					children: [
 						{
-							value: "这是一个条目3", checked: false,
+							value: "这是一个条目17", checked: false,
 							children: [
-								{ value: "这是一个条目3", checked: false },
-								{ value: "这是一个条目7", checked: false }
+								{ value: "这是一个条目18", checked: false },
+								{ value: "这是一个条目19", checked: false }
 							]
 						},
 						{
-							value: "这是一个条目7", checked: false,
+							value: "这是一个条目20", checked: false,
 							children: [
-								{ value: "这是一个条目3", checked: false },
-								{ value: "这是一个条目7", checked: false }
+								{ value: "这是一个条目21", checked: false },
+								{ value: "这是一个条目22", checked: false }
 							]
 						}
 					]
 				},
-				{ value: "这是一个条目10", checked: false },
-				{ value: "这是一个条目11", checked: false },
-				{ value: "这是一个条目8", checked: false },
-				{ value: "这是一个条目9", checked: false },
-				{ value: "这是一个条目10", checked: false },
-				{ value: "这是一个条目11", checked: false },
-				{ value: "这是一个条目8", checked: false },
-				{ value: "这是一个条目9", checked: false },
-				{ value: "这是一个条目10", checked: false },
-				{ value: "这是一个条目11", checked: false }
+				{ value: "这是一个条目23", checked: false },
+				{ value: "这是一个条目24", checked: false },
+				{ value: "这是一个条目25", checked: false }
 			];
 
 			function buildRows(index, length) {
@@ -146,7 +139,7 @@
 				setTimeout(function () {
 					var info = {
 						data: buildRows(queryInfo.begin, queryInfo.cacheSize),
-						length: 1000000,
+						length: 10000000,
 						begin: queryInfo.begin,
 						head: ["a", "b", "c", "d"]
 					};
@@ -159,7 +152,14 @@
 				grid.hasHScroll(data.ctrl._ctrl.checked());
 			});
 
-			var list = tui.ctrl.list("listdiv").data(result);
+			var another = tui.clone(result);
+			tui.ctrl.list("listdiv").data(result);
+			tui.ctrl.list("listdiv1").data(another);
+			tui.ctrl.list("listdiv2").data([
+				{ key: 1, value: "数据条目1" },
+				{ key: 2, value: "数据条目2" },
+				{ key: 3, value: "数据条目3" }
+			]);
 
 			tui.debugElementPosition("#ttDiv");
 		});
@@ -233,8 +233,8 @@
 		<div class="tui-input" data-type="multi-select"
 				data-icon="fa-user"></div>
 		<div id="fileInput" class="tui-input" data-type="file"
-				data-upload-url="upload.ashx" data-accept="image/gif"
-				data-placeholder="请选择文件" data-format=".*\.sql$"></div>
+			 data-upload-url="upload.ashx" data-accept="image/png"
+			 data-placeholder="请选择文件" data-validator="{'.*\.png$':'请选择PNG文件'}"></div>
 		<div class="tui-input" data-type="custom-text"
 				data-placeholder="请输入" data-icon="fa-search"></div>
 		<div class="tui-input" data-type="custom-select"
@@ -296,7 +296,7 @@
 
 	<hr>
 	<h2 id="showGrid">数据网格</h2>
-
+	<div>这里给出了如果你有<b style="color:red">1千万条</b>记录，应该如何合理的进行展示，什么？你说翻页？算了吧，手指会断的。</div>
 	<a id="btnGrid" class="tui-checkbox">水平滚动条</a><br>
 	<div id="gridTest"
 		class="tui-grid" style="display:inline-block;width:500px;height:300px;"
@@ -312,10 +312,24 @@
 	<hr>
 	<h2 id="showList">列表框</h2>
 
-	<div id="listdiv" class="tui-list" 
-		style="display:inline-block;width:200px;height:300px;"
-		data-rowselectable="true">
+	<div style="display:inline-block;padding-right:20px;">
+		<div style="padding:10px;">三态列表框</div>
+		<div id="listdiv" class="tui-list" 
+			style="display:inline-block;width:200px;height:300px;"
+			data-tri-state="true">
+		</div>
 	</div>
-	
+	<div style="display:inline-block;padding-right:20px;">
+		<div style="padding:10px;">非三态列表框</div>
+		<div id="listdiv1" class="tui-list"
+			 style="display:inline-block;width:200px;height:300px;">
+		</div>
+	</div>
+	<div style="display:inline-block;">
+		<div style="padding:10px;">普通列表框</div>
+		<div id="listdiv2" class="tui-list"
+			 style="display:inline-block;width:200px;height:300px;">
+		</div>
+	</div>
 </body>
 </html>

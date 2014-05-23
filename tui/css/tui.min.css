@@ -1494,6 +1494,9 @@ div.tui-mask,
 .tui-list .tui-list-checkbox.tui-checked:before {
   content: "\f046";
 }
+.tui-list .tui-list-checkbox.tui-half-checked:before {
+  content: "\f14a";
+}
 *[data-hidden=true],
 .tui-hidden {
   display: none;

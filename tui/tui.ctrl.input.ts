@@ -3,6 +3,13 @@
 /// <reference path="tui.ctrl.popup.ts" />
 /// <reference path="tui.ctrl.calendar.ts" />
 module tui.ctrl {
+	function validText(t) {
+		if (typeof t === tui.undef || t === null) {
+			return "";
+		} else {
+			return t + "";
+		}
+	}
 	export class Input extends Control<Input> {
 		static CLASS: string = "tui-input";
 		static VALIDATORS = {
@@ -28,6 +35,12 @@ module tui.ctrl {
 		private _binding: UploadBinding = null;
 		private _invalid: boolean = false;
 		private _message: string = "";
+		private _data: IDataProvider = null;
+		private _keyColumKey: string;
+		private _valueColumnKey: string;
+		private _childrenColumKey: string;
+		private _columnKeyMap: {} = null;
+
 
 		constructor(el?: HTMLElement, type?: string) {
 			super();
@@ -145,8 +158,14 @@ module tui.ctrl {
 				accept: this.accept(),
 				responseType: "json"
 			});
-			this._binding.on("submit", (data: {}) => {
-				return this.validate(data["file"]);
+			this._binding.on("change", (data: {}) => {
+				var result = this.validate(data["file"]);
+				if (!result) {
+					this.value(null);
+					this._invalid = true;
+					this.refresh();
+				}
+				return result;
 			});
 			this._binding.on("complete", (data: {}) => {
 				var response = data["response"];
@@ -164,6 +183,53 @@ module tui.ctrl {
 				this._binding.uninstallBind();
 				this._binding = null;
 			}
+		}
+
+		private formatSelectText(val: any[]): string {
+			var text = "";
+			for (var i = 0; i < val.length; i++) {
+				if (text.length > 0)
+					text += "; ";
+				text += validText(val[this._valueColumnKey]);
+			}
+			return text;
+		}
+
+		private formatSelectTextByData(val: { key: any; value: string; }[]): string {
+			var self = this;
+			var map = {};
+			function buildMap(children: any[]): void {
+				for (var i = 0; i < children.length; i++) {
+					var k = children[i][self._keyColumKey];
+					map[k] = children[i][self._valueColumnKey];
+					var myChildren = children[i][self._childrenColumKey];
+					if (myChildren && myChildren.length > 0) {
+						buildMap(myChildren);
+					}
+				}
+			}
+			var data:any = this._data;
+			data && typeof data.src === "function" && buildMap(data.src());
+			var text = "";
+			for (var i = 0; i < val.length; i++) {
+				if (text.length > 0)
+					text += "; ";
+				var t = map[val[i].key];
+				if (typeof t === tui.undef)
+					t = validText(val[i].value);
+				else
+					t = validText(t);
+				text += t;
+			}
+			return text;
+		}
+
+		private columnKey(key: string): any {
+			var val = this._columnKeyMap[key];
+			if (typeof val === "number" && val >= 0)
+				return val;
+			else
+				return key;
 		}
 
 		fileId(): string {
@@ -326,6 +392,23 @@ module tui.ctrl {
 				return this.attr("data-accept");
 		}
 
+		data(): tui.IDataProvider;
+		data(data: tui.IDataProvider): Input;
+		data(data?: tui.IDataProvider): any {
+			if (data) {
+				this._data = data;
+				if (data)
+					this._columnKeyMap = data.columnKeyMap();
+				else
+					this._columnKeyMap = {};
+				this._keyColumKey = this.columnKey("key");
+				this._valueColumnKey = this.columnKey("value");
+				this._childrenColumKey = this.columnKey("children");
+				return this;
+			} else
+				return this._data;
+		}
+
 		value(): any;
 		value(val?: any): Input;
 		value(val?: any): any {
@@ -339,7 +422,12 @@ module tui.ctrl {
 						this.refresh();
 					}
 				} else if (type === "file") {
-					if (val.file && val.fileId) {
+					if (val === null) {
+						this.attr("data-value", JSON.stringify(val));
+						this.attr("data-text", "");
+						this._invalid = false;
+						this.refresh();
+					} else if (val.file && val.fileId) {
 						this.attr("data-value", JSON.stringify(val));
 						this.attr("data-text", val.file);
 						this._invalid = false;
@@ -350,14 +438,29 @@ module tui.ctrl {
 					this.attr("data-value", val);
 					this._invalid = false;
 					this.refresh();
+				} else if (type === "select" || type === "multi-select") {
+					if (val && val.length >= 0) {
+						this.attr("data-value", JSON.stringify(val));
+						this.attr("data-text", this.formatSelectTextByData(val));
+						this._invalid = false;
+						this.refresh();
+					}
 				}
 				return this;
 			} else {
 				val = this.attr("data-value");
 				if (type === "calendar") {
+					if (val === null)
+						return null;
 					return tui.parseDate(val);
 				} else if (type === "file") {
+					if (val === null)
+						return null;
 					return eval("("+val+")");
+				} else if (type === "select" || type === "multi-select") {
+					if (val === null)
+						return [];
+					return eval("(" + val + ")");
 				} else
 					return val;
 			}
