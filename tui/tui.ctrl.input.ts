@@ -10,6 +10,15 @@ module tui.ctrl {
 			return t + "";
 		}
 	}
+	function getKeys(items: any[]) {
+		var keys: string[] = [];
+		for (var i = 0; i < items.length; i++) {
+			var key = items[i]["key"];
+			if (typeof key !== tui.undef)
+				keys.push(key);
+		}
+		return keys;
+	}
 	export class Input extends Control<Input> {
 		static CLASS: string = "tui-input";
 		static VALIDATORS = {
@@ -79,11 +88,107 @@ module tui.ctrl {
 					calendar.on("picked", (e) => {
 						self.value(e["time"]);
 						pop.close();
+						self.focus();
 					});
-					pop.show(calendar[0], this._button, "Rb");
+					var calbox = document.createElement("div");
+					calbox.appendChild(calendar[0]);
+					var todayLink = document.createElement("a");
+					todayLink.innerHTML = "<i class='fa fa-clock-o'></i> " + tui.str("Today") + ": " + tui.formatDate(tui.today(), "yyyy-MM-dd");
+					todayLink.href = "javascript:void(0)";
+					$(todayLink).click(function (e) {
+						self.value(tui.today());
+						pop.close();
+						self.focus();
+					});
+					var todayLine = document.createElement("div");
+					todayLine.appendChild(todayLink);
+					todayLine.className = "tui-input-select-bar";
+					calbox.appendChild(todayLine);
+					pop.show(calbox, this._button, "Rb");
 					calendar.focus();
-				} else if (this.type() === "select" || this.type() === "multi-select") {
-					// TODO: MODIFY
+				} else if (this.type() === "select") {
+					var pop = tui.ctrl.popup();
+					var list = tui.ctrl.list();
+					list.consumeMouseWheelEvent(true);
+					list.rowcheckable(false);
+					list.on("rowclick", (data) => {
+						self.value([list.activeItem()]);
+						pop.close();
+						self.focus();
+					});
+					list.on("keydown", (data) => {
+						if (data["event"].keyCode === 13) { // Enter
+							self.value([list.activeItem()]);
+							pop.close();
+							self.focus();
+						}
+					});
+					list[0].style.width = self[0].offsetWidth + "px";
+					list.data(self._data);
+					pop.show(list[0], self._button, "Rb");
+					
+					var items = self._data ? self._data.length() : 0;
+					if (items < 1)
+						items = 1;
+					else if (items > 6)
+						items = 6;
+
+					list[0].style.height = items * list.lineHeight() + 4 + "px";
+					list.refresh();
+					pop.refresh();
+					var val = this.value();
+					if (val && val.length > 0) {
+						list.activeRowByKey(val[0].key);
+						list.scrollTo(list.activerow());
+					}
+					list.focus();
+				} else if (this.type() === "multi-select") {
+					var pop = tui.ctrl.popup();
+					var list = tui.ctrl.list();
+					list.consumeMouseWheelEvent(true);
+					///////
+					// TODO
+					var calbox = document.createElement("div");
+					calbox.appendChild(list[0]);
+
+					list[0].style.width = self[0].offsetWidth + "px";
+					list.data(self._data);
+					list.uncheckAllItems();
+					var keys = getKeys(this.value());
+					list.checkItems(keys);
+					calbox.appendChild(list[0]);
+					var bar = document.createElement("div");
+					bar.className = "tui-input-select-bar";
+					calbox.appendChild(bar);
+					var okLink = document.createElement("a");
+					okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Accept");
+					okLink.href = "javascript:void(0)";
+					$(okLink).click(function (e) {
+						self.value(list.checkedItems());
+						pop.close();
+						self.focus();
+					});
+					list.on("keydown", (data) => {
+						if (data["event"].keyCode === 13) { // Enter
+							self.value(list.checkedItems());
+							pop.close();
+							self.focus();
+						}
+					});
+					bar.appendChild(okLink);
+
+					pop.show(calbox, self._button, "Rb");
+
+					var items = self._data ? self._data.length() : 0;
+					if (items < 1)
+						items = 1;
+					else if (items > 6)
+						items = 6;
+
+					list[0].style.height = items * list.lineHeight() + 4 + "px";
+					list.refresh();
+					pop.refresh();
+					list.focus();
 				} else if (this.type() === "file") {
 					// Don't need do anything
 				} else {
@@ -159,6 +264,7 @@ module tui.ctrl {
 				responseType: "json"
 			});
 			this._binding.on("change", (data: {}) => {
+				this.focus();
 				var result = this.validate(data["file"]);
 				if (!result) {
 					this.value(null);
@@ -230,6 +336,19 @@ module tui.ctrl {
 				return val;
 			else
 				return key;
+		}
+
+		private onlyKeyValue(value: any[]) {
+			var result: any[] = [];
+			for (var i = 0; i < value.length; i++) {
+				if (typeof value[i][this._keyColumKey] !== tui.undef) {
+					var item: { key: any; value?: any; } = { key: value[i][this._keyColumKey] };
+					if (typeof value[i][this._valueColumnKey] !== tui.undef)
+						item.value = value[i][this._valueColumnKey];
+					result.push(item);
+				}
+			}
+			return JSON.stringify(result);
 		}
 
 		fileId(): string {
@@ -393,9 +512,21 @@ module tui.ctrl {
 		}
 
 		data(): tui.IDataProvider;
-		data(data: tui.IDataProvider): Input;
-		data(data?: tui.IDataProvider): any {
+		data(data: tui.IDataProvider): Grid;
+		data(data: any[]): Grid;
+		data(data: { data: any[]; head?: string[]; length?: number; }): Grid;
+		data(data?: any): any {
 			if (data) {
+				var self = this;
+				if (data instanceof Array || data.data && data.data instanceof Array) {
+					data = new ArrayProvider(data);
+				}
+				if (typeof data.length !== "function" ||
+					typeof data.sort !== "function" ||
+					typeof data.at !== "function" ||
+					typeof data.columnKeyMap !== "function") {
+					throw new Error("TUI Input: need a data provider.");
+				}
 				this._data = data;
 				if (data)
 					this._columnKeyMap = data.columnKeyMap();
@@ -440,7 +571,7 @@ module tui.ctrl {
 					this.refresh();
 				} else if (type === "select" || type === "multi-select") {
 					if (val && val.length >= 0) {
-						this.attr("data-value", JSON.stringify(val));
+						this.attr("data-value", this.onlyKeyValue(val));
 						this.attr("data-text", this.formatSelectTextByData(val));
 						this._invalid = false;
 						this.refresh();

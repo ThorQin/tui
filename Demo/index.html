@@ -73,56 +73,61 @@
 			});
 
 			var result = [
-				{ value: "这是一个条目1", checked: false },
+				{key:1, value: "这是一个条目1", checked: false },
 				{
-					value: "这是一个条目2", checked: false,
+					key: 2, value: "这是一个条目2", checked: false,
 					children: [
-						{ value: "这是一个条目3", checked: false },
-						{ value: "这是一个条目4", checked: false },
-						{ value: "这是一个条目5", checked: false },
+						{ key: 3, value: "这是一个条目3", checked: false },
+						{ key: 4, value: "这是一个条目4", checked: false },
+						{ key: 5, value: "这是一个条目5", checked: false },
 						{
+							key: 6,
 							value: "这是一个条目6", checked: false,
 							expand:true,
 							children: [
-								{ value: "这是一个条目7", checked: false },
-								{ value: "这是一个条目8", checked: false },
-								{ value: "这是一个条目9", checked: false },
-								{ value: "这是一个条目10", checked: false },
-								{ value: "这是一个条目11", checked: false }
+								{ key: 7, value: "这是一个条目7", checked: false },
+								{ key: 8, value: "这是一个条目8", checked: false },
+								{ key: 9, value: "这是一个条目9", checked: false },
+								{ key: 10, value: "这是一个条目10", checked: false },
+								{ key: 11, value: "这是一个条目11", checked: false }
 							]
 						},
-						{ value: "这是一个条目12", checked: false }
+						{ key: 12, value: "这是一个条目12", checked: false }
 					]
 				},
 				{
+					key: 13,
 					value: "这是一个条目13", checked: false,
 					children: [
-						{ value: "这是一个条目14", checked: false },
-						{ value: "这是一个条目15", checked: false }
+						{ key: 14, value: "这是一个条目14", checked: false },
+						{ key: 15, value: "这是一个条目15", checked: false }
 					]
 				},
 				{
+					key: 16,
 					value: "这是一个条目16", checked: false,
 					children: [
 						{
+							key: 17,
 							value: "这是一个条目17", checked: false,
 							children: [
-								{ value: "这是一个条目18", checked: false },
-								{ value: "这是一个条目19", checked: false }
+								{ key: 18, value: "这是一个条目18", checked: false },
+								{ key: 19, value: "这是一个条目19", checked: false }
 							]
 						},
 						{
+							key: 20,
 							value: "这是一个条目20", checked: false,
 							children: [
-								{ value: "这是一个条目21", checked: false },
-								{ value: "这是一个条目22", checked: false }
+								{ key: 21, value: "这是一个条目21", checked: false },
+								{ key: 22, value: "这是一个条目22", checked: false }
 							]
 						}
 					]
 				},
-				{ value: "这是一个条目23", checked: false },
-				{ value: "这是一个条目24", checked: false },
-				{ value: "这是一个条目25", checked: false }
+				{ key: 23, value: "这是一个条目23", checked: false },
+				{ key: 24, value: "这是一个条目24", checked: false },
+				{ key: 25, value: "这是一个条目25", checked: false }
 			];
 
 			function buildRows(index, length) {
@@ -132,6 +137,8 @@
 				}
 				return result;
 			}
+
+			
 
 			var cursor = new tui.RemoteCursorProvider();
 			var sum = 0;
@@ -161,7 +168,13 @@
 				{ key: 3, value: "数据条目3" }
 			]);
 
+			tui.ctrl.input("select1").data(result);
+			tui.ctrl.input("select2").data(another);
+
 			tui.debugElementPosition("#ttDiv");
+			$("#testd").mousedown(function () { alert("mousedown"); });
+			$("#testd").mouseup(function () { alert("click"); });
+			$("#testd").click(function () { alert("click");});
 		});
 	</script>
 	<style>
@@ -178,6 +191,9 @@
 	</style>
 </head>
 <body class="tui-container">
+
+	<div id="testd">haah</div>
+
 	<div class="tui-sidebar">
 		<div><a href="#showButton">按钮</a></div>
 		<div><a href="#showButtonGroup">按钮组</a></div>
@@ -228,10 +244,9 @@
 				data-validator='{"*any":"请输入密码","*password":"密码必须包含数字英文大小写和符号且不能小于6位"}'></div>
 		<div class="tui-input" data-type="calendar"
 				data-placeholder="请选择日期" data-validator="{'*any':'请选择日期'}"></div>
-		<div class="tui-input" data-type="select"></div>
+		<div id="select1" class="tui-input" data-type="select"></div>
 		<br>
-		<div class="tui-input" data-type="multi-select"
-				data-icon="fa-user"></div>
+		<div id="select2" class="tui-input" data-type="multi-select"></div>
 		<div id="fileInput" class="tui-input" data-type="file"
 			 data-upload-url="upload.ashx" data-accept="image/png"
 			 data-placeholder="请选择文件" data-validator="{'.*\.png$':'请选择PNG文件'}"></div>

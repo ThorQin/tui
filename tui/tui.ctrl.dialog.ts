@@ -413,7 +413,7 @@ module tui {
 				name: str("Ok"), func: () => {
 					result = true;
 					dlg.close();
-				}, cls: "tui-primary"
+				}
 			},{
 				name: str("Cancel"), func: () => {
 					dlg.close();

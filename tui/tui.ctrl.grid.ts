@@ -115,12 +115,18 @@ module tui.ctrl {
 						self.drawLines();
 						ev.stopPropagation();
 						ev.preventDefault();
+					} else if (self.consumeMouseWheelEvent()) {
+						ev.stopPropagation();
+						ev.preventDefault();
 					}
 				} else {
 					if (self._vscroll.value() > 0) {
 						self._vscroll.value(self._vscroll.value() - scrollSize);
 						self._scrollTop = self._vscroll.value();
 						self.drawLines();
+						ev.stopPropagation();
+						ev.preventDefault();
+					} else if (self.consumeMouseWheelEvent()) {
 						ev.stopPropagation();
 						ev.preventDefault();
 					}
@@ -138,6 +144,7 @@ module tui.ctrl {
 					return;
 				var data = self.myData();
 				var k = e.keyCode;
+				// 37:left 38:up 39:right 40:down
 				if ([33, 34, 37, 38, 39, 40].indexOf(k) >= 0) {
 					if (k === 37) {
 						!self._hscroll.hidden() && self._hscroll.value(self._hscroll.value() - self._hscroll.step());
@@ -563,10 +570,6 @@ module tui.ctrl {
 				var value = (key !== null && rowData ? rowData[key] : " ");
 				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, value, rowData, index, i);
 			}
-			if (this.isRowSelected(index)) {
-				$(line).addClass("tui-grid-line-selected");
-			} else
-				$(line).removeClass("tui-grid-line-selected");
 
 			if (!bindEvent)
 				return;
@@ -584,11 +587,11 @@ module tui.ctrl {
 				var index = line["_rowIndex"];
 				self.fire("rowmouseup", { "event": e, "index": index, "row": line });
 			});
-			$(line).click(function (e) {
+			$(line).on("click", function (e) {
 				var index = line["_rowIndex"];
 				self.fire("rowclick", { "event": e, "index": index, "row": line });
 			});
-			$(line).dblclick(function (e) {
+			$(line).on("dblclick", function (e) {
 				var index = line["_rowIndex"];
 				self.fire("rowdblclick", { "event": e, "index": index, "row": line });
 			});
@@ -620,6 +623,10 @@ module tui.ctrl {
 					this.drawLine(line, i, true);
 					this.moveLine(line, i - begin, base);
 				}
+				if (this.isRowSelected(i)) {
+					$(line).addClass("tui-grid-line-selected");
+				} else
+					$(line).removeClass("tui-grid-line-selected");
 			}
 			var end = i;
 			for (var i = this._bufferedBegin; i < this._bufferedEnd; i++) {
@@ -642,13 +649,19 @@ module tui.ctrl {
 			this._bufferedEnd = this._bufferedBegin = 0;
 		}
 
+		lineHeight() {
+			return this._lineHeight;
+		}
+
 		select(rows?: number[]): number[]{
 			if (rows && typeof rows.length === "number" && rows.length >= 0) {
 				this._selectrows.length = 0;
 				for (var i = 0; i < rows.length; i++) {
 					this._selectrows.push(rows[i]);
 				}
-				this.clearBufferLines();
+				// Clear buffer cause row click event cannot be raised, 
+				// so never do this when we only want to change row selection status.
+				// this.clearBufferLines();
 				this.drawLines();
 			}
 			return this._selectrows;
@@ -661,9 +674,31 @@ module tui.ctrl {
 				if (rowIndex >= this.myData().length())
 					rowIndex = this.myData().length() - 1;
 				this._activerow = rowIndex;
-				this.select([rowIndex]);
+				if (rowIndex === null)
+					this.select([]);
+				else
+					this.select([rowIndex]);
 			}
 			return this._activerow;
+		}
+
+		activeItem(rowItem?: any): any {
+			if (typeof rowItem !== tui.undef) {
+				if (rowItem === null) {
+					this.activerow(null);
+				} else {
+					for (var i = 0; i < this._data.length(); i++) {
+						if (this._data.at(i) === rowItem) {
+							this.activerow(i);
+							break;
+						}
+					}
+				}
+			} 
+			if (this._activerow !== null) {
+				return this._data.at(this._activerow);
+			} else
+				return null;
 		}
 
 		/**
@@ -857,6 +892,17 @@ module tui.ctrl {
 			} else {
 				return this._data;
 			}
+		}
+
+		consumeMouseWheelEvent(): boolean;
+		consumeMouseWheelEvent(val: boolean): Grid;
+		consumeMouseWheelEvent(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-consume-mwe", val);
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-consume-mwe");
 		}
 
 		refresh() {

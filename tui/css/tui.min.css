@@ -550,16 +550,17 @@ div.tui-mask,
   padding: 0px;
   outline: none;
   z-index: 2147483645;
-  -webkit-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
-  -moz-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
-  box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.1);
+  -webkit-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.2);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
   border: 1px solid #c0c0c0;
   background-color: #fff;
 }
-.tui-popup .tui-calendar {
+.tui-popup .tui-calendar,
+.tui-popup .tui-list {
   border: none;
   outline: none;
 }
@@ -698,35 +699,35 @@ div.tui-mask,
 .tui-input[data-type=file] > span:before {
   content: "\f114";
 }
+.tui-input-select-bar {
+  padding: 5px;
+  font-size: 14px;
+  border-top: 1px dotted #cccccc;
+  text-align: center;
+}
 .tui-dialog-mask {
-  background-color: #444;
+  background-color: #888;
   opacity: 0.5;
   filter: alpha(opacity=50);
   z-index: 2147483644;
 }
 .tui-dialog {
-  -webkit-animation: fadein 0.1s linear;
-  -moz-animation: fadein 0.1s linear;
-  -o-animation: fadein 0.1s linear;
-  animation: fadein 0.1s linear;
   outline: none;
   display: block;
   position: fixed;
   background-color: white;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
   min-width: 340px;
-  -webkit-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
-  -moz-box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.7);
+  border: 1px solid #e0e0e0;
+  -webkit-box-shadow: 0px 1px 30px #777777;
+  -moz-box-shadow: 0px 1px 30px #777777;
+  box-shadow: 0px 1px 30px #777777;
   z-index: 2147483644;
 }
 .tui-dialog > div {
   padding: 30px 20px;
   background-color: #fcfcfc;
-  border-top: 1px solid #dddddd;
-  border-bottom: 1px solid #dddddd;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
 }
 .tui-dialog > .tui-dlg-title-bar {
   -webkit-border-top-left-radius: 6px;
@@ -739,10 +740,9 @@ div.tui-mask,
   overflow: hidden;
   padding: 5px 20px;
   border: 0;
+  background-color: #f0f0f0;
   height: 40px;
   line-height: 40px;
-  font-weight: bold;
-  font-size: 16px;
   font-family: 'Microsoft YaHei';
 }
 .tui-dialog > .tui-dlg-title-bar .tui-dlg-close {
@@ -1272,7 +1272,7 @@ div.tui-mask,
   filter: alpha(opacity=50);
 }
 .tui-grid .tui-grid-line.tui-grid-line-selected {
-  background-color: #bbb;
+  background-color: #d8d8d8;
 }
 .tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
@@ -1427,7 +1427,7 @@ div.tui-mask,
   filter: alpha(opacity=50);
 }
 .tui-list .tui-grid-line.tui-grid-line-selected {
-  background-color: #bbb;
+  background-color: #d8d8d8;
 }
 .tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;

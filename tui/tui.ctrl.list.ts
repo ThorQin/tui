@@ -20,18 +20,17 @@ module tui.ctrl {
 		constructor(el?: HTMLElement) {
 			super();
 			var self = this;
-			if (el)
-				this.elem(el);
-			else
-				this.elem("div", Grid.CLASS);
 			this._grid = grid(el);
+			this[0] = this._grid[0];
 			this[0]._ctrl = this;
+			this.addClass(List.CLASS);
 			this._grid.noHead(true);
 			var columns = this._grid.columns();
 			if (columns === null) {
 				this._grid.columns([{
 					key: "value",
 					format: (info: IColumnFormatInfo) => {
+						var rowcheckable = this.rowcheckable();
 						var cell = info.cell.firstChild;
 						var isExpanded = !!info.row[this._expandColumnKey];
 						var hasCheckbox = (typeof info.row[this._checkedColumnKey] !== tui.undef);
@@ -39,6 +38,7 @@ module tui.ctrl {
 						var hasChild = !!info.row[this._childrenColumKey];
 						var isHalfChecked = (this.triState() && info.row[this._checkedColumnKey] === TriState.HalfChecked);
 						var spaceSpan = document.createElement("span");
+
 						spaceSpan.className = "tui-list-space";
 						var foldIcon = document.createElement("span");
 						foldIcon.className = "tui-list-fold";
@@ -56,7 +56,7 @@ module tui.ctrl {
 							}
 						}
 						
-						if (hasCheckbox) {
+						if (hasCheckbox && rowcheckable) {
 							var checkIcon = document.createElement("span");
 							checkIcon.className = "tui-list-checkbox";
 							if (isChecked) {
@@ -97,9 +97,39 @@ module tui.ctrl {
 				this.fire("resizecolumn", data);
 			});
 			this._grid.on("keydown", (data) => {
-				if (data["event"].keyCode === 32) {
+				var keyCode = data["event"].keyCode;
+				if (keyCode === 32) {
 					var activeRowIndex = self._grid.activerow();
 					if (activeRowIndex >= 0) {
+						data["event"].preventDefault();
+						data["event"].stopPropagation();
+					}
+				} else if (keyCode === 37 /*Left*/) {
+					var item = self._grid.activeItem();
+					if (item) {
+						var children = item[self._childrenColumKey];
+						if (children && children.length > 0 && item[self._expandColumnKey]) {
+							item[self._expandColumnKey] = false;
+							this.formatData();
+						} else {
+							if (item["__parent"]) {
+								self.activeItem(item["__parent"]);
+								self.scrollTo(self.activerow());
+								self.refresh();
+							}
+						}
+
+						data["event"].preventDefault();
+						data["event"].stopPropagation();
+					}
+				} else if (keyCode === 39 /*Right*/) {
+					var item = self._grid.activeItem();
+					if (item) {
+						var children = item[self._childrenColumKey];
+						if (children && children.length > 0 && !item[self._expandColumnKey]) {
+							item[self._expandColumnKey] = true;
+							this.formatData();
+						}
 						data["event"].preventDefault();
 						data["event"].stopPropagation();
 					}
@@ -111,11 +141,7 @@ module tui.ctrl {
 					var activeRowIndex = self._grid.activerow();
 					if (activeRowIndex >= 0) {
 						var row = self._grid.data().at(activeRowIndex);
-						row[this._checkedColumnKey] = !row[this._checkedColumnKey];
-						data["event"].preventDefault();
-						data["event"].stopPropagation();
-						this.fire("rowcheck", { event: event, checked: row[this._checkedColumnKey], row: row, index: activeRowIndex });
-						this.refresh();
+						this.onCheckRow(row, activeRowIndex, data["event"]);
 					}
 				}
 				this.fire("keyup", data);
@@ -123,6 +149,8 @@ module tui.ctrl {
 
 			if (!this.hasAttr("data-rowselectable"))
 				this.rowselectable(true);
+			if (!this.hasAttr("data-rowcheckable"))
+				this.rowcheckable(true);
 		}
 
 		private checkChildren(children: any[], checkState: TriState) {
@@ -194,7 +222,7 @@ module tui.ctrl {
 				return key;
 		}
 
-		private initTriState() {
+		private initData(useTriState: boolean = false) {
 			var self = this;
 			var data: any = this._grid.data();
 			if (typeof data.process === "function") {
@@ -202,25 +230,33 @@ module tui.ctrl {
 					var checkedCount: number = 0, uncheckedCount: number = 0;
 					for (var i = 0; i < input.length; i++) {
 						var row = input[i];
-						if (row[self._childrenColumKey] && row[self._childrenColumKey].length > 0) {
-							var state: TriState = checkChildren(row[self._childrenColumKey], row);
-							row[self._checkedColumnKey] = state;
+						if (useTriState) {
+							if (row[self._childrenColumKey] && row[self._childrenColumKey].length > 0) {
+								var state: TriState = checkChildren(row[self._childrenColumKey], row);
+								row[self._checkedColumnKey] = state;
+							}
+							if (row[self._checkedColumnKey] === TriState.HalfChecked) {
+								uncheckedCount++;
+								checkedCount++;
+							} else if (!!row[self._checkedColumnKey])
+								checkedCount++;
+							else
+								uncheckedCount++;
+						} else {
+							if (row[self._childrenColumKey] && row[self._childrenColumKey].length > 0) {
+								checkChildren(row[self._childrenColumKey], row);
+							}
 						}
-						if (row[self._checkedColumnKey] === TriState.HalfChecked) {
-							uncheckedCount++;
-							checkedCount++;
-						} else if (!!row[self._checkedColumnKey])
-							checkedCount++;
-						else
-							uncheckedCount++;
 						row["__parent"] = parentRow;
 					}
-					if (checkedCount === 0)
-						return TriState.Unchecked;
-					else if (uncheckedCount === 0)
-						return TriState.Checked;
-					else
-						return TriState.HalfChecked;
+					if (useTriState) {
+						if (checkedCount === 0)
+							return TriState.Unchecked;
+						else if (uncheckedCount === 0)
+							return TriState.Checked;
+						else
+							return TriState.HalfChecked;
+					}
 				}
 
 				function processTree(input: any[]): any[] {
@@ -229,6 +265,10 @@ module tui.ctrl {
 				}
 				data.process(processTree);
 			}
+		}
+
+		private initTriState() {
+			this.initData(true);
 		}
 
 		private formatData() {
@@ -263,6 +303,43 @@ module tui.ctrl {
 
 		activerow(rowIndex?: number): number {
 			return this._grid.activerow(rowIndex);
+		}
+
+		activeItem(rowItem?: any): any {
+			if (typeof rowItem !== tui.undef) {
+				var parent = rowItem["__parent"];
+				while (parent) {
+					parent[this._expandColumnKey] = true;
+					parent = parent["__parent"];
+				}
+				this.formatData();
+			} 
+			return this._grid.activeItem(rowItem);
+		}
+
+		activeRowByKey(key: string) {
+			var self = this;
+			var activeRow = null;
+			function checkChildren(children: any[]): boolean {
+				for (var i = 0; i < children.length; i++) {
+					if (children[i][self._keyColumKey] === key) {
+						activeRow = children[i];
+						return true;
+					}
+					var myChilren = children[i][self._childrenColumKey];
+					if (myChilren && myChilren.length > 0)
+						if (checkChildren(myChilren))
+							return true;
+				}
+			}
+			var data: ArrayProvider = <ArrayProvider>this._grid.data();
+			if (typeof data.src === "function") {
+				if (checkChildren(data.src())) {
+					return this.activeItem(activeRow);
+				} else
+					return this.activeItem(null);
+			} else
+				return null;
 		}
 
 		private doCheck(keys: any[], checkState: TriState) {
@@ -356,6 +433,23 @@ module tui.ctrl {
 			return this._grid.rowselectable(val);
 		}
 
+		rowcheckable(): boolean;
+		rowcheckable(val: boolean): List;
+		rowcheckable(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-rowcheckable", val);
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-rowcheckable");
+		}
+
+		consumeMouseWheelEvent(): boolean;
+		consumeMouseWheelEvent(val: boolean): Grid;
+		consumeMouseWheelEvent(val?: boolean): any {
+			return this._grid.consumeMouseWheelEvent(val);
+		}
+
 		triState(): boolean;
 		triState(val: boolean): List;
 		triState(val?: boolean): any {
@@ -393,9 +487,17 @@ module tui.ctrl {
 				this._expandColumnKey = this.columnKey("expand");
 				if (this.triState())
 					this.initTriState();
+				else
+					this.initData();
 				this.formatData();
 			}
 			return ret;
+		}
+
+		lineHeight() {
+			if (!this._grid)
+				return 0;
+			return this._grid.lineHeight();
 		}
 
 		refresh() {

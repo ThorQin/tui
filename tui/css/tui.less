@@ -429,6 +429,8 @@ div.tui-mask {
 	}
 }
 
+
+
 // Popup Control
 .tui-popup {
 	display:inline-block;
@@ -438,11 +440,11 @@ div.tui-mask {
 	padding:0px;
 	outline:none;
 	z-index:@popupLayer;
-	.shadow(1px, 2px, 7px, rgba(0,0,0,0.1));
+	.shadow(1px, 2px, 7px, rgba(0,0,0,0.2));
 	.border-radius(4px);
 	border: 1px solid #c0c0c0;
 	background-color: #fff;
-	.tui-calendar {
+	.tui-calendar,.tui-list {
 		border:none;
 		outline:none;
 	}
@@ -559,28 +561,35 @@ div.tui-mask {
 	}
 }
 
+.tui-input-select-bar {
+	padding:5px;
+	font-size:14px;
+	border-top: 1px dotted @borderColor;
+	text-align:center;
+}
+
 
 .tui-dialog-mask:extend(div.tui-mask) {
-	background-color:#444;
+	background-color:#888;
 	.opacity(0.5);
 	z-index:@dialogLayer;
 }
 .tui-dialog {
 	@radius: 6px;
-	@lineColor: #ddd;
+	@lineColor: #e0e0e0;
 	@captionHeight: 40px;
 	@backColor:#fcfcfc;
 
-	.tui-fadein;
+	//.tui-fadein;
 
 	outline:none;
 	display:block;
 	position:fixed;
 	background-color:white;
-	.border-radius(@radius);
+	//.border-radius(@radius);
 	min-width:340px;
-	//border:1px solid @lineColor;
-	.shadow(0px, 1px, 10px, rgba(0,0,0,0.7));
+	border:1px solid @lineColor;
+	.shadow(0px, 1px, 30px, #777);
 	z-index:@dialogLayer;
 	> div {
 		padding:30px 20px;
@@ -594,10 +603,11 @@ div.tui-mask {
 		overflow:hidden;
 		padding:5px 20px;
 		border:0;
+		background-color:@captionColor;
 		height:@captionHeight;
 		line-height:@captionHeight;
-		font-weight:bold;
-		font-size:16px;
+		//font-weight:bold;
+		//font-size:16px;
 		font-family:'Microsoft YaHei';
 		.tui-dlg-close {
 			position:absolute;
@@ -1053,7 +1063,7 @@ div.tui-mask {
 		}
 	}
 	.tui-grid-line.tui-grid-line-selected {
-		background-color:#bbb;
+		background-color:#d8d8d8;
 		.tui-grid-cell {
 			&.tui-grid-sort-cell {
 				background-color:#bbb;
