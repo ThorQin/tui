@@ -425,7 +425,7 @@ module tui.ctrl {
 							if (!/[a-z]/.test(finalText) ||
 								!/[A-Z]/.test(finalText) ||
 								!/[0-9]/.test(finalText) ||
-								!/[~`!@#$%^&*()_\-+=\\\]\[{}:;"'/?,.<>|]/.test(finalText) ||
+								!/[\~\`\!\@\#\$\%\^\&\*\(\)\_\-\+\=\\\]\[\{\}\:\;\"\'\/\?\,\.\<\>\|]/.test(finalText) ||
 								finalText.length < 6) {
 								this._invalid = true;
 							}

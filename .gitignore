@@ -161,3 +161,6 @@ tui/css/tui.min.css
 tui/lang/*.map
 tui/lang/*.js
 
+/FinalRelease/Demo
+/FinalRelease/Scripts
+/FinalRelease/tui
