@@ -433,15 +433,22 @@ module tui {
 	}
 
 	export function focusWithoutScroll(target: HTMLElement) {
-		if (tui.ieVer > 0)
-			target.setActive();
-		else if (tui.ffVer > 0)
-			target.focus();
-		else {
-			var backup = tui.backupScrollPosition(target);
-			target.focus();
-			backup.restore();
-		}
+		setTimeout(function () {
+			if (tui.ieVer > 0) {
+				//if (tui.ieVer > 8)
+				//	target.setActive();
+				//else {
+				//	if (target !== document.activeElement)
+						target.setActive();
+				//}
+			} else if (tui.ffVer > 0)
+				target.focus();
+			else {
+				var backup = tui.backupScrollPosition(target);
+				target.focus();
+				backup.restore();
+			}
+		}, 0);
 	}
 
 	/**

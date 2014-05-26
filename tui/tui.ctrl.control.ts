@@ -3,6 +3,13 @@ module tui {
 	var _maskDiv: HTMLDivElement = document.createElement("div");
 	_maskDiv.className = "tui-mask";
 	_maskDiv.setAttribute("unselectable", "on");
+
+	var _tooltip: HTMLSpanElement = document.createElement("span");
+	_tooltip.className = "tui-tooltip";
+	_tooltip.setAttribute("unselectable", "on");
+
+	var _tooltipTarget: HTMLElement = null;
+
 	/**
 	 * Show a mask layer to prevent user drag or select document elements which don't want to be affected.
 	 * It's very useful when user perform a dragging operation.
@@ -21,6 +28,48 @@ module tui {
 		_maskDiv.style.cursor = "";
 		return _maskDiv;
 	}
+
+	export function showTooltip(target: HTMLElement, tooltip: string) {
+		if (target === _tooltipTarget || target === _tooltip)
+			return;
+		document.body.appendChild(_tooltip);
+		_tooltip.innerHTML = tooltip;
+		_tooltipTarget = target;
+		var pos = tui.fixedPosition(target);
+		_tooltip.style.left = pos.x + "px";
+		_tooltip.style.top = pos.y + 7 + target.offsetHeight + "px";
+	}
+
+	export function closeTooltip() {
+		if (_tooltip.parentNode)
+			_tooltip.parentNode.removeChild(_tooltip);
+		_tooltip.innerHTML = "";
+		_tooltipTarget = null;
+	}
+
+	export function whetherShowTooltip(target: HTMLElement) {
+		if (target === _tooltip)
+			return;
+		var obj = target;
+		while (obj) {
+			var tooltip = obj.getAttribute("data-tooltip");
+			if (tooltip) {
+				showTooltip(obj, tooltip);
+				return;
+			} else {
+				obj = obj.parentElement;
+			}
+		}
+		if (!obj)
+			closeTooltip();
+	}
+
+	export function whetherCloseTooltip(target: HTMLElement) {
+		if (target !== _tooltipTarget && target !== _tooltip) {
+			closeTooltip();
+		}
+	}
+
 }
 module tui.ctrl {
 	export class Control<T> extends EventObject {
@@ -360,6 +409,36 @@ module tui.ctrl {
 				return !this.isAttrTrue("unselectable");
 			}
 		}
+
+		ajaxForm(): string;
+		ajaxForm(txt?: string): T;
+		ajaxForm(txt?: string): any {
+			if (typeof txt === "string") {
+				this.attr("data-ajax-form", txt);
+				return this;
+			} else
+				return this.attr("data-ajax-form");
+		}
+
+		ajaxField(): string;
+		ajaxField(txt?: string): T;
+		ajaxField(txt?: string): any {
+			if (typeof txt === "string") {
+				this.attr("data-ajax-field", txt);
+				return this;
+			} else
+				return this.attr("data-ajax-field");
+		}
+
+		ajaxArray(): boolean;
+		ajaxArray(val?: boolean): T;
+		ajaxArray(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-ajax-array", val);
+				return this;
+			} else
+				return this.is("data-ajax-array");
+		}
 		
 		blur() {
 			var el = this.elem();
@@ -448,10 +527,23 @@ module tui.ctrl {
 		}
 	}
 
+
+	var checkTooltipTimeout = null;
 	var _hoverElement: any;
 	$(window.document).mousemove(function (e: any) {
 		_hoverElement = e.target || e.toElement;
+		
+		if (e.button === 0 && (e.which === 1 || e.which === 0)) {
+			if (checkTooltipTimeout)
+				clearTimeout(checkTooltipTimeout);
+			checkTooltipTimeout = setTimeout(function () {
+				whetherShowTooltip(_hoverElement);
+			}, 20);
+		} else {
+			console.log("btn:" + e.button + "which:" + e.which);
+		}
 	});
+	$(window).scroll(() => { closeTooltip(); });
 
 	$(window.document).ready(function () {
 		initCtrls(document);

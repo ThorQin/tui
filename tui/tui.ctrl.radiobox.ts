@@ -79,6 +79,21 @@ module tui.ctrl {
 				return this;
 			}	
 		}
+
+		value(): any;
+		value(val?: any): Checkbox;
+		value(val?: any): any {
+			if (typeof val !== tui.undef) {
+				this.attr("data-value", JSON.stringify(val));
+				return this;
+			} else {
+				val = this.attr("data-value");
+				if (val && this.checked())
+					return JSON.parse(val);
+				else
+					return null;
+			}
+		}
 	}
 
 	export function radiobox(param: HTMLElement): Radiobox;

@@ -6,6 +6,7 @@
 	<title>TUI library</title>
 	<link rel="stylesheet" href="../tui/css/tui.min.css" type="text/css" />
 	<link href="../Scripts/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<script src="../Scripts/json2.js"></script>
 	<!--[if lt IE 9]>
 		<script src="/tui/html5shiv.min.js"></script>
 	<![endif]-->
@@ -21,6 +22,7 @@
 	<script src="../tui/tui.ctrl.calendar.js"></script>
 	<script src="../tui/tui.upload.js"></script>
 	<script src="../tui/tui.ctrl.input.js"></script>
+	<script src="../tui/tui.ctrl.textarea.js"></script>
 	<script src="../tui/tui.ctrl.dialog.js"></script>
 	<script src="../tui/tui.ctrl.scrollbar.js"></script>
 	<script src="../tui/tui.ctrl.table.js"></script>
@@ -47,10 +49,13 @@
 				$("#info").append(tui.format("Change {0} ,ext: {1}, fileid: {2}!<br>", data.file, data.ext, data.response.fileId));
 			});
 
-			tui.on("btnValidate", function (e) {
-				$(".tui-input").each(function (index, elem) {
+			tui.on("btnVerify", function (e) {
+				$(".tui-input, .tui-textarea").each(function (index, elem) {
 					tui.ctrl.input(elem).validate();
 				});
+			});
+
+			tui.on("btnShowResource", function (e) {
 				var dlg = tui.ctrl.dialog();
 				dlg.showResource("dlgResource", "测试资源");
 			});
@@ -173,10 +178,6 @@
 			tui.ctrl.input("select1").data(result);
 			tui.ctrl.input("select2").data(another);
 
-			tui.debugElementPosition("#ttDiv");
-			$("#testd").mousedown(function () { alert("mousedown"); });
-			$("#testd").mouseup(function () { alert("click"); });
-			$("#testd").click(function () { alert("click");});
 		});
 	</script>
 	<style>
@@ -193,13 +194,11 @@
 	</style>
 </head>
 <body class="tui-container">
-
-	<div id="testd">haah</div>
-
 	<div class="tui-sidebar">
 		<div><a href="#showButton">按钮</a></div>
 		<div><a href="#showButtonGroup">按钮组</a></div>
 		<div><a href="#showCalendar">日历</a></div>
+		<div><a href="#showTooltip">工具提示</a></div>
 		<div><a href="#showInput">输入框</a></div>
 		<div><a href="#showDialog">对话框</a></div>
 		<div><a href="#showTable">常规表格</a></div>
@@ -234,6 +233,12 @@
 
 	<div class="tui-calendar"></div>
 
+
+	<hr>
+	<h2 id="showTooltip">工具提示</h2>
+
+	<p>这里演示工具提示，鼠标移动到<a style="border-bottom:3px double red;" data-tooltip="一个小小的工具提示">这里</a>可以看见效果。</p>
+	<b>使用</b>: 在任何标签上添加 data-tooltip="&lt;提示文字&gt;" 属性即可。
 	<hr>
 	<h2 id="showInput">输入框</h2>
 
@@ -246,9 +251,9 @@
 				data-validator='{"*any":"请输入密码","*password":"密码必须包含数字英文大小写和符号且不能小于6位"}'></div>
 		<div class="tui-input" data-type="calendar"
 				data-placeholder="请选择日期" data-validator="{'*any':'请选择日期'}"></div>
-		<div id="select1" class="tui-input" data-type="select"></div>
+		<div id="select1" data-placeholder="请选择项目" class="tui-input" data-type="select"></div>
 		<br>
-		<div id="select2" class="tui-input" data-type="multi-select"></div>
+		<div id="select2" data-placeholder="请选择项目" class="tui-input" data-type="multi-select"></div>
 		<div id="fileInput" class="tui-input" data-type="file"
 			 data-upload-url="upload.ashx" data-accept="image/png"
 			 data-placeholder="请选择文件" data-validator="{'.*\.png$':'请选择PNG文件'}"></div>
@@ -256,12 +261,16 @@
 				data-placeholder="请输入" data-icon="fa-search"></div>
 		<div class="tui-input" data-type="custom-select"
 				data-placeholder="请选择" data-icon="fa-user"></div>
+		<div class="tui-textarea" style="max-height:200px;" 
+			 data-placeholder="请输入一段文字描述" 
+			 data-validator="{'*any': '请输入文字内容'}"></div>
+		<a id="btnVerify" class="tui-button">输入校验</a>
 	</div>
 
 	<hr>
 	<h2 id="showDialog">对话框</h2>
 
-	<a id="btnValidate" class="tui-button">输入界面放入对话框</a>
+	<a id="btnShowResource" class="tui-button">输入界面放入对话框</a>
 	<a id="btninfo" class="tui-button">消息</a>
 	<a id="btnerr" class="tui-button">错误</a>
 	<a id="btnwarn" class="tui-button">警告</a>
@@ -313,7 +322,7 @@
 
 	<hr>
 	<h2 id="showGrid">数据网格</h2>
-	<div>这里给出了如果你有<b style="color:red">1千万条</b>记录，应该如何合理的进行展示，什么？你说翻页？算了吧，手指会断的。</div>
+	<div>这里给出了如果你有<b style="color:red">1千万条</b>记录，应该如何展示。使用翻页，手指会断的。</div>
 	<a id="btnGrid" class="tui-checkbox">水平滚动条</a><br>
 	<div id="gridTest"
 		class="tui-grid" style="display:inline-block;width:500px;height:300px;"
@@ -348,5 +357,7 @@
 			 style="display:inline-block;width:200px;height:300px;">
 		</div>
 	</div>
+
+	
 </body>
 </html>

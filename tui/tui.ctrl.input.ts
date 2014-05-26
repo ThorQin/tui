@@ -73,13 +73,6 @@ module tui.ctrl {
 
 			this.createTextbox();
 			
-			$(this[0]).on("focus", () => {
-				$(this[0]).addClass("tui-focus");
-			});
-			$(this[0]).on("blur", () => {
-				$(this[0]).removeClass("tui-focus");
-			});
-			
 			$(this._button).on("click", (e) => {
 				if (this.type() === "calendar") {
 					var pop = tui.ctrl.popup();
@@ -681,10 +674,11 @@ module tui.ctrl {
 				$(this._label).removeClass("tui-placeholder");
 			}
 			if (this._invalid) {
-				if (tui.ieVer > 0 && tui.ieVer < 9)
-					$(this._notify).attr("title", this._message);
-				else
-					$(this._notify).attr("data-warning", this._message);
+				//if (tui.ieVer > 0 && tui.ieVer < 9)
+				//	$(this._notify).attr("title", this._message);
+				//else
+				//	$(this._notify).attr("data-warning", this._message);
+				$(this._notify).attr("data-tooltip", this._message);
 				$(this._notify).css({
 					"display": "",
 					"right": (withBtn ? this._button.offsetWidth : 0) + "px"

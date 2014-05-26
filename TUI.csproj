@@ -30,7 +30,9 @@
     <TypeScriptCompile Include="tui\tui.ctrl.checkbox.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.control.ts" />
     <TypeScriptCompile Include="tui\tui.core.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.form.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.list.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.textarea.ts" />
     <TypeScriptCompile Include="tui\tui.dataprovider.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.grid.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.popup.ts" />
@@ -46,6 +48,7 @@
     <Content Include="tui\css\tui.less" />
     <Content Include="tui\css\awesome4.less" />
     <Content Include="Demo\upload.ashx" />
+    <Content Include="FinalRelease\build.bat" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

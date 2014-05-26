@@ -137,13 +137,38 @@ a:visited {
 a:hover {
   color: red;
 }
+.tui-tooltip {
+  padding: 4px 8px;
+  color: #ddd;
+  position: fixed;
+  max-width: 300px;
+  z-index: 2147483646;
+  background-color: #555;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
+}
+.tui-tooltip:before {
+  display: inline-block;
+  position: absolute;
+  content: " ";
+  width: 0;
+  height: 0;
+  left: 10px;
+  top: -14px;
+  border: 8px solid transparent;
+  border-bottom-color: #555;
+}
 .tui-sidebar {
   display: block;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
   border: 1px solid #cccccc;
-  background-color: #fafafa;
+  background-color: #fefefe;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -191,37 +216,37 @@ div.tui-mask,
   border-radius: 3px;
   text-decoration: none;
   color: #000;
-  background-color: #f3f3f3;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#f0f0f0');
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f5f5f5), to(#f0f0f0));
-  background-image: -webkit-linear-gradient(top, #f5f5f5, #f0f0f0);
-  background-image: -moz-linear-gradient(top, #f5f5f5, #f0f0f0);
-  background-image: -ms-linear-gradient(top, #f5f5f5, #f0f0f0);
-  background-image: -o-linear-gradient(top, #f5f5f5, #f0f0f0);
-  border-color: #dfdfdf;
+  background-color: #fdfdfd;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f4f4f4');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f4f4f4));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -moz-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -ms-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -o-linear-gradient(top, #ffffff, #f4f4f4);
+  border-color: #e3e3e3;
   border: 1px solid #cccccc;
   vertical-align: middle;
   text-align: center;
   min-width: 40px;
 }
 .tui-button:hover {
-  background-color: #f3f3f3;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0f0f0', endColorstr='#f5f5f5');
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#f5f5f5));
-  background-image: -webkit-linear-gradient(top, #f0f0f0, #f5f5f5);
-  background-image: -moz-linear-gradient(top, #f0f0f0, #f5f5f5);
-  background-image: -ms-linear-gradient(top, #f0f0f0, #f5f5f5);
-  background-image: -o-linear-gradient(top, #f0f0f0, #f5f5f5);
+  background-color: #fdfdfd;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f4f4f4', endColorstr='#ffffff');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f4f4f4), to(#ffffff));
+  background-image: -webkit-linear-gradient(top, #f4f4f4, #ffffff);
+  background-image: -moz-linear-gradient(top, #f4f4f4, #ffffff);
+  background-image: -ms-linear-gradient(top, #f4f4f4, #ffffff);
+  background-image: -o-linear-gradient(top, #f4f4f4, #ffffff);
 }
 .tui-button:active,
 .tui-button.tui-actived {
-  background-color: #dfdfdf;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#dfdfdf');
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#dfdfdf), to(#dfdfdf));
-  background-image: -webkit-linear-gradient(top, #dfdfdf, #dfdfdf);
-  background-image: -moz-linear-gradient(top, #dfdfdf, #dfdfdf);
-  background-image: -ms-linear-gradient(top, #dfdfdf, #dfdfdf);
-  background-image: -o-linear-gradient(top, #dfdfdf, #dfdfdf);
+  background-color: #e3e3e3;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e3e3e3', endColorstr='#e3e3e3');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#e3e3e3), to(#e3e3e3));
+  background-image: -webkit-linear-gradient(top, #e3e3e3, #e3e3e3);
+  background-image: -moz-linear-gradient(top, #e3e3e3, #e3e3e3);
+  background-image: -ms-linear-gradient(top, #e3e3e3, #e3e3e3);
+  background-image: -o-linear-gradient(top, #e3e3e3, #e3e3e3);
 }
 .tui-button:hover {
   color: #000;
@@ -627,7 +652,7 @@ div.tui-mask,
   top: 0;
   bottom: 0;
   cursor: pointer;
-  background-color: #f0f0f0;
+  background-color: #f4f4f4;
   -webkit-border-top-right-radius: 3px;
   -moz-border-top-right-radius: 3px;
   border-top-right-radius: 3px;
@@ -672,23 +697,6 @@ div.tui-mask,
 .tui-input > div:before {
   content: "\f071";
 }
-.tui-input > div[data-warning]:hover:after {
-  padding: 4px 8px;
-  color: #ddd;
-  position: absolute;
-  left: 0;
-  top: 100%;
-  white-space: nowrap;
-  z-index: 2147483646;
-  background-color: #555;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  -webkit-box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
-  box-shadow: 1px 2px 5px rgba(0, 0, 0, 0.2);
-  content: attr(data-warning);
-}
 .tui-input[data-type=select] > span:before,
 .tui-input[data-type=multi-select] > span:before {
   content: "\f078";
@@ -698,6 +706,83 @@ div.tui-mask,
 }
 .tui-input[data-type=file] > span:before {
   content: "\f114";
+}
+.tui-textarea {
+  margin: 2px;
+  display: block;
+  position: relative;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  outline: none;
+  width: 200px;
+  min-height: 64px;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+.tui-textarea .tui-placeholder {
+  color: #ccc;
+}
+.tui-textarea.tui-focus,
+.tui-textarea:focus {
+  border: 1px solid #71b2e6;
+  -webkit-box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+  -moz-box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+  box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+}
+.tui-textarea > textarea {
+  margin: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: none;
+  outline: none;
+  padding: 4px 8px;
+  padding-top: 4px;
+  background-color: transparent;
+  font-size: 14px;
+  font-family: 'Microsoft YaHei';
+  resize: none;
+  overflow: auto;
+}
+.tui-textarea > label {
+  display: inline-block;
+  padding: 4px 8px;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.tui-textarea > div {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 30px;
+  font-size: 14px;
+  position: absolute;
+  width: 34px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  cursor: default;
+  color: #feb000;
+  text-align: center;
+  background-color: #ffffff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.tui-textarea > div:before {
+  content: "\f071";
 }
 .tui-input-select-bar {
   padding: 5px;
@@ -724,23 +809,14 @@ div.tui-mask,
   z-index: 2147483644;
 }
 .tui-dialog > div {
-  padding: 30px 20px;
-  background-color: #fcfcfc;
-  border-top: 1px solid #e0e0e0;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 40px 20px;
+  background-color: #ffffff;
 }
 .tui-dialog > .tui-dlg-title-bar {
-  -webkit-border-top-left-radius: 6px;
-  -moz-border-top-left-radius: 6px;
-  border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
-  -moz-border-top-right-radius: 6px;
-  border-top-right-radius: 6px;
-  position: relative;
   overflow: hidden;
   padding: 5px 20px;
-  border: 0;
-  background-color: #f0f0f0;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f4f4f4;
   height: 40px;
   line-height: 40px;
   font-family: 'Microsoft YaHei';
@@ -763,7 +839,7 @@ div.tui-mask,
   border-radius: 3px;
 }
 .tui-dialog > .tui-dlg-title-bar .tui-dlg-close:hover {
-  background-color: #eee;
+  background-color: #e3e3e3;
 }
 .tui-dialog > .tui-dlg-title-bar .tui-dlg-close:before {
   display: inline-block;
@@ -776,16 +852,10 @@ div.tui-mask,
   content: "\f00d";
 }
 .tui-dialog > .tui-dlg-btn-bar {
-  -webkit-border-bottom-left-radius: 6px;
-  -moz-border-bottom-left-radius: 6px;
-  border-bottom-left-radius: 6px;
-  -webkit-border-bottom-right-radius: 6px;
-  -moz-border-bottom-right-radius: 6px;
-  border-bottom-right-radius: 6px;
   overflow: hidden;
   padding: 5px 20px;
-  border: 0;
-  background-color: #f0f0f0;
+  border-top: 1px solid #e0e0e0;
+  background-color: #f4f4f4;
   min-height: 40px;
   text-align: right;
 }
@@ -881,7 +951,7 @@ div.tui-mask,
   height: 16px;
   right: 0;
   bottom: 0;
-  background-color: #f0f0f0;
+  background-color: #f4f4f4;
 }
 .tui-scrollbar {
   font-size: 9px;
@@ -890,7 +960,7 @@ div.tui-mask,
   display: inline-block;
   position: relative;
   width: 16px;
-  background-color: #f0f0f0;
+  background-color: #f4f4f4;
   vertical-align: middle;
   cursor: default;
   -webkit-border-radius: 5px;
@@ -935,8 +1005,8 @@ div.tui-mask,
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   border-radius: 6px;
-  border-left: 3px solid #f0f0f0;
-  border-right: 3px solid #f0f0f0;
+  border-left: 3px solid #f4f4f4;
+  border-right: 3px solid #f4f4f4;
 }
 .tui-scrollbar .tui-scroll-thumb:hover,
 .tui-scrollbar .tui-scroll-thumb.tui-actived {
@@ -1001,8 +1071,8 @@ div.tui-mask,
   left: auto;
   right: auto;
   background-color: #bbbbbb;
-  border-top: 3px solid #f0f0f0;
-  border-bottom: 3px solid #f0f0f0;
+  border-top: 3px solid #f4f4f4;
+  border-bottom: 3px solid #f4f4f4;
   border-left: 0;
   border-right: 0;
 }
@@ -1053,7 +1123,7 @@ div.tui-mask,
   padding: 8px 8px;
 }
 .tui-table tr th {
-  background-color: #f0f0f0;
+  background-color: #f4f4f4;
   color: #000000;
   font-weight: normal;
 }
@@ -1200,7 +1270,7 @@ div.tui-mask,
 }
 .tui-grid .tui-grid-head {
   top: 0;
-  background-color: #f0f0f0;
+  background-color: #f4f4f4;
   -webkit-border-top-left-radius: 5px;
   -moz-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
@@ -1355,7 +1425,7 @@ div.tui-mask,
 }
 .tui-list .tui-grid-head {
   top: 0;
-  background-color: #f0f0f0;
+  background-color: #f4f4f4;
   -webkit-border-top-left-radius: 5px;
   -moz-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
