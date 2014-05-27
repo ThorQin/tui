@@ -429,16 +429,6 @@ module tui.ctrl {
 			} else
 				return this.attr("data-ajax-field");
 		}
-
-		ajaxArray(): boolean;
-		ajaxArray(val?: boolean): T;
-		ajaxArray(val?: boolean): any {
-			if (typeof val === "boolean") {
-				this.is("data-ajax-array", val);
-				return this;
-			} else
-				return this.is("data-ajax-array");
-		}
 		
 		blur() {
 			var el = this.elem();

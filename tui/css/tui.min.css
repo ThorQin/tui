@@ -137,6 +137,28 @@ a:visited {
 a:hover {
   color: red;
 }
+.tui-panel {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+  padding: 0px;
+  overflow: hidden;
+}
+.tui-panel[data-title]:before {
+  top: 0;
+  display: block;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #cccccc;
+  padding: 10px;
+  content: attr(data-title);
+}
 .tui-tooltip {
   padding: 4px 8px;
   color: #ddd;
@@ -1215,6 +1237,8 @@ div.tui-mask,
   -webkit-mask-image: -webkit-radial-gradient(circle, #ffffff, #000000);
   overflow: hidden;
   outline: none;
+  width: 500px;
+  height: 200px;
 }
 .tui-grid .tui-scrollbar {
   -webkit-border-radius: 0;
@@ -1370,6 +1394,8 @@ div.tui-mask,
   -webkit-mask-image: -webkit-radial-gradient(circle, #ffffff, #000000);
   overflow: hidden;
   outline: none;
+  width: 500px;
+  height: 200px;
 }
 .tui-list .tui-scrollbar {
   -webkit-border-radius: 0;
@@ -1568,6 +1594,8 @@ div.tui-mask,
   content: "\f14a";
 }
 *[data-hidden=true],
-.tui-hidden {
+.tui-hidden,
+.tui-form,
+.tui-form-agent {
   display: none;
 }

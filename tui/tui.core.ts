@@ -182,6 +182,20 @@ module tui {
 		return EventObject.prototype.fire.call(_eventObject, eventName, data);
 	}
 
+	export function parseBoolean(string) {
+		if (typeof string === tui.undef)
+			return false;
+		switch (String(string).toLowerCase()) {
+			case "true":
+			case "1":
+			case "yes":
+			case "y":
+				return true;
+			default:
+				return false;
+		}
+	}
+
 	export function toElement (html: string): Node {
 		var div = document.createElement('div');
 		div.innerHTML = html;

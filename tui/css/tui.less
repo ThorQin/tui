@@ -204,6 +204,24 @@ a {
 	}
 }
 
+.tui-panel {
+	.border-radius(@tableRadius);
+	border:1px solid @borderColor;
+	padding:0px;
+	overflow:hidden;
+	&[data-title] {
+		&:before {
+			top:0;
+			display:block;
+			.top-radius(@tableRadius);
+			background-color:@captionColor;
+			border-bottom:1px solid @borderColor;
+			padding:10px;
+			content:attr(data-title);
+		}
+	}
+}
+
 .tui-tooltip {
 	&:before {
 		display:inline-block;
@@ -1045,6 +1063,8 @@ div.tui-mask {
 	-webkit-mask-image: -webkit-radial-gradient(circle, white, black);
 	overflow:hidden;
 	outline:none;
+	width:500px;
+	height:200px;
 	
 	.tui-scrollbar {
 		.border-radius(0);
@@ -1211,6 +1231,7 @@ div.tui-mask {
 	}
 }
 
-*[data-hidden=true], .tui-hidden {
+
+*[data-hidden=true], .tui-hidden, .tui-form, .tui-form-agent {
 	display:none;
 }

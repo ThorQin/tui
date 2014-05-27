@@ -236,7 +236,7 @@ module tui.ctrl {
 			//this._textbox.scrollHeight
 
 			this._textbox.style.height = "";
-			var maxHeight = parseInt($(this[0]).css("max-height"));
+			var maxHeight = parseInt($(this[0]).css("max-height"), 10);
 			if (this._textbox.scrollHeight < maxHeight || isNaN(maxHeight)) {
 				this._textbox.style.overflow = "hidden";
 				$(this[0]).css("height", this._textbox.scrollHeight + "px");

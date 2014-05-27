@@ -151,6 +151,9 @@ module tui.ctrl {
 				this.rowselectable(true);
 			if (!this.hasAttr("data-rowcheckable"))
 				this.rowcheckable(true);
+			if (this._grid.data()) {
+				this.data(this._grid.data());
+			}
 		}
 
 		private checkChildren(children: any[], checkState: TriState) {
@@ -362,7 +365,7 @@ module tui.ctrl {
 				}
 			}
 			var data: ArrayProvider = <ArrayProvider>this._grid.data();
-			if (typeof data.src === "function") {
+			if (data && typeof data.src === "function") {
 				checkChildren(keys, data.src());
 				if (useTriState) {
 					this.initTriState();
@@ -400,7 +403,7 @@ module tui.ctrl {
 				}
 			}
 			var data: ArrayProvider = <ArrayProvider>this._grid.data();
-			if (typeof data.src === "function") {
+			if (data && typeof data.src === "function") {
 				checkChildren(data.src());
 			}
 			return checkedItems;

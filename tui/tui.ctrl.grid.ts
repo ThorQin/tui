@@ -221,7 +221,11 @@ module tui.ctrl {
 						self[0].setActive();
 				}
 			});
-			
+			var predefined: any = this.attr("data-data");
+			if (predefined)
+				predefined = eval("(" + predefined + ")");
+			if (predefined)
+				this.data(predefined);
 			this.refresh();
 		}
 
@@ -683,12 +687,13 @@ module tui.ctrl {
 		}
 
 		activeItem(rowItem?: any): any {
+			var data = this.myData();
 			if (typeof rowItem !== tui.undef) {
 				if (rowItem === null) {
 					this.activerow(null);
 				} else {
-					for (var i = 0; i < this._data.length(); i++) {
-						if (this._data.at(i) === rowItem) {
+					for (var i = 0; i < data.length(); i++) {
+						if (data.at(i) === rowItem) {
 							this.activerow(i);
 							break;
 						}
@@ -696,7 +701,7 @@ module tui.ctrl {
 				}
 			} 
 			if (this._activerow !== null) {
-				return this._data.at(this._activerow);
+				return data.at(this._activerow);
 			} else
 				return null;
 		}
@@ -862,6 +867,26 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.is("data-resizable");
+		}
+
+		/**
+		 * Used for support form control
+		 */
+		value(): any[];
+		value(data: tui.IDataProvider): Grid;
+		value(data: any[]): Grid;
+		value(data: { data: any[]; head?: string[]; length?: number; }): Grid;
+		value(data?: any): any {
+			if (data) {
+				return this.data(data);
+			} else {
+				var result = [];
+				var dt = this.data();
+				for (var i = 0; i < dt.length(); i++) {
+					result.push(dt.at(i));
+				}
+				return result;
+			}
 		}
 
 		data(): tui.IDataProvider;

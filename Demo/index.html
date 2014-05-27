@@ -11,6 +11,12 @@
 		<script src="/tui/html5shiv.min.js"></script>
 	<![endif]-->
 	<script src="../Scripts/jquery-1.11.0.js"></script>
+	<link rel="stylesheet" href="../Scripts/CodeMirror/codemirror.css">
+	<script src="../Scripts/CodeMirror/codemirror.js"></script>
+	<script src="../Scripts/CodeMirror/mode/xml/xml.js"></script>
+	<script src="../Scripts/CodeMirror/mode/javascript/javascript.js"></script>
+	<script src="../Scripts/CodeMirror/mode/css/css.js"></script>
+	<script src="../Scripts/CodeMirror/mode/htmlmixed/htmlmixed.js"></script>
 	<!--#TUI BEGIN#-->
 	<script src="../tui/tui.core.js"></script>
 	<script src="../tui/tui.time.js"></script>
@@ -35,6 +41,22 @@
 	<script>
 		//tui.lang = "zh-cn";
 		$(function () {
+			var mixedMode = {
+				name: "htmlmixed",
+				scriptTypes: [{
+					matches: /\/x-handlebars-template|\/x-mustache/i,
+					mode: null
+				}]
+			};
+			var editor = CodeMirror.fromTextArea(
+				document.getElementById("formCode"), {
+				mode: mixedMode,
+				tabMode: "indent",
+				lineNumbers: true,
+				readOnly: true
+			});
+
+
 			tui.on("btnTest btnB btnA", function (e) {
 				$("#info").append(e.name + " action fired!<br>");
 				var pop = tui.ctrl.popup();
@@ -50,7 +72,7 @@
 			});
 
 			tui.on("btnVerify", function (e) {
-				$(".tui-input, .tui-textarea").each(function (index, elem) {
+				$("#dlgResource .tui-input, #dlgResource .tui-textarea").each(function (index, elem) {
 					tui.ctrl.input(elem).validate();
 				});
 			});
@@ -79,77 +101,17 @@
 				}, 1000);
 			});
 
-			var result = [
-				{key:1, value: "这是一个条目1", checked: false },
-				{
-					key: 2, value: "这是一个条目2", checked: false,
-					children: [
-						{ key: 3, value: "这是一个条目3", checked: false },
-						{ key: 4, value: "这是一个条目4", checked: false },
-						{ key: 5, value: "这是一个条目5", checked: false },
-						{
-							key: 6,
-							value: "这是一个条目6", checked: false,
-							expand:true,
-							children: [
-								{ key: 7, value: "这是一个条目7", checked: false },
-								{ key: 8, value: "这是一个条目8", checked: false },
-								{ key: 9, value: "这是一个条目9", checked: false },
-								{ key: 10, value: "这是一个条目10", checked: false },
-								{ key: 11, value: "这是一个条目11", checked: false }
-							]
-						},
-						{ key: 12, value: "这是一个条目12", checked: false }
-					]
-				},
-				{
-					key: 13,
-					value: "这是一个条目13", checked: false,
-					children: [
-						{ key: 14, value: "这是一个条目14", checked: false },
-						{ key: 15, value: "这是一个条目15", checked: false }
-					]
-				},
-				{
-					key: 16,
-					value: "这是一个条目16", checked: false,
-					children: [
-						{
-							key: 17,
-							value: "这是一个条目17", checked: false,
-							children: [
-								{ key: 18, value: "这是一个条目18", checked: false },
-								{ key: 19, value: "这是一个条目19", checked: false }
-							]
-						},
-						{
-							key: 20,
-							value: "这是一个条目20", checked: false,
-							children: [
-								{ key: 21, value: "这是一个条目21", checked: false },
-								{ key: 22, value: "这是一个条目22", checked: false }
-							]
-						}
-					]
-				},
-				{ key: 23, value: "这是一个条目23", checked: false },
-				{ key: 24, value: "这是一个条目24", checked: false },
-				{ key: 25, value: "这是一个条目25", checked: false }
-			];
-
-			function buildRows(index, length) {
-				var result = [];
-				for (var i = 0; i < length; i++) {
-					result.push([index + i, 'col b', 'col c', 'col d']);
-				}
-				return result;
-			}
-
-			
 
 			var cursor = new tui.RemoteCursorProvider();
 			var sum = 0;
 			cursor.onquery(function (queryInfo) {
+				function buildRows(index, length) {
+					var result = [];
+					for (var i = 0; i < length; i++) {
+						result.push([index + i, 'col b', 'col c', 'col d']);
+					}
+					return result;
+				}
 				setTimeout(function () {
 					var info = {
 						data: buildRows(queryInfo.begin, queryInfo.cacheSize),
@@ -159,25 +121,14 @@
 					};
 					queryInfo.update(info);
 				}, 50);
-				console.log(sum++);
+				console.log("Request times: " + (sum++));
 			});
 			var grid = tui.ctrl.grid("gridTest").data(cursor);
+
+
 			tui.on("btnGrid", function (data) {
 				grid.hasHScroll(data.ctrl._ctrl.checked());
 			});
-
-			var another = tui.clone(result);
-			tui.ctrl.list("listdiv").data(result);
-			tui.ctrl.list("listdiv1").data(another);
-			tui.ctrl.list("listdiv2").data([
-				{ key: 1, value: "数据条目1" },
-				{ key: 2, value: "数据条目2" },
-				{ key: 3, value: "数据条目3" }
-			]);
-
-			tui.ctrl.input("select1").data(result);
-			tui.ctrl.input("select2").data(another);
-
 		});
 	</script>
 	<style>
@@ -192,6 +143,7 @@
 			width:200px;
 		}
 	</style>
+	
 </head>
 <body class="tui-container">
 	<div class="tui-sidebar">
@@ -204,6 +156,7 @@
 		<div><a href="#showTable">常规表格</a></div>
 		<div><a href="#showGrid">数据网格</a></div>
 		<div><a href="#showList">列表框</a></div>
+		<div><a href="#showForm">表单</a> <i style="color:red">(Feature)</i></div>
 	</div>
 	<h1>TUI Control library</h1>
 
@@ -251,9 +204,27 @@
 				data-validator='{"*any":"请输入密码","*password":"密码必须包含数字英文大小写和符号且不能小于6位"}'></div>
 		<div class="tui-input" data-type="calendar"
 				data-placeholder="请选择日期" data-validator="{'*any':'请选择日期'}"></div>
-		<div id="select1" data-placeholder="请选择项目" class="tui-input" data-type="select"></div>
+		<div id="select1" data-placeholder="请选择项目" class="tui-input"
+			 data-type="select"
+			 data-data="[
+				{key:1, value:'选项1', checked:false, children:[
+						{key:4, value:'选项4', checked: false },
+						{key:5, value:'选项5', checked: false },
+					]},
+				{key:2, value:'选项2', checked:false },
+				{key:3, value:'选项3', checked:false}
+			 ]"></div>
 		<br>
-		<div id="select2" data-placeholder="请选择项目" class="tui-input" data-type="multi-select"></div>
+		<div id="select2" data-placeholder="请选择项目" class="tui-input"
+			 data-type="multi-select" 
+			 data-data="[
+				{key:1, value:'选项1', checked:false, children:[
+						{key:4, value:'选项4', checked: false },
+						{key:5, value:'选项5', checked: false },
+					]},
+				{key:2, value:'选项2', checked:false },
+				{key:3, value:'选项3', checked:false}
+			 ]"></div>
 		<div id="fileInput" class="tui-input" data-type="file"
 			 data-upload-url="upload.ashx" data-accept="image/png"
 			 data-placeholder="请选择文件" data-validator="{'.*\.png$':'请选择PNG文件'}"></div>
@@ -322,17 +293,38 @@
 
 	<hr>
 	<h2 id="showGrid">数据网格</h2>
+	简单的数据表格，支持滚动，自动排序，改变列宽，自定义绘制特特色。<br><br>
+	<div id="gridDemo1"
+		 class="tui-grid" style="display:inline-block;width:500px;height:272px;"
+		 data-columns="[{'name':'姓名', 'sort':true, 'key': 0 },
+			{'name':'年龄', 'sort':true, 'key': 1 },
+			{'name':'性别', 'key': 2 },
+			{'name':'身高', 'key': 3 }]"
+		 data-data="[
+			['张三',29,'男',173],
+			 ['李四',23,'男',172],
+			 ['王五',15,'男',174],
+			 ['赵六',33,'男',176],
+			 ['薛丁山',20,'男',179],
+			 ['樊梨花',18,'男',172],
+			 ['薛仁贵',40,'男',182],
+			 ['薛平贵',40,'男',180]
+		 ]"
+		 data-resizable="true"
+		 data-rowselectable="true">
+	</div><br><br>
+
 	<div>这里给出了如果你有<b style="color:red">1千万条</b>记录，应该如何展示。使用翻页，手指会断的。</div>
 	<a id="btnGrid" class="tui-checkbox">水平滚动条</a><br>
 	<div id="gridTest"
-		class="tui-grid" style="display:inline-block;width:500px;height:300px;"
-		data-columns="[{'name':'序号列 1', 'sort':true, 'key': 0, 'width':200 },
-		{'name':'column 2', 'sort':true, 'key': 1 },
-		{'name':'column 2', 'sort':true, 'key': 2 },
-		{'name':'column 3', 'key': 3 }]"
-		data-resizable="true"
-		data-rowselectable="true"
-		data-has-hscroll="false">
+		 class="tui-grid" style="display:inline-block;width:500px;height:300px;"
+		 data-columns="[{'name':'序号列', 'key': 0, 'width':200 },
+		{'name':'其它列1', 'key': 1 },
+		{'name':'其它列2', 'key': 2 },
+		{'name':'其它列3', 'key': 3 }]"
+		 data-resizable="true"
+		 data-rowselectable="true"
+		 data-has-hscroll="false">
 	</div>
 
 	<hr>
@@ -340,24 +332,120 @@
 
 	<div style="display:inline-block;padding-right:20px;">
 		<div style="padding:10px;">三态列表框</div>
-		<div id="listdiv" class="tui-list" 
-			style="display:inline-block;width:200px;height:300px;"
-			data-tri-state="true">
+		<div id="listdiv" class="tui-list"
+			 style="display:inline-block;width:200px;height:300px;"
+			 data-data="[
+				{key:1, value:'选项1', checked:false, children:[
+						{key:4, value:'选项4', checked: false },
+						{key:5, value:'选项5', checked: false },
+					]},
+				{key:2, value:'选项2', checked:false },
+				{key:3, value:'选项3', checked:false}
+			 ]"
+			 data-tri-state="true">
 		</div>
 	</div>
 	<div style="display:inline-block;padding-right:20px;">
 		<div style="padding:10px;">非三态列表框</div>
 		<div id="listdiv1" class="tui-list"
-			 style="display:inline-block;width:200px;height:300px;">
+			 style="display:inline-block;width:200px;height:300px;"
+			 data-data="[
+				{key:1, value:'选项1', checked:false, children:[
+						{key:4, value:'选项4', checked: false },
+						{key:5, value:'选项5', checked: false },
+					]},
+				{key:2, value:'选项2', checked:false },
+				{key:3, value:'选项3', checked:false}
+			 ]">
 		</div>
 	</div>
 	<div style="display:inline-block;">
 		<div style="padding:10px;">普通列表框</div>
 		<div id="listdiv2" class="tui-list"
-			 style="display:inline-block;width:200px;height:300px;">
+			 style="display:inline-block;width:200px;height:300px;"
+			 data-data="[
+				{value:'选项1'},
+				{value:'选项2'},
+				{value:'选项3'}
+			 ]">
 		</div>
 	</div>
 
-	
+	<hr>
+	<h2 id="showForm">数据表单</h2>
+
+	<ul>
+		<li>
+			表单可以用在很多地方，数据的增删改查都可以使用表单系统，TUI集成的表单和HTML原有的FORM并不相同，
+			TUI-FORM使用分散的组织结构，并不要求组成数据都写入表单标签之内。这样设计页面的时候可以单独把所有表单标签放在一起，
+			组成一个交互区，也就是说所有向服务器发起请求的地方都在一起，更加便于维护。同时这么做也增强了灵活性，原有的FORM只能提交内部的控件数据，如果多个表单共用一些控件的时候会比较不方便。
+		</li>
+		<li>TUI表单还实现了数据到JSON格式的自动序列化和反序列化功能，一个表单既可以完成数据的采集又可以作为返回数据的显示。</li>
+	</ul>
+	<div class="tui-panel" data-title="看下面的例子" style="margin:0 20px;">
+		<textarea id="formCode">
+输入查询条件：
+
+<div id="text1" class="tui-input" 
+	data-type="text"
+	data-validator="{'*any': '请输入文字内容'}"
+	data-ajax-form="queryForm"
+	data-ajax-field="name"></div>
+<div id="text2" class="tui-input"
+	data-type="text" 
+	data-ajax-form="queryForm"
+	data-ajax-field="age"></div>
+
+显示一个查询按钮，点击按钮会导致 'queryForm' 提交：
+
+<a class="tui-button" data-submit-form="queryForm">提交</a>
+
+查询结果显示：
+
+<div id="result" class="tui-grid" 
+	 data-columns="[
+		{'name':'姓名', 'key': 0 },
+		{'name':'年龄', 'key': 1 }
+	 ]"></div>
+
+下面定义表单:
+
+<span id="queryForm" class="tui-form"
+		data-action="http://someurl/someaction"
+		data-method="post"
+		data-target="result"></span>
+</textarea>
+	</div>
+	<p>
+		上面这段代码实现了输入两个查询条件，自动输入校验，提交查询，然后返回一个记录集并显示到数据网格中的过程。<br>
+		在表单 queryForm 中的data-target指定了返回的结果应该被显示到的目标对象，
+		这个对象可以是任何拥有 value 接口的 TUI 控件，或者是个普通的HTML标签，
+		如果是普通的HTML标签，则只是简单的把数据序列化为JSON字符串，
+		然后填充到 data-value 属性中。表单的data-target如果指定为另一个表单，则会把返回的数据分解到目标表单的各个控件中。<br>
+		这就是表单控件的一个特性：<b>无脚本AJAX提交</b>
+	</p>
+	<p>下面来做个测试：
+		</p>
+	姓名：<div id="text1" class="tui-input"
+		 data-type="text"
+		 data-validator="{'*any': '请输入文字内容'}"
+		 data-ajax-form="queryForm"
+		 data-ajax-field="name"></div>
+	年龄：<div id="text2" class="tui-input"
+		 data-type="text"
+		 data-ajax-form="queryForm"
+		 data-ajax-field="age"></div>
+	<a class="tui-button" data-submit-form="queryForm">提交</a>
+	<br><br>
+	<div id="result" class="tui-grid"
+		 data-columns="[
+		{'name':'姓名', 'key': 0 },
+		{'name':'年龄', 'key': 1 }
+	 ]" data-resizable="true" style="height:200px;width:600px;"></div>
+
+	<span id="queryForm" class="tui-form"
+		  data-action="http://someurl/someaction"
+		  data-method="post"
+		  data-target="result"></span>
 </body>
 </html>

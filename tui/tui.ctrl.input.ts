@@ -193,6 +193,14 @@ module tui.ctrl {
 				if (!this.disabled() && (this.type() === "text" || this.type() === "password" || this.type() === "custom-text"))
 					setTimeout(() => { this._textbox.focus(); }, 0);
 			});
+
+			if (this.type() === "select" || this.type() === "multi-select") {
+				var predefined: any = this.attr("data-data");
+				if (predefined)
+					predefined = eval("(" + predefined + ")");
+				if (predefined)
+					this.data(predefined);
+			}
 			this.refresh();
 		}
 

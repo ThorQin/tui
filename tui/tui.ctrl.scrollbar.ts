@@ -231,7 +231,7 @@ module tui.ctrl {
 					this.refresh();
 				return this;
 			} else {
-				var val = parseInt(this.attr("data-total"));
+				var val = parseInt(this.attr("data-total"), 10);
 				if (val === null || isNaN(val))
 					return 0;
 				else
@@ -252,7 +252,7 @@ module tui.ctrl {
 				this.refresh();
 				return this;
 			} else {
-				var val = parseInt(this.attr("data-value"));
+				var val = parseInt(this.attr("data-value"), 10);
 				if (val === null || isNaN(val))
 					return 0;
 				else
@@ -276,7 +276,7 @@ module tui.ctrl {
 					this.refresh();
 				return this;
 			} else {
-				var val = parseInt(this.attr("data-step"));
+				var val = parseInt(this.attr("data-step"), 10);
 				if (val === null || isNaN(val))
 					return this.total() > 0 ? 1 : 0;
 				else
@@ -300,7 +300,7 @@ module tui.ctrl {
 					this.refresh();
 				return this;
 			} else {
-				var val = parseInt(this.attr("data-page"));
+				var val = parseInt(this.attr("data-page"), 10);
 				if (val === null || isNaN(val))
 					return this.total() > 0 ? 1 : 0;
 				else
