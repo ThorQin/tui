@@ -310,12 +310,14 @@ module tui.ctrl {
 
 		activeItem(rowItem?: any): any {
 			if (typeof rowItem !== tui.undef) {
-				var parent = rowItem["__parent"];
-				while (parent) {
-					parent[this._expandColumnKey] = true;
-					parent = parent["__parent"];
+				if (rowItem) {
+					var parent = rowItem["__parent"];
+					while (parent) {
+						parent[this._expandColumnKey] = true;
+						parent = parent["__parent"];
+					}
+					this.formatData();
 				}
-				this.formatData();
 			} 
 			return this._grid.activeItem(rowItem);
 		}

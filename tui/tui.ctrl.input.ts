@@ -2,6 +2,7 @@
 /// <reference path="tui.upload.ts" />
 /// <reference path="tui.ctrl.popup.ts" />
 /// <reference path="tui.ctrl.calendar.ts" />
+/// <reference path="tui.ctrl.form.ts" />
 module tui.ctrl {
 	function validText(t) {
 		if (typeof t === tui.undef || t === null) {
@@ -72,8 +73,8 @@ module tui.ctrl {
 			this[0].appendChild(this._notify);
 
 			this.createTextbox();
-			
-			$(this._button).on("click", (e) => {
+
+			var openPopup = (e) => {
 				if (this.type() === "calendar") {
 					var pop = tui.ctrl.popup();
 					var calendar = tui.ctrl.calendar();
@@ -82,6 +83,7 @@ module tui.ctrl {
 						self.value(e["time"]);
 						pop.close();
 						self.focus();
+						this.doSubmit();
 					});
 					var calbox = document.createElement("div");
 					calbox.appendChild(calendar[0]);
@@ -92,6 +94,7 @@ module tui.ctrl {
 						self.value(tui.today());
 						pop.close();
 						self.focus();
+						this.doSubmit();
 					});
 					var todayLine = document.createElement("div");
 					todayLine.appendChild(todayLink);
@@ -105,21 +108,23 @@ module tui.ctrl {
 					list.consumeMouseWheelEvent(true);
 					list.rowcheckable(false);
 					list.on("rowclick", (data) => {
-						self.value([list.activeItem()]);
+						self.selectValue([list.activeItem()]);
 						pop.close();
 						self.focus();
+						this.doSubmit();
 					});
 					list.on("keydown", (data) => {
 						if (data["event"].keyCode === 13) { // Enter
-							self.value([list.activeItem()]);
+							self.selectValue([list.activeItem()]);
 							pop.close();
 							self.focus();
+							this.doSubmit();
 						}
 					});
 					list[0].style.width = self[0].offsetWidth + "px";
 					list.data(self._data);
 					pop.show(list[0], self._button, "Rb");
-					
+
 					var items = self._data ? self._data.length() : 0;
 					if (items < 1)
 						items = 1;
@@ -129,7 +134,7 @@ module tui.ctrl {
 					list[0].style.height = items * list.lineHeight() + 4 + "px";
 					list.refresh();
 					pop.refresh();
-					var val = this.value();
+					var val = this.selectValue();
 					if (val && val.length > 0) {
 						list.activeRowByKey(val[0].key);
 						list.scrollTo(list.activerow());
@@ -147,7 +152,7 @@ module tui.ctrl {
 					list[0].style.width = self[0].offsetWidth + "px";
 					list.data(self._data);
 					list.uncheckAllItems();
-					var keys = getKeys(this.value());
+					var keys = getKeys(this.selectValue());
 					list.checkItems(keys);
 					calbox.appendChild(list[0]);
 					var bar = document.createElement("div");
@@ -157,15 +162,17 @@ module tui.ctrl {
 					okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Accept");
 					okLink.href = "javascript:void(0)";
 					$(okLink).click(function (e) {
-						self.value(list.checkedItems());
+						self.selectValue(list.checkedItems());
 						pop.close();
 						self.focus();
+						this.doSubmit();
 					});
 					list.on("keydown", (data) => {
 						if (data["event"].keyCode === 13) { // Enter
-							self.value(list.checkedItems());
+							self.selectValue(list.checkedItems());
 							pop.close();
 							self.focus();
+							this.doSubmit();
 						}
 					});
 					bar.appendChild(okLink);
@@ -187,11 +194,17 @@ module tui.ctrl {
 				} else {
 					this.fire("btnclick", { "ctrl": this[0], "event": e });
 				}
-			});
+			};
+			$(this._button).on("click", openPopup);
 
-			$(this._label).on("mousedown", () => {
+			$(this._label).on("mousedown", (e) => {
 				if (!this.disabled() && (this.type() === "text" || this.type() === "password" || this.type() === "custom-text"))
 					setTimeout(() => { this._textbox.focus(); }, 0);
+				else if (this.type() === "select" || this.type() === "multi-select" || this.type() === "calendar") {
+					openPopup(e);
+				} else if (this.type() === "file") {
+
+				}
 			});
 
 			if (this.type() === "select" || this.type() === "multi-select") {
@@ -202,6 +215,14 @@ module tui.ctrl {
 					this.data(predefined);
 			}
 			this.refresh();
+		}
+
+		private doSubmit() {
+			var formId = this.submitForm();
+			if (formId) {
+				var form = tui.ctrl.form(formId);
+				form && form.submit();
+			}
 		}
 
 		private createTextbox() {
@@ -251,6 +272,11 @@ module tui.ctrl {
 						this.refresh();
 					}
 				}, 0);
+			});
+			$(this._textbox).keydown((e: any) => {
+				if (e.keyCode === 13) {
+					this.doSubmit();
+				}
 			});
 		}
 
@@ -430,6 +456,22 @@ module tui.ctrl {
 								finalText.length < 6) {
 								this._invalid = true;
 							}
+						} else if (k.substr(0, 8) === "*maxlen:") {
+							var imaxLen = parseFloat(k.substr(8));
+							if (isNaN(imaxLen))
+								throw new Error("Invalid validator: '*maxlen:...' must follow a number");
+							var ival = finalText.length;
+							if (ival > imaxLen) {
+								this._invalid = true;
+							}
+						} else if (k.substr(0, 8) === "*minlen:") {
+							var iminLen = parseFloat(k.substr(8));
+							if (isNaN(iminLen))
+								throw new Error("Invalid validator: '*iminLen:...' must follow a number");
+							var ival = finalText.length;
+							if (ival < iminLen) {
+								this._invalid = true;
+							}
 						} else if (k.substr(0,5) === "*max:") {
 							var imax = parseFloat(k.substr(5));
 							if (isNaN(imax))
@@ -438,7 +480,7 @@ module tui.ctrl {
 							if (isNaN(ival) || ival > imax) {
 								this._invalid = true;
 							}
-						} else if (k.substr(0, 4) === "*min:") {
+						} else if (k.substr(0, 5) === "*min:") {
 							var imin = parseFloat(k.substr(5));
 							if (isNaN(imin))
 								throw new Error("Invalid validator: '*min:...' must follow a number");
@@ -513,9 +555,9 @@ module tui.ctrl {
 		}
 
 		data(): tui.IDataProvider;
-		data(data: tui.IDataProvider): Grid;
-		data(data: any[]): Grid;
-		data(data: { data: any[]; head?: string[]; length?: number; }): Grid;
+		data(data: tui.IDataProvider): Input;
+		data(data: any[]): Input;
+		data(data: { data: any[]; head?: string[]; length?: number; }): Input;
 		data(data?: any): any {
 			if (data) {
 				var self = this;
@@ -539,6 +581,81 @@ module tui.ctrl {
 				return this;
 			} else
 				return this._data;
+		}
+
+
+		valueHasText(): boolean;
+		valueHasText(val: boolean): Input;
+		valueHasText(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-value-has-text", val);
+				return this;
+			} else
+				return this.is("data-value-has-text");
+		}
+
+		private valueToSelect(val: any): any {
+			if (this.valueHasText()) {
+				return val;
+			} else {
+				if (this.type() === "select") {
+					val = [val];
+				}
+				var newval = [];
+				if (val && val.length > 0) {
+					for (var i = 0; i < val.length; i++) {
+						newval.push({ key: val[i] });
+					}
+				}
+				return newval;
+			}
+		}
+
+		private selectToValue(val: any): any {
+			if (this.valueHasText()) {
+				return val;
+			} else {
+				if (this.type() === "select") {
+					if (val && val.length > 0)
+						return val[0].key;
+					else
+						return null;
+				} else {
+					var newval = [];
+					if (val && val.length > 0) {
+						for (var i = 0; i < val.length; i++) {
+							newval.push(val[i].key);
+						}
+					}
+					return newval;
+				}
+			}
+		}
+
+		selectValue(): any;
+		selectValue(val?: any): Input;
+		selectValue(val?: any): any {
+			var type = this.type();
+			if (typeof val !== tui.undef) {
+				if (type === "select" || type === "multi-select") {
+					if (val && typeof val.length === "number") {
+						this.attr("data-value", this.onlyKeyValue(val));
+						this.attr("data-text", this.formatSelectTextByData(val));
+						this._invalid = false;
+						this.refresh();
+					}
+				}
+				return this;
+			} else {
+				val = this.attr("data-value");
+				if (type === "select" || type === "multi-select") {
+					if (val === null) {
+						return [];
+					}
+					return eval("(" + val + ")");
+				} else
+					return null;
+			}
 		}
 
 		value(): any;
@@ -571,12 +688,7 @@ module tui.ctrl {
 					this._invalid = false;
 					this.refresh();
 				} else if (type === "select" || type === "multi-select") {
-					if (val && val.length >= 0) {
-						this.attr("data-value", this.onlyKeyValue(val));
-						this.attr("data-text", this.formatSelectTextByData(val));
-						this._invalid = false;
-						this.refresh();
-					}
+					this.selectValue(this.valueToSelect(val));
 				}
 				return this;
 			} else {
@@ -588,11 +700,9 @@ module tui.ctrl {
 				} else if (type === "file") {
 					if (val === null)
 						return null;
-					return eval("("+val+")");
-				} else if (type === "select" || type === "multi-select") {
-					if (val === null)
-						return [];
 					return eval("(" + val + ")");
+				} else if (type === "select" || type === "multi-select") {
+					return this.selectToValue(this.selectValue());
 				} else
 					return val;
 			}
@@ -618,6 +728,16 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.attr("data-placeholder");
+		}
+
+		submitForm(): string;
+		submitForm(formId: string): Button;
+		submitForm(formId?: string): any {
+			if (typeof formId === "string") {
+				this.attr("data-submit-form", formId);
+				return this;
+			} else
+				return this.attr("data-submit-form");
 		}
 
 		refresh() {

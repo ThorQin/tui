@@ -421,6 +421,14 @@ div.tui-mask,
 .tui-radiobox.tui-actived {
   background-color: #f5f5f5;
 }
+.tui-checkbox.tui-notify,
+.tui-radiobox.tui-notify {
+  color: red;
+}
+.tui-checkbox.tui-notify:hover,
+.tui-radiobox.tui-notify:hover {
+  color: red;
+}
 .tui-checkbox:before {
   display: inline-block;
   font-family: FontAwesome;

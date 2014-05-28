@@ -38,7 +38,7 @@ module tui.ctrl {
 				this.attr("data-method", val.toUpperCase());
 				return this;
 			} else
-				return this.attr("data-method");
+				return this.attr("data-method").toUpperCase();
 		}
 
 		/**
@@ -169,9 +169,9 @@ module tui.ctrl {
 				"timeout": this.timeout(),
 				"url": action,
 				"contentType": "application/json",
-				"data": data,
+				"data": (this.method() === "GET" ? data : JSON.stringify(data)),
 				"complete": function (jqXHR: JQueryXHR, status) {
-					if (!self.fire("complete", { jqXHR: jqXHR, status: status }) === false) {
+					if (self.fire("complete", { jqXHR: jqXHR, status: status }) !== false) {
 						if (status === "success") {
 							var target: any = self.target();
 							if (target) {
@@ -179,18 +179,18 @@ module tui.ctrl {
 								if (target) {
 									if (target._ctrl) {
 										if (typeof target._ctrl.value === "function")
-											target._ctrl.value(jqXHR.response);
+											target._ctrl.value(jqXHR["responseJSON"]);
 									} else {
 										$(target).attr("data-value", jqXHR.responseText);
 									}
 								}
 							}
 						} else {
-							tui.errbox(tui.str(status), tui.str("Failed"));
+							tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
 						}
 					}
 				},
-				"processData": (this.method() === "GET" ? true: false)
+				"processData": (this.method() === "GET" ? true : false)
 			});
 		}
 	}

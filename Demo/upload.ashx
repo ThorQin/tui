@@ -18,7 +18,7 @@ public class Handler : IHttpHandler {
     }
         
     public void ProcessRequest (HttpContext context) {
-        context.Response.ContentType = "text/html";
+		context.Response.ContentType = "text/html";
         JavaScriptSerializer json = new JavaScriptSerializer();
 		Result result;
 		result.fileId = "file1234";

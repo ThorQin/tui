@@ -1,4 +1,5 @@
 ﻿/// <reference path="tui.ctrl.button.ts" />
+/// <reference path="tui.ctrl.checkbox.ts" />
 module tui.ctrl {
 	export class Radiobox extends Control<Radiobox> implements IButton {
 		static CLASS: string = "tui-radiobox";
@@ -55,10 +56,14 @@ module tui.ctrl {
 			});
 		}
 
-		text(t?: string): string {
-			if (this[0])
-				return tui.elementText(this[0], t);
-			return null;
+		text(): string;
+		text(val?: string): Radiobox;
+		text(val?: string): any {
+			if (typeof val !== tui.undef) {
+				$(this[0]).html(val);
+				return this;
+			} else
+				return $(this[0]).html();
 		}
 
 		checked(): boolean;
@@ -69,31 +74,65 @@ module tui.ctrl {
 			} else {
 				val = (!!val);
 				if (val) {
-					var groupName = this.attr("data-group");
-					$("." + Radiobox.CLASS + "[data-group=" + groupName + "]").each(function () {
-						$(this).removeAttr("data-checked");
-						this.className = this.className;
-					});
+					var groupName = this.group();
+					if (groupName) {
+						$("." + Radiobox.CLASS + "[data-group='" + groupName + "']").each(function () {
+							$(this).removeAttr("data-checked");
+							this.className = this.className;
+						});
+					}
 				}
 				super.checked(val);
+				this.unNotifyGroup();
 				return this;
 			}	
 		}
 
+		group(): string;
+		group(val?: string): Radiobox;
+		group(val?: string): any {
+			if (typeof val !== tui.undef) {
+				this.attr("data-group", val);
+				return this;
+			} else
+				return this.attr("data-group");
+		}
+
 		value(): any;
-		value(val?: any): Checkbox;
+		value(val?: any): Radiobox;
 		value(val?: any): any {
 			if (typeof val !== tui.undef) {
 				this.attr("data-value", JSON.stringify(val));
 				return this;
 			} else {
 				val = this.attr("data-value");
-				if (val && this.checked())
-					return JSON.parse(val);
-				else
-					return null;
+				return JSON.parse(val);
 			}
 		}
+
+		private unNotifyGroup() {
+			var groupName = this.group();
+			if (groupName) {
+				$("." + Radiobox.CLASS + "[data-group='" + groupName + "']").each(function (index, elem) {
+					var ctrl = elem["_ctrl"];
+					if (ctrl && typeof ctrl.notify === "function") {
+						ctrl.notify(null);
+					}
+				});
+			}
+		}
+
+		notify(message: string): void {
+			if (typeof message === "string") {
+				this.attr("data-tooltip", message);
+				this.addClass("tui-notify");
+			} else if (message === null) {
+				this.attr("data-tooltip", "");
+				this.removeAttr("data-tooltip");
+				this.removeClass("tui-notify");
+			}
+		}
+
 	}
 
 	export function radiobox(param: HTMLElement): Radiobox;

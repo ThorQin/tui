@@ -35,6 +35,8 @@
 	<script src="../tui/tui.dataprovider.js"></script>
 	<script src="../tui/tui.ctrl.grid.js"></script>
 	<script src="../tui/tui.ctrl.list.js"></script>
+	<script src="../tui/tui.ctrl.form.js"></script>
+	<script src="../tui/tui.ctrl.formagent.js"></script>
 	<!--#TUI END#-->
 	<script src="../tui/lang/zh-cn.js"></script>
 	<script src="../tui/lang/en-us.js"></script>
@@ -50,11 +52,18 @@
 			};
 			var editor = CodeMirror.fromTextArea(
 				document.getElementById("formCode"), {
-				mode: mixedMode,
-				tabMode: "indent",
-				lineNumbers: true,
-				readOnly: true
-			});
+					mode: mixedMode,
+					tabMode: "indent",
+					lineNumbers: true,
+					readOnly: true
+				});
+			var editor1 = CodeMirror.fromTextArea(
+				document.getElementById("formCode1"), {
+					mode: mixedMode,
+					tabMode: "indent",
+					lineNumbers: true,
+					readOnly: true
+				});
 
 
 			tui.on("btnTest btnB btnA", function (e) {
@@ -101,6 +110,9 @@
 				}, 1000);
 			});
 
+			tui.ctrl.form("queryForm1").on("complete", function (e) {
+				document.body.scrollTop -= 580;
+			});
 
 			var cursor = new tui.RemoteCursorProvider();
 			var sum = 0;
@@ -133,77 +145,105 @@
 	</script>
 	<style>
 		.tui-container {
-			margin-left:300px;
-			padding-bottom:200px;
+			margin-left: 300px;
+			padding-bottom: 200px;
 		}
+
 		.tui-sidebar {
-			position:fixed;
-			left:40px;
-			top:40px;
-			width:200px;
+			position: fixed;
+			left: 40px;
+			top: 40px;
+			width: 200px;
+		}
+
+		hr {
+			margin: 50px 0;
 		}
 	</style>
-	
+
 </head>
 <body class="tui-container">
 	<div class="tui-sidebar">
+		<div><a href="#showLanguage">多语言支持</a></div>
 		<div><a href="#showButton">按钮</a></div>
+		<div><a href="#showCheck">单选、复选</a></div>
 		<div><a href="#showButtonGroup">按钮组</a></div>
 		<div><a href="#showCalendar">日历</a></div>
 		<div><a href="#showTooltip">工具提示</a></div>
-		<div><a href="#showInput">输入框</a></div>
+		<div><a href="#showInput">输入框</a> <i style="color:red" class="fa fa-star" data-tooltip="功能很多，需要详细了解。"></i></div>
 		<div><a href="#showDialog">对话框</a></div>
 		<div><a href="#showTable">常规表格</a></div>
-		<div><a href="#showGrid">数据网格</a></div>
-		<div><a href="#showList">列表框</a></div>
-		<div><a href="#showForm">表单</a> <i style="color:red">(Feature)</i></div>
+		<div><a href="#showGrid">数据网格</a> <i style="color:red" class="fa fa-star" data-tooltip="功能很多，需要详细了解。"></i></div>
+		<div><a href="#showList">列表框</a> <i style="color:red" class="fa fa-star" data-tooltip="功能很多，需要详细了解。"></i></div>
+		<div><a href="#showForm">表单</a> <i style="color:red" class="fa fa-star" data-tooltip="功能很多，需要详细了解。"></i></div>
+		<div><a href="#showFormAgent">表单代理</a> <i style="color:red" class="fa fa-star" data-tooltip="功能很多，需要详细了解。"></i></div>
 	</div>
-	<h1>TUI Control library</h1>
+	<h1>TUI Framework</h1>
+	<div style="margin:0 20px;">
+		TUI 是一个强大的 Web UI 框架，提供了一组方便使用的控件，还实现了无脚本前后台交互，这里只是一个简单的介绍，没有把所有功能都讲到，由于本库目前还只限于内部使用，故暂时没有API文档，有问题请联系：<a href="mailto:thor.qin@outlook.com">秦诺</a>
+	</div>
+	<hr>
+	<h2 id="showLanguage">多语言支持</h2>
+	<div style="margin:0 20px;">
+		实现了多语言框架，并随库携带 en-us 和 zh-cn 两套翻译。用户可以提供自己的翻译脚本，只要注册一下就可以了，使用 tui.str("originText") 就可以得到当前语言环境下对应的翻译结果，如果没有找到则返回原始内容，也可以手工设定语言区域，这样可以自己控制要显示的语言。
+	</div>
 
 	<hr>
 	<h2 id="showButton">按钮</h2>
+	<div style="margin:0 20px;">
+		<button id="btnFire" class="tui-button tui-primary"><i class="fa fa-camera-retro"></i> Click</button>
+		<button id="btnTest" class="tui-button"><i class="fa fa-check"></i> 复选框</button>
+		<button id="btnB" class="tui-button tui-danger">危险</button>
+		<a id="btnA" class="tui-button tui-warning">警告</a>
+		<span id="btnTest" class="tui-button tui-success">成功</span>
+	</div>
 
-	<button id="btnFire" class="tui-button tui-primary"><i class="fa fa-camera-retro"></i> Click</button>
-	<button id="btnTest" class="tui-button"><i class="fa fa-check"></i> 复选框</button>
-	<button id="btnB" class="tui-button tui-danger">危险</button>
-	<a id="btnA" class="tui-button tui-warning">警告</a>
-	<span id="btnTest" class="tui-button tui-success">成功</span>
-	<a class="tui-checkbox">选项1</a><a class="tui-checkbox">选项2</a>
-	<a class="tui-radiobox" data-group="abc">选项1</a><a class="tui-radiobox" data-group="abc">选项2</a>
-	
+
+
+	<hr>
+	<h2 id="showCheck">单选、复选</h2>
+	<div style="margin:0 20px;">
+		<a class="tui-checkbox">选项1</a><a class="tui-checkbox">选项2</a>
+		<a class="tui-radiobox" data-group="abc">选项1</a><a class="tui-radiobox" data-group="abc">选项2</a>
+	</div>
+
+
 	<hr>
 	<h2 id="showButtonGroup">按钮组</h2>
-
-	<div class="tui-btn-group">
-		<a class="tui-button"><i class="fa fa-list"></i> 列表</a>
-		<a class="tui-button"><i class="fa fa-font"></i></a>
-		<a class="tui-button"><i class="fa fa-italic"></i></a>
-		<a class="tui-button"><i class="fa fa-indent"></i></a>
+	<div style="margin:0 20px;">
+		<div class="tui-btn-group">
+			<a class="tui-button"><i class="fa fa-list"></i> 列表</a>
+			<a class="tui-button"><i class="fa fa-font"></i></a>
+			<a class="tui-button"><i class="fa fa-italic"></i></a>
+			<a class="tui-button"><i class="fa fa-indent"></i></a>
+		</div>
+	</div>
+	<hr>
+	<h2 id="showCalendar">日历</h2>
+	<div style="margin:0 20px;">
+		<div class="tui-calendar"></div>
 	</div>
 
 	<hr>
-	<h2 id="showCalendar">日历</h2>
-
-	<div class="tui-calendar"></div>
-
-
-	<hr>
 	<h2 id="showTooltip">工具提示</h2>
+	<div style="margin:0 20px;">
+		<p>这里演示工具提示，鼠标移动到<a style="border-bottom:3px double red;" data-tooltip="一个小小的工具提示">这里</a>可以看见效果。</p>
+		<b>使用</b>: 在任何标签上添加 data-tooltip="&lt;提示文字&gt;" 属性即可。
+	</div>
 
-	<p>这里演示工具提示，鼠标移动到<a style="border-bottom:3px double red;" data-tooltip="一个小小的工具提示">这里</a>可以看见效果。</p>
-	<b>使用</b>: 在任何标签上添加 data-tooltip="&lt;提示文字&gt;" 属性即可。
+
 	<hr>
 	<h2 id="showInput">输入框</h2>
-
-	<div id="dlgResource">
+	<div id="dlgResource" style="margin:0 20px;">
+		这里的文件上传已经实现了后台交互，只要指定后台接口地址就可以了，一旦选择文件完毕就已经完成了文件的上传，服务器会返回文件的ID，以后可以随表单提交该ID。<br>
 		<div class="tui-input"
-				data-type="text"
-				data-placeholder="用户名称"
-				data-validator="{'*any':'请输入用户名','*email':'必须是邮件格式'}"></div>
+			 data-type="text"
+			 data-placeholder="用户名称"
+			 data-validator="{'*any':'请输入用户名','*email':'必须是邮件格式'}"></div>
 		<div class="tui-input" data-type="password" data-placeholder="用户密码"
-				data-validator='{"*any":"请输入密码","*password":"密码必须包含数字英文大小写和符号且不能小于6位"}'></div>
+			 data-validator='{"*any":"请输入密码","*password":"密码必须包含数字英文大小写和符号且不能小于6位"}'></div>
 		<div class="tui-input" data-type="calendar"
-				data-placeholder="请选择日期" data-validator="{'*any':'请选择日期'}"></div>
+			 data-placeholder="请选择日期" data-validator="{'*any':'请选择日期'}"></div>
 		<div id="select1" data-placeholder="请选择项目" class="tui-input"
 			 data-type="select"
 			 data-data="[
@@ -216,7 +256,7 @@
 			 ]"></div>
 		<br>
 		<div id="select2" data-placeholder="请选择项目" class="tui-input"
-			 data-type="multi-select" 
+			 data-type="multi-select"
 			 data-data="[
 				{key:1, value:'选项1', checked:false, children:[
 						{key:4, value:'选项4', checked: false },
@@ -226,81 +266,92 @@
 				{key:3, value:'选项3', checked:false}
 			 ]"></div>
 		<div id="fileInput" class="tui-input" data-type="file"
-			 data-upload-url="upload.ashx" data-accept="image/png"
+			 data-upload-url="upload.ashx?" data-accept="image/png"
 			 data-placeholder="请选择文件" data-validator="{'.*\.png$':'请选择PNG文件'}"></div>
 		<div class="tui-input" data-type="custom-text"
-				data-placeholder="请输入" data-icon="fa-search"></div>
+			 data-placeholder="请输入" data-icon="fa-search"></div>
 		<div class="tui-input" data-type="custom-select"
-				data-placeholder="请选择" data-icon="fa-user"></div>
-		<div class="tui-textarea" style="max-height:200px;" 
-			 data-placeholder="请输入一段文字描述" 
+			 data-placeholder="请选择" data-icon="fa-user"></div>
+		<div class="tui-textarea" style="max-height:200px;"
+			 data-placeholder="请输入一段文字描述"
 			 data-validator="{'*any': '请输入文字内容'}"></div>
 		<a id="btnVerify" class="tui-button">输入校验</a>
 	</div>
 
+
+
+
 	<hr>
 	<h2 id="showDialog">对话框</h2>
+	<div style="margin:0 20px;">
+		<a id="btnShowResource" class="tui-button">输入界面放入对话框</a>
+		<a id="btninfo" class="tui-button">消息</a>
+		<a id="btnerr" class="tui-button">错误</a>
+		<a id="btnwarn" class="tui-button">警告</a>
+		<a id="btnask" class="tui-button">询问</a>
+		<a id="btnwait" class="tui-button">等待</a>
+	</div>
 
-	<a id="btnShowResource" class="tui-button">输入界面放入对话框</a>
-	<a id="btninfo" class="tui-button">消息</a>
-	<a id="btnerr" class="tui-button">错误</a>
-	<a id="btnwarn" class="tui-button">警告</a>
-	<a id="btnask" class="tui-button">询问</a>
-	<a id="btnwait" class="tui-button">等待</a>
+
 
 	<hr>
 	<h2 id="showTable">常规表格</h2>
-
-	<div class="tui-inline">
-		<table class="tui-table" style="width:700px" data-resizable="true">
-			<tr>
-				<th style="width:200px"><div>某个列1</div></th>
-				<th><div>某个列2</div></th>
-				<th><div>某个列3</div></th>
-				<th><div>某个列4</div></th>
-				<th><div>某个列5</div></th>
-			</tr>
-			<tr>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-			</tr>
-			<tr>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-			</tr>
-			<tr>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-			</tr>
-			<tr>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-				<td><div>一些表格数据</div></td>
-			</tr>
-		</table>
+	<div style="margin:0 20px;">
+		<div class="tui-inline">
+			<table class="tui-table" style="width:700px" data-resizable="true">
+				<tr>
+					<th style="width:200px"><div>某个列1</div></th>
+					<th><div>某个列2</div></th>
+					<th><div>某个列3</div></th>
+					<th><div>某个列4</div></th>
+					<th><div>某个列5</div></th>
+				</tr>
+				<tr>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+				</tr>
+				<tr>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+				</tr>
+				<tr>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+				</tr>
+				<tr>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+					<td><div>一些表格数据</div></td>
+				</tr>
+			</table>
+		</div>
 	</div>
+
+
+
 
 	<hr>
 	<h2 id="showGrid">数据网格</h2>
-	简单的数据表格，支持滚动，自动排序，改变列宽，自定义绘制特特色。<br><br>
-	<div id="gridDemo1"
-		 class="tui-grid" style="display:inline-block;width:500px;height:272px;"
-		 data-columns="[{'name':'姓名', 'sort':true, 'key': 0 },
+	<div style="margin:0 20px;">
+		简单的数据表格，支持滚动，自动排序，改变列宽，自定义绘制特特色。<br><br>
+		<div id="gridDemo1"
+			 class="tui-grid" style="display:inline-block;width:500px;height:272px;"
+			 data-columns="[{'name':'姓名', 'sort':true, 'key': 0 },
 			{'name':'年龄', 'sort':true, 'key': 1 },
 			{'name':'性别', 'key': 2 },
 			{'name':'身高', 'key': 3 }]"
-		 data-data="[
+			 data-data="[
 			['张三',29,'男',173],
 			 ['李四',23,'男',172],
 			 ['王五',15,'男',174],
@@ -310,31 +361,35 @@
 			 ['薛仁贵',40,'男',182],
 			 ['薛平贵',40,'男',180]
 		 ]"
-		 data-resizable="true"
-		 data-rowselectable="true">
-	</div><br><br>
+			 data-resizable="true"
+			 data-rowselectable="true">
+		</div><br><br>
 
-	<div>这里给出了如果你有<b style="color:red">1千万条</b>记录，应该如何展示。使用翻页，手指会断的。</div>
-	<a id="btnGrid" class="tui-checkbox">水平滚动条</a><br>
-	<div id="gridTest"
-		 class="tui-grid" style="display:inline-block;width:500px;height:300px;"
-		 data-columns="[{'name':'序号列', 'key': 0, 'width':200 },
+		<div>这里给出了如果你有<b style="color:red">1千万条</b>记录，应该如何展示。使用翻页，手指会断的。</div>
+		<a id="btnGrid" class="tui-checkbox">水平滚动条</a><br>
+		<div id="gridTest"
+			 class="tui-grid" style="display:inline-block;width:500px;height:300px;"
+			 data-columns="[{'name':'序号列', 'key': 0, 'width':200 },
 		{'name':'其它列1', 'key': 1 },
 		{'name':'其它列2', 'key': 2 },
 		{'name':'其它列3', 'key': 3 }]"
-		 data-resizable="true"
-		 data-rowselectable="true"
-		 data-has-hscroll="false">
+			 data-resizable="true"
+			 data-rowselectable="true"
+			 data-has-hscroll="false">
+		</div>
 	</div>
+
+
+
 
 	<hr>
 	<h2 id="showList">列表框</h2>
-
-	<div style="display:inline-block;padding-right:20px;">
-		<div style="padding:10px;">三态列表框</div>
-		<div id="listdiv" class="tui-list"
-			 style="display:inline-block;width:200px;height:300px;"
-			 data-data="[
+	<div style="margin:0 20px;">
+		<div style="display:inline-block;padding-right:20px;">
+			<div style="padding:10px;">三态列表框</div>
+			<div id="listdiv" class="tui-list"
+				 style="display:inline-block;width:200px;height:300px;"
+				 data-data="[
 				{key:1, value:'选项1', checked:false, children:[
 						{key:4, value:'选项4', checked: false },
 						{key:5, value:'选项5', checked: false },
@@ -342,14 +397,14 @@
 				{key:2, value:'选项2', checked:false },
 				{key:3, value:'选项3', checked:false}
 			 ]"
-			 data-tri-state="true">
+				 data-tri-state="true">
+			</div>
 		</div>
-	</div>
-	<div style="display:inline-block;padding-right:20px;">
-		<div style="padding:10px;">非三态列表框</div>
-		<div id="listdiv1" class="tui-list"
-			 style="display:inline-block;width:200px;height:300px;"
-			 data-data="[
+		<div style="display:inline-block;padding-right:20px;">
+			<div style="padding:10px;">非三态列表框</div>
+			<div id="listdiv1" class="tui-list"
+				 style="display:inline-block;width:200px;height:300px;"
+				 data-data="[
 				{key:1, value:'选项1', checked:false, children:[
 						{key:4, value:'选项4', checked: false },
 						{key:5, value:'选项5', checked: false },
@@ -357,95 +412,167 @@
 				{key:2, value:'选项2', checked:false },
 				{key:3, value:'选项3', checked:false}
 			 ]">
+			</div>
 		</div>
-	</div>
-	<div style="display:inline-block;">
-		<div style="padding:10px;">普通列表框</div>
-		<div id="listdiv2" class="tui-list"
-			 style="display:inline-block;width:200px;height:300px;"
-			 data-data="[
+		<div style="display:inline-block;">
+			<div style="padding:10px;">普通列表框</div>
+			<div id="listdiv2" class="tui-list"
+				 style="display:inline-block;width:200px;height:300px;"
+				 data-data="[
 				{value:'选项1'},
 				{value:'选项2'},
 				{value:'选项3'}
 			 ]">
+			</div>
 		</div>
 	</div>
 
+
+
+
 	<hr>
 	<h2 id="showForm">数据表单</h2>
-
-	<ul>
-		<li>
-			表单可以用在很多地方，数据的增删改查都可以使用表单系统，TUI集成的表单和HTML原有的FORM并不相同，
-			TUI-FORM使用分散的组织结构，并不要求组成数据都写入表单标签之内。这样设计页面的时候可以单独把所有表单标签放在一起，
-			组成一个交互区，也就是说所有向服务器发起请求的地方都在一起，更加便于维护。同时这么做也增强了灵活性，原有的FORM只能提交内部的控件数据，如果多个表单共用一些控件的时候会比较不方便。
-		</li>
-		<li>TUI表单还实现了数据到JSON格式的自动序列化和反序列化功能，一个表单既可以完成数据的采集又可以作为返回数据的显示。</li>
-	</ul>
-	<div class="tui-panel" data-title="看下面的例子" style="margin:0 20px;">
-		<textarea id="formCode">
-输入查询条件：
-
-<div id="text1" class="tui-input" 
-	data-type="text"
-	data-validator="{'*any': '请输入文字内容'}"
-	data-ajax-form="queryForm"
-	data-ajax-field="name"></div>
-<div id="text2" class="tui-input"
-	data-type="text" 
-	data-ajax-form="queryForm"
-	data-ajax-field="age"></div>
-
-显示一个查询按钮，点击按钮会导致 'queryForm' 提交：
-
-<a class="tui-button" data-submit-form="queryForm">提交</a>
-
-查询结果显示：
-
-<div id="result" class="tui-grid" 
-	 data-columns="[
-		{'name':'姓名', 'key': 0 },
-		{'name':'年龄', 'key': 1 }
-	 ]"></div>
-
-下面定义表单:
-
-<span id="queryForm" class="tui-form"
-		data-action="http://someurl/someaction"
-		data-method="post"
-		data-target="result"></span>
-</textarea>
+	<div style="margin:0 20px;">
+		<ul>
+			<li>
+				表单可以用在很多地方，数据的增删改查都可以使用表单系统，TUI集成的表单和HTML原有的FORM并不相同，
+				TUI-FORM使用分散的组织结构，并不要求组成数据都写入表单标签之内。这样设计页面的时候可以单独把所有表单标签放在一起，
+				组成一个交互区，也就是说所有向服务器发起请求的地方都在一起，更加便于维护。同时这么做也增强了灵活性，原有的FORM只能提交内部的控件数据，如果多个表单共用一些控件的时候会比较不方便。
+			</li>
+			<li>TUI表单还实现了数据到JSON格式的自动序列化和反序列化功能，一个表单既可以完成数据的采集又可以作为返回数据的显示。</li>
+		</ul>
 	</div>
-	<p>
-		上面这段代码实现了输入两个查询条件，自动输入校验，提交查询，然后返回一个记录集并显示到数据网格中的过程。<br>
-		在表单 queryForm 中的data-target指定了返回的结果应该被显示到的目标对象，
-		这个对象可以是任何拥有 value 接口的 TUI 控件，或者是个普通的HTML标签，
-		如果是普通的HTML标签，则只是简单的把数据序列化为JSON字符串，
-		然后填充到 data-value 属性中。表单的data-target如果指定为另一个表单，则会把返回的数据分解到目标表单的各个控件中。<br>
-		这就是表单控件的一个特性：<b>无脚本AJAX提交</b>
-	</p>
-	<p>下面来做个测试：
-		</p>
-	姓名：<div id="text1" class="tui-input"
-		 data-type="text"
-		 data-validator="{'*any': '请输入文字内容'}"
-		 data-ajax-form="queryForm"
-		 data-ajax-field="name"></div>
-	年龄：<div id="text2" class="tui-input"
-		 data-type="text"
-		 data-ajax-form="queryForm"
-		 data-ajax-field="age"></div>
-	<a class="tui-button" data-submit-form="queryForm">提交</a>
-	<br><br>
-	<div id="result" class="tui-grid"
-		 data-columns="[
-		{'name':'姓名', 'key': 0 },
-		{'name':'年龄', 'key': 1 }
-	 ]" data-resizable="true" style="height:200px;width:600px;"></div>
+		<div class="tui-panel" data-title="看下面的例子" style="margin:0 20px;">
+			<textarea id="formCode">
+				输入查询条件：
 
-	<span id="queryForm" class="tui-form"
-		  data-action="http://someurl/someaction"
-		  data-method="post"
-		  data-target="result"></span>
+				<div id="text1" class="tui-input"
+					 data-type="text"
+					 data-validator="{'*any': '请输入文字内容'}"
+					 data-ajax-form="queryForm"
+					 data-ajax-field="name"></div>
+				<div id="text2" class="tui-input"
+					 data-type="text"
+					 data-ajax-form="queryForm"
+					 data-ajax-field="age"></div>
+
+				显示一个查询按钮，点击按钮会导致 'queryForm' 提交：
+
+				<a class="tui-button" data-submit-form="queryForm">查询</a>
+
+				查询结果显示：
+
+				<div id="result" class="tui-grid"
+					 data-columns="[
+		{'name':'姓名', 'key': 'name' },
+		{'name':'年龄', 'key': 'age' },
+		{'name':'性别', 'key': 'sex' },
+		{'name':'身高', 'key': 'height' }
+	]"></div>
+
+				下面定义表单:
+
+				<span id="queryForm" class="tui-form"
+					  data-action="query.ashx"
+					  data-method="post"
+					  data-target="result"></span>
+			</textarea>
+		</div>
+		<div style="margin:0 20px;">
+			<p>
+				上面这段代码实现了输入两个查询条件，自动输入校验，提交查询，然后返回一个记录集并显示到数据网格中的过程。<br>
+				在表单 queryForm 中的data-target指定了返回的结果应该被显示到的目标对象，
+				这个对象可以是任何拥有 value 接口的 TUI 控件，或者是个普通的HTML标签，
+				如果是普通的HTML标签，则只是简单的把数据序列化为JSON字符串，
+				然后填充到 data-value 属性中。表单的data-target如果指定为另一个表单，则会把返回的数据分解到目标表单的各个控件中。<br>
+				这就是表单控件的一个特性：<b>无脚本交互</b>，表单甚至可以嵌套使用（不要互相嵌套，这是死循环），这样可以实现内容的分组和组合。
+			</p>
+			<p class="tui-panel" style="background:#e5ffe0;padding:10px;">
+				下面来看一下实际运行效果<br>（注意：如果你运行的是一个离线的页面，则没有后台代码支持，你可以把你得到的分发包解压缩后发布到IIS中再查看此页）：
+			</p>
+			姓名：<div id="text1" class="tui-input"
+					data-type="text"
+					data-ajax-form="queryForm"
+					data-ajax-field="name" style="width:150px;"></div>
+			年龄：<div id="text2" class="tui-input"
+					data-type="text"
+					data-ajax-form="queryForm"
+					data-ajax-field="age" style="width:80px;"></div>
+			性别：
+			<div id="sex" class="tui-input"
+				 data-type="select"
+				 data-ajax-form="queryForm"
+				 data-ajax-field="sex"
+				 data-validator="{'*any': '请选择性别'}"
+				 data-data="[
+			{key:'男', value:'男'},
+			{key:'女', value:'女'}
+		]" style="width:100px;"></div>
+			<a class="tui-button" data-submit-form="queryForm">查询</a>
+			<br><br>
+			<div id="result" class="tui-grid"
+				 data-columns="[
+				{'name':'姓名', 'key': 'name' },
+				{'name':'年龄', 'key': 'age' },
+				 {'name':'性别', 'key': 'sex' },
+				 {'name':'身高', 'key': 'height' }
+			 ]"
+				 data-resizable="true"
+				 style="height:200px;width:600px;"></div>
+
+			<span id="queryForm" class="tui-form"
+				  data-action="query.ashx?id=1"
+				  data-method="post"
+				  data-target="result"></span>
+		</div>
+
+
+
+		<hr>
+		<h2 id="showFormAgent">表单代理</h2>
+		<div style="margin:0 20px;">
+			使用上面演示的表单已经很方便了，但是在有些情况下，或者是还不够灵活，或者是无法实现某种需求，这时就要用到强大的表单代理控件了，这里列举了如下几种情况需要使用到表单代理：
+			<ul>
+				<li>当表单字段是一组单选或复选框时，此时由于表单字段对应的是单选组或复选组，所以简单的设置checkbox或radiobox的data-ajax-form和data-ajax-field属性是和需求不符的，这只会把改对象的值加入表单，而没有起到判定选择的作用。</li>
+				<li>当多个表单会复用某些控件的时候，这时由于一个控件只能设置一个ajax-form属性，所以只能隶属于一个表单，这时使用表单代理就可以映射该控件到不同的表单中。</li>
+				<li>当表单字段的值需要取自一些内置控件，或需要更为精细的脚本控制时，这时使用绑定事件的表单代理控件可以以最少的代码实现最大化的灵活性。</li>
+				<li>表单代理控件可以摆放到表单控件内部，这样代码看起来更加清晰，表单有哪些字段可以一目了然，并且放在里面的代理控件可以不用填写 data-ajax-form 属性，减少了一些代码。</li>
+			</ul>
+		</div>
+	<div class="tui-panel" data-title="还以上面的查询做例子改写一下" style="margin:0 20px;">
+		<textarea id="formCode1">
+
+			我们还借用上面的输入控件，只把性别改用RadioBox来实现：
+			<a id="gender1" class="tui-radiobox" data-group="gender" data-value="男">男</a>
+			<a id="gender2" class="tui-radiobox" data-group="gender" data-value="女">女</a>
+			<a class="tui-button" data-submit-form="queryForm1">查询</a>
+			<span id="queryForm1" class="tui-form"
+				  data-action="query.ashx"
+				  data-method="post"
+				  data-target="result">
+				<span class="tui-form-agent" data-ajax-field="name" data-target="text1"></span>
+				<span class="tui-form-agent" data-ajax-field="age" data-target="text2"></span>
+				<span class="tui-form-agent" data-ajax-field="sex" data-target="gender"
+					  data-is-group="true"
+					  data-group-validator="{'*min:1': '请选择性别'}"></span>
+			</span>
+		</textarea>
+	</div>
+	<div style="margin:0 20px;">
+		<div style="padding:10px;">看一下效果，由于提交后的目标还是上面的表格，所以您可能需要向上看：</div>
+		<a id="gender1" class="tui-radiobox" data-group="gender" data-value="男">男</a>
+		<a id="gender2" class="tui-radiobox" data-group="gender" data-value="女">女</a>
+		<a class="tui-button" data-submit-form="queryForm1">查询</a>
+		<span id="queryForm1" class="tui-form"
+			  data-action="query.ashx"
+			  data-method="post"
+			  data-target="result">
+			<span class="tui-form-agent" data-ajax-field="name" data-target="text1"></span>
+			<span class="tui-form-agent" data-ajax-field="age" data-target="text2"></span>
+			<span class="tui-form-agent" data-ajax-field="sex" data-target="gender"
+				  data-is-group="true"
+				  data-group-validator="{'*min:1': '请选择性别'}"></span>
+		</span>
+	</div>
 </body>
 </html>

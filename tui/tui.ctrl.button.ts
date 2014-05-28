@@ -1,4 +1,5 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.ctrl.form.ts" />
 module tui.ctrl {
 	export interface IButton {
 		text(t?: string): string;
@@ -19,8 +20,17 @@ module tui.ctrl {
 			this.exposeEvents("mousedown mouseup mousemove mouseenter mouseleave");
 
 			$(this[0]).on("click", (e) => {
-				this.fire("click", { "ctrl": this[0], "event": e });
-				tui.fire(this.id(), { "ctrl": this[0], "event": e });
+				if (this.fire("click", { "ctrl": this[0], "event": e }) === false)
+					return;
+
+				if (tui.fire(this.id(), { "ctrl": this[0], "event": e }) === false)
+					return;
+
+				var formId = this.submitForm();
+				if (formId) {
+					var form = tui.ctrl.form(formId);
+					form && form.submit();
+				}
 			});
 
 			$(this[0]).on("mousedown", (e) => {
@@ -62,6 +72,16 @@ module tui.ctrl {
 					tui.fire(this.id(), { "ctrl": this[0], "event": e });
 				}
 			});
+		}
+
+		submitForm(): string;
+		submitForm(formId: string): Button;
+		submitForm(formId?: string): any {
+			if (typeof formId === "string") {
+				this.attr("data-submit-form", formId);
+				return this;
+			} else
+				return this.attr("data-submit-form");
 		}
 
 		text(t?: string): string {
