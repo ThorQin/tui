@@ -34,6 +34,7 @@ module tui.ctrl {
 				if (e.keyCode === 13 && !isButton) {
 					e.preventDefault();
 					e.type = "click";
+					this.checked(!this.checked());
 					this.fire("click", { "ctrl": this[0], "event": e });
 					tui.fire(this.id(), { "ctrl": this[0], "event": e });
 				}
@@ -55,7 +56,7 @@ module tui.ctrl {
 		}
 
 		checked(): boolean;
-		checked(val: boolean): Radiobox;
+		checked(val: boolean): Checkbox;
 		checked(val?: boolean): any {
 			if (typeof val === tui.undef) {
 				return super.checked();

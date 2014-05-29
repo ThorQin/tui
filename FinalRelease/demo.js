@@ -20,5 +20,13 @@ function saveFile(fileName, content) {
 }
 
 var demo = loadFile("Demo\\index.html");
-demo = demo.replace(/<!--#TUI BEGIN#-->((?:.|\r|\n)*)<!--#TUI END#-->/gm, "<script src=\"../tui/tui.all.min.js\"></script>");
-saveFile("Demo\\index.html", demo);
+
+var begin = demo.indexOf("<!--#TUI BEGIN#-->");
+var end = demo.indexOf("<!--#TUI END#-->") + "<!--#TUI END#-->".length;
+var result = demo.substring(0, begin);
+result += "<script src=\"../tui/tui.all.min.js\"></script>";
+result += demo.substr(end);
+
+//demo = demo.replace(/<!--#TUI BEGIN#-->((?:.|\r|\n)*)<!--#TUI END#-->/mi, "<script src=\"../tui/tui.all.min.js\"></script>");
+
+saveFile("Demo\\index.html", result);

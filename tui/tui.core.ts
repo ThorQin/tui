@@ -50,7 +50,8 @@ module tui {
 	export var uuid = (function () {
 		var id = 0;
 		return function () {
-			return 'tid-' + id++;
+			var uid = 'tid-' + id++;
+			return uid;
 		};
 	})();
 
@@ -264,7 +265,7 @@ module tui {
 			$(anchor).mouseup(function (e) {
 				document.body.removeChild(anchor);
 			});
-			console.log(tui.format("x: {0}, y: {1}", pos.x, pos.y));
+			// console.log(tui.format("x: {0}, y: {1}", pos.x, pos.y));
 		});
 	}
 

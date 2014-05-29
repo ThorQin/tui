@@ -3,6 +3,11 @@ module tui {
 	var _maskDiv: HTMLDivElement = document.createElement("div");
 	_maskDiv.className = "tui-mask";
 	_maskDiv.setAttribute("unselectable", "on");
+	var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+	$(_maskDiv).on(mousewheelevt, function (ev) {
+		ev.stopPropagation();
+		ev.preventDefault();
+	});
 
 	var _tooltip: HTMLSpanElement = document.createElement("span");
 	_tooltip.className = "tui-tooltip";
@@ -367,7 +372,12 @@ module tui.ctrl {
 		checked(): boolean;
 		checked(val: boolean): T;
 		checked(val?: boolean): any {
-			return this.is("data-checked", val);
+			if (typeof val === "boolean") {
+				this.is("data-checked", val);
+				this.fire("check", { ctrl: this, checked: val });
+				return this;
+			} else
+				return this.is("data-checked");
 		}
 
 		actived(): boolean;
@@ -529,8 +539,6 @@ module tui.ctrl {
 			checkTooltipTimeout = setTimeout(function () {
 				whetherShowTooltip(_hoverElement);
 			}, 20);
-		} else {
-			console.log("btn:" + e.button + "which:" + e.which);
 		}
 	});
 	$(window).scroll(() => { closeTooltip(); });

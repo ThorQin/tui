@@ -5,6 +5,11 @@ module tui {
 		var _mask: HTMLDivElement = document.createElement("div");
 		_mask.className = "tui-dialog-mask";
 		_mask.setAttribute("unselectable", "on");
+		var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+		$(_mask).on(mousewheelevt, function (ev) {
+			ev.stopPropagation();
+			ev.preventDefault();
+		});
 
 		function reorder() {
 			if (_mask.parentNode !== null) {
@@ -167,12 +172,30 @@ module tui {
 					$(document).on("mousemove", onMove);
 					$(document).on("mouseup", onMoveEnd);
 				});
+				$(this[0]).on(mousewheelevt, function (ev) {
+					ev.stopPropagation();
+					ev.preventDefault();
+				});
+				$(window).resize(() => { this.limitSize(); });
 				// After initialization finished preform refresh now.
 				this._noRefresh = false;
+				this[0].style.left = "0px";
+				this[0].style.top = "0px";
+				this.limitSize();
 				this.refresh();
 				this[0].focus();
 				this.fire("open");
 				return this;
+			}
+
+			private limitSize() {
+				setTimeout(() => {
+					this._contentDiv.style.maxHeight = "";
+					this[0].style.maxWidth = _mask.offsetWidth + "px";
+					this[0].style.maxHeight = _mask.offsetHeight + "px";
+					this._contentDiv.style.maxHeight = this[0].clientHeight - this._titleDiv.offsetHeight - this._buttonDiv.offsetHeight - $(this._contentDiv).outerHeight() + $(this._contentDiv).height() + "px";
+					this.refresh();
+				}, 0);
 			}
 
 			insertButton(btn: DialogButton, index?: number): Button {

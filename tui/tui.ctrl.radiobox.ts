@@ -36,6 +36,7 @@ module tui.ctrl {
 				if (e.keyCode === 13 && !isButton) {
 					e.preventDefault();
 					e.type = "click";
+					this.checked(true);
 					this.fire("click", { "ctrl": this[0], "event": e });
 					tui.fire(this.id(), { "ctrl": this[0], "event": e });
 				}
@@ -76,9 +77,11 @@ module tui.ctrl {
 				if (val) {
 					var groupName = this.group();
 					if (groupName) {
-						$("." + Radiobox.CLASS + "[data-group='" + groupName + "']").each(function () {
-							$(this).removeAttr("data-checked");
-							this.className = this.className;
+						$("." + Radiobox.CLASS + "[data-group='" + groupName + "']").each(function (index, elem) {
+							var ctrl = elem["_ctrl"];
+							if (ctrl && typeof ctrl.checked === "function") {
+								ctrl.checked(false);
+							}
 						});
 					}
 				}
