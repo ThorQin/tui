@@ -176,7 +176,6 @@ module tui {
 					ev.stopPropagation();
 					ev.preventDefault();
 				});
-				$(window).resize(() => { this.limitSize(); });
 				// After initialization finished preform refresh now.
 				this._noRefresh = false;
 				this[0].style.left = "0px";
@@ -188,7 +187,7 @@ module tui {
 				return this;
 			}
 
-			private limitSize() {
+			limitSize() {
 				setTimeout(() => {
 					this._contentDiv.style.maxHeight = "";
 					this[0].style.maxWidth = _mask.offsetWidth + "px";
@@ -384,6 +383,7 @@ module tui {
 
 		$(window).resize(() => {
 			for (var i = 0; i < _dialogStack.length; i++) {
+				_dialogStack[i].limitSize();
 				_dialogStack[i].refresh();
 			}
 		});

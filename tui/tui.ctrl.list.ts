@@ -158,6 +158,8 @@ module tui.ctrl {
 
 		private checkChildren(children: any[], checkState: TriState) {
 			for (var i = 0; i < children.length; i++) {
+				if (!children[i])
+					continue;
 				children[i][this._checkedColumnKey] = checkState;
 				var myChildren = children[i][this._childrenColumKey];
 				myChildren && myChildren.length > 0 && this.checkChildren(myChildren, checkState);
@@ -169,6 +171,8 @@ module tui.ctrl {
 			var checkedCount: number = 0, uncheckedCount: number = 0;
 			for (var i = 0; i < children.length; i++) {
 				var row = children[i];
+				if (!row)
+					continue;
 				if (row[this._checkedColumnKey] === TriState.HalfChecked) {
 					uncheckedCount++;
 					checkedCount++;
@@ -233,6 +237,8 @@ module tui.ctrl {
 					var checkedCount: number = 0, uncheckedCount: number = 0;
 					for (var i = 0; i < input.length; i++) {
 						var row = input[i];
+						if (!row)
+							continue;
 						if (useTriState) {
 							if (row[self._childrenColumKey] && row[self._childrenColumKey].length > 0) {
 								var state: TriState = checkChildren(row[self._childrenColumKey], row);
@@ -281,6 +287,8 @@ module tui.ctrl {
 				function addChildren(input: any[], output: any[], level: number) {
 					for (var i = 0; i < input.length; i++) {
 						var row = input[i];
+						if (!row)
+							continue;
 						output.push(row);
 						row[self._levelColumnKey] = level;
 						if (!!row[self._expandColumnKey] &&
@@ -327,6 +335,8 @@ module tui.ctrl {
 			var activeRow = null;
 			function checkChildren(children: any[]): boolean {
 				for (var i = 0; i < children.length; i++) {
+					if (!children[i])
+						continue;
 					if (children[i][self._keyColumKey] === key) {
 						activeRow = children[i];
 						return true;
@@ -358,6 +368,8 @@ module tui.ctrl {
 			}
 			function checkChildren(keys: any[], children: any[]) {
 				for (var i = 0; i < children.length; i++) {
+					if (!children[i])
+						continue;
 					if (keys === null || map[children[i][self._keyColumKey]]) {
 						children[i][self._checkedColumnKey] = checkState;
 					}
@@ -397,6 +409,8 @@ module tui.ctrl {
 			var checkedItems = [];
 			function checkChildren(children: any[]) {
 				for (var i = 0; i < children.length; i++) {
+					if (!children[i])
+						continue;
 					if (!!children[i][self._checkedColumnKey])
 						checkedItems.push(children[i]);
 					var myChilren = children[i][self._childrenColumKey];

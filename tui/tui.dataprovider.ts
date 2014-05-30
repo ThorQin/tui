@@ -242,7 +242,7 @@ module tui {
 					this._firstQuery = true;
 					this._queryTimer = null;
 					this._queryCallback(queryInfo);
-				}, 50);
+				}, 100);
 			}
 		}
 

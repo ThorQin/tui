@@ -328,6 +328,8 @@ module tui.ctrl {
 			var map = {};
 			function buildMap(children: any[]): void {
 				for (var i = 0; i < children.length; i++) {
+					if (!children[i])
+						continue;
 					var k = children[i][self._keyColumKey];
 					map[k] = children[i][self._valueColumnKey];
 					var myChildren = children[i][self._childrenColumKey];

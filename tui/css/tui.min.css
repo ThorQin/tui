@@ -1218,9 +1218,6 @@ div.tui-mask,
   background-color: #f4f4f4;
   vertical-align: middle;
   cursor: default;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
 }
 .tui-scrollbar span {
   display: inline-block;
@@ -1257,9 +1254,6 @@ div.tui-mask,
   left: 1px;
   right: 1px;
   background-color: #bbbbbb;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
   border-left: 3px solid #f4f4f4;
   border-right: 3px solid #f4f4f4;
 }
