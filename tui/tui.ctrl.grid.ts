@@ -65,13 +65,9 @@ module tui.ctrl {
 		private _columnKeyMap: {} = null;
 
 		constructor(el?: HTMLElement) {
-			super();
+			super("div", Grid.CLASS, el);
 			var self = this;
-			if (el)
-				this.elem(el);
-			else
-				this.elem("div", Grid.CLASS);
-			this[0]._ctrl = this;
+
 			this.attr("tabIndex", "0");
 			this[0].innerHTML = "";
 			if (document.createStyleSheet) {
@@ -484,8 +480,13 @@ module tui.ctrl {
 		}
 
 		private drawCell(cell: HTMLSpanElement, contentSpan: HTMLSpanElement, col: GridColumn, value: any, row: any, rowIndex: number, colIndex: number) {
-			if (["center", "left", "right"].indexOf(col.headAlign) >= 0)
-				cell.style.textAlign = col.headAlign;
+			if (rowIndex >= 0) {
+				if (["center", "left", "right"].indexOf(col.align) >= 0)
+					cell.style.textAlign = col.align;
+			} else {
+				if (["center", "left", "right"].indexOf(col.headAlign) >= 0)
+					cell.style.textAlign = col.headAlign;
+			}
 			if (typeof value === "object" && value.nodeName) {
 				contentSpan.innerHTML = "";
 				contentSpan.appendChild(value);

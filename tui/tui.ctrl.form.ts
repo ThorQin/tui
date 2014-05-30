@@ -7,18 +7,27 @@ module tui.ctrl {
 			"success", "notmodified", "error", "timeout", "abort", "parsererror"
 		];
 		constructor(el?: HTMLElement) {
-			super();
-			if (el)
-				this.elem(el);
-			else
-				this.elem("span", Form.CLASS);
-			this[0]._ctrl = this;
+			super("span", Form.CLASS, el);
+
 			if (!this.hasAttr("data-method")) {
 				this.method("POST");
 			}
 			if (!this.hasAttr("data-timeout")) {
 				this.timeout(60000);
 			}
+			if (this.isAutoSubmit()) {
+				this.submit();
+			}
+		}
+
+		isAutoSubmit(): boolean;
+		isAutoSubmit(val: boolean): Form;
+		isAutoSubmit(val?: boolean): any {
+			if (typeof val !== tui.undef) {
+				this.is("data-auto-submit", !!val);
+				return this;
+			} else
+				return this.is("data-auto-submit");
 		}
 
 		action(): string;

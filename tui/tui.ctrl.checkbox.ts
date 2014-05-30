@@ -4,12 +4,8 @@ module tui.ctrl {
 		static CLASS: string = "tui-checkbox";
 
 		constructor(el?: HTMLElement) {
-			super();
-			if (el)
-				this.elem(el);
-			else
-				this.elem("a", Checkbox.CLASS);
-			this[0]._ctrl = this;
+			super("a", Checkbox.CLASS, el);
+
 			this.attr("tabIndex", "0");
 			this.exposeEvents("mousedown mouseup mousemove mouseenter mouseleave");
 			$(this[0]).on("click", (e) => {

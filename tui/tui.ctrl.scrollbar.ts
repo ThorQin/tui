@@ -7,14 +7,10 @@ module tui.ctrl {
 		private _btnHead: HTMLSpanElement = null;
 		private _btnFoot: HTMLSpanElement = null;
 		constructor(el?: HTMLElement) {
-			super();
+			super("span", Scrollbar.CLASS, el);
 			var self = this;
-			if (el)
-				this.elem(el);
-			else
-				this.elem("span", Scrollbar.CLASS);
+
 			this.attr("unselectable", "on");
-			this[0]._ctrl = this;
 			this[0].innerHTML = "";
 			this._btnHead = document.createElement("span");
 			this._btnHead.className = "tui-scroll-head";

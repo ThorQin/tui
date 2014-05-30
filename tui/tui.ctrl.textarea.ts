@@ -10,13 +10,8 @@ module tui.ctrl {
 		private _message: string = "";
 
 		constructor(el?: HTMLElement) {
-			super();
+			super("div", TextArea.CLASS, el);
 			var self = this;
-			if (el)
-				this.elem(el);
-			else
-				this.elem("div", TextArea.CLASS);
-			this[0]._ctrl = this;
 
 			this._label = document.createElement("label");
 			this._notify = document.createElement("div");

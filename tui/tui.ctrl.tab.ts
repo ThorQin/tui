@@ -6,12 +6,8 @@ module tui.ctrl {
 		private _buttons: Radiobox[] = [];
 
 		constructor(el?: HTMLElement) {
-			super();
-			if (el)
-				this.elem(el);
-			else
-				this.elem("div", Tab.CLASS);
-			this[0]._ctrl = this;
+			super("div", Tab.CLASS, el);
+
 			var removeList = [];
 			var activeIndex = 0;
 			for (var i = 0; i < this[0].childNodes.length; i++) {

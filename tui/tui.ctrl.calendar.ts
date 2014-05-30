@@ -22,13 +22,8 @@ module tui.ctrl {
 		}
 
 		constructor(el?: HTMLElement) {
-			super();
+			super("div", Calendar.CLASS, el);
 			var self = this;
-			if (el)
-				this.elem(el);
-			else
-				this.elem("div", Calendar.CLASS);
-			this[0]._ctrl = this;
 			this.attr("tabIndex", "0");
 			this.selectable(false);
 			this[0].innerHTML = "";

@@ -18,7 +18,7 @@ module tui.ctrl {
 		private _columnKeyMap: {} = null;
 
 		constructor(el?: HTMLElement) {
-			super();
+			super("div", List.CLASS, null);
 			var self = this;
 			this._grid = grid(el);
 			this[0] = this._grid[0];

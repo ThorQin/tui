@@ -9,12 +9,8 @@ module tui.ctrl {
 		static CLASS: string = "tui-button";
 
 		constructor(el?: HTMLElement) {
-			super();
-			if (el)
-				this.elem(el);
-			else
-				this.elem("a", Button.CLASS);
-			this[0]._ctrl = this;
+			super("a", Button.CLASS, el);
+
 			this.attr("tabIndex", "0");
 			this.selectable(false);
 			this.exposeEvents("mousedown mouseup mousemove mouseenter mouseleave");

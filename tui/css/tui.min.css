@@ -1376,14 +1376,13 @@ div.tui-mask,
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
   padding: 8px 8px;
+  color: #555555;
 }
-.tui-table tr th {
+.tui-table tr .tui-table-head {
   background-color: #f4f4f4;
   color: #000000;
   font-weight: normal;
-}
-.tui-table tr td {
-  color: #555555;
+  text-align: center;
 }
 .tui-table tr th:first-child,
 .tui-table tr td:first-child {

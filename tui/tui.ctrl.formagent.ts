@@ -3,12 +3,8 @@ module tui.ctrl {
 	export class FormAgent extends Control<FormAgent> {
 		static CLASS: string = "tui-form-agent";
 		constructor(el?: HTMLElement) {
-			super();
-			if (el)
-				this.elem(el);
-			else
-				this.elem("span", FormAgent.CLASS);
-			this[0]._ctrl = this;
+			super("span", FormAgent.CLASS, el);
+
 			var parent = this[0].parentElement;
 			while (parent) {
 				if ($(parent).hasClass("tui-form")) {
@@ -221,11 +217,11 @@ module tui.ctrl {
 		}
 	}
 
-	export function formagent(elem: HTMLElement): FormAgent;
-	export function formagent(elemId: string): FormAgent;
-	export function formagent(): FormAgent;
-	export function formagent(param?: any): FormAgent {
+	export function formAgent(elem: HTMLElement): FormAgent;
+	export function formAgent(elemId: string): FormAgent;
+	export function formAgent(): FormAgent;
+	export function formAgent(param?: any): FormAgent {
 		return tui.ctrl.control(param, FormAgent);
 	}
-	tui.ctrl.registerInitCallback(FormAgent.CLASS, formagent);
+	tui.ctrl.registerInitCallback(FormAgent.CLASS, formAgent);
 }

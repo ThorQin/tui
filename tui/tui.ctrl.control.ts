@@ -78,6 +78,17 @@ module tui {
 }
 module tui.ctrl {
 	export class Control<T> extends EventObject {
+
+		constructor(tagName: string, className: string, el?: HTMLElement) {
+			super();
+			if (typeof el === "object")
+				this.elem(el);
+			else
+				this.elem(tagName, className);
+			if (this[0])
+				this[0]._ctrl = this;
+		}
+
 		elem(el: HTMLElement): HTMLElement;
 		elem(nodeName: string, cls: string): HTMLElement;
 		elem(): HTMLElement;

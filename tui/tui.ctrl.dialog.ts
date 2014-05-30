@@ -65,7 +65,7 @@ module tui {
 			private _useEsc: boolean = true;
 
 			constructor() {
-				super();
+				super("div", Dialog.CLASS, null);
 			}
 
 			showContent(content: string, title?: string, buttons?: DialogButton[]) {

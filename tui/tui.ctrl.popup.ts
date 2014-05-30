@@ -25,7 +25,7 @@ module tui.ctrl {
 		private _childPopup: Popup = null;
 
 		constructor() {
-			super();
+			super("div", Popup.CLASS, null);
 		}
 
 		private getParentPopup(elem: HTMLElement): Popup {

@@ -118,16 +118,6 @@
 				tui.msgbox("<div style='width:2000px;height:2000px;line-height:2000px;text-align:center'>大内容</div>","测试大内容");
 			});
 
-			tui.ctrl.form("queryForm1").on("complete", function (e) {
-				var container;
-				if (document.body.scrollTop > 0)
-					container = document.body;
-				else if (document.documentElement.scrollTop > 0)
-					container = document.documentElement;
-				var destination = $("#queryTable").offset().top;
-				$(container).animate({ scrollTop: destination }, 200);
-			});
-
 			var cursor = new tui.RemoteCursorProvider();
 			var sum = 0;
 			cursor.onquery(function (queryInfo) {
@@ -339,39 +329,32 @@
 		<div class="tui-inline">
 			<table class="tui-table" style="width:700px" data-resizable="true">
 				<tr>
-					<th style="width:200px"><div>某个列1</div></th>
-					<th><div>某个列2</div></th>
-					<th><div>某个列3</div></th>
-					<th><div>某个列4</div></th>
-					<th><div>某个列5</div></th>
+					<th style="width:200px">某个列1</th>
+					<th>某个列2</th>
+					<th>某个列3</th>
+					<th>某个列4</th>
+					<th>某个列5</th>
 				</tr>
 				<tr>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
 				</tr>
 				<tr>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
 				</tr>
 				<tr>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-				</tr>
-				<tr>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
-					<td><div>一些表格数据</div></td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
+					<td>一些表格数据</td>
 				</tr>
 			</table>
 		</div>
@@ -571,6 +554,7 @@
 			使用上面演示的表单已经很方便了，但是在有些情况下，或者是还不够灵活，或者是无法实现某种需求，这时就要用到强大的表单代理控件了，这里列举了如下几种情况需要使用到表单代理：
 			<ul>
 				<li>当表单字段是一组单选或复选框时，此时由于表单字段对应的是单选组或复选组，所以简单的设置checkbox或radiobox的data-ajax-form和data-ajax-field属性是和需求不符的，这只会把改对象的值加入表单，而没有起到判定选择的作用。</li>
+				<li>当希望取值的属性不是默认的"value"属性时，这时候使用表单代理可以指定希望使用的属性。</li>
 				<li>当多个表单会复用某些控件的时候，这时由于一个控件只能设置一个ajax-form属性，所以只能隶属于一个表单，这时使用表单代理就可以映射该控件到不同的表单中。</li>
 				<li>当表单字段的值需要取自一些内置控件，或需要更为精细的脚本控制时，这时使用绑定事件的表单代理控件可以以最少的代码实现最大化的灵活性。</li>
 				<li>表单代理控件可以摆放到表单控件内部，这样代码看起来更加清晰，表单有哪些字段可以一目了然，并且放在里面的代理控件可以不用填写 data-ajax-form 属性，减少了一些代码。</li>
@@ -585,7 +569,7 @@
 <span id="queryForm1" class="tui-form"
 		data-action="query.ashx"
 		data-method="post"
-		data-target="result">
+		data-target="result1">
 	<span class="tui-form-agent" data-ajax-field="name" data-target="text1"></span>
 	<span class="tui-form-agent" data-ajax-field="age" data-target="text2"></span>
 	<span class="tui-form-agent" data-ajax-field="sex" data-target="gender"
@@ -595,20 +579,28 @@
 		</textarea>
 	</div>
 	<div style="margin:0 20px;">
-		<div style="padding:10px;">看一下效果，由于提交后的目标还是上面的表格，所以您可能需要向上看：</div>
+		<div style="padding:10px;">看一下效果，这次我们把结果集放到下面的普通表格中：</div>
 		<a id="gender1" class="tui-radiobox" data-group="gender" data-value="男">男</a>
 		<a id="gender2" class="tui-radiobox" data-group="gender" data-value="女">女</a>
 		<a class="tui-button" data-submit-form="queryForm1">查询</a>
 		<span id="queryForm1" class="tui-form"
 			  data-action="query.ashx"
 			  data-method="post"
-			  data-target="result">
+			  data-target="result1">
 			<span class="tui-form-agent" data-ajax-field="name" data-target="text1"></span>
 			<span class="tui-form-agent" data-ajax-field="age" data-target="text2"></span>
 			<span class="tui-form-agent" data-ajax-field="sex" data-target="gender"
 				  data-is-group="true"
 				  data-group-validator="{'*min:1': '请选择性别'}"></span>
 		</span>
+		<table id="result1" class="tui-table" style="width:500px;" data-resizable="true">
+			<tr>
+				<td data-key="name">姓名</td>
+				<td data-key="age">年龄</td>
+				<td data-key="sex">性别</td>
+				<td data-key="height">身高</td>
+			</tr>
+		</table>
 	</div>
 
 

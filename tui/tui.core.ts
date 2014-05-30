@@ -466,6 +466,15 @@ module tui {
 		}, 0);
 	}
 
+	export function scrollToElement(elem: HTMLElement) {
+		var obj = elem;
+		while (obj) {
+			var parent = obj.offsetParent;
+			$(parent).animate({ scrollTop: $(obj).offset().top }, 200);
+			obj = <HTMLElement>parent;
+		}
+	}
+
 	/**
 	 * Get IE version
 	 * @return {Number}

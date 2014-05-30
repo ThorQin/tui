@@ -53,13 +53,8 @@ module tui.ctrl {
 
 
 		constructor(el?: HTMLElement, type?: string) {
-			super();
+			super("span", Input.CLASS, el);
 			var self = this;
-			if (el)
-				this.elem(el);
-			else
-				this.elem("span", Input.CLASS);
-			this[0]._ctrl = this;
 
 			if (typeof type !== tui.undef)
 				this.type(type);
@@ -83,7 +78,7 @@ module tui.ctrl {
 						self.value(e["time"]);
 						pop.close();
 						self.focus();
-						this.doSubmit();
+						self.doSubmit();
 					});
 					var calbox = document.createElement("div");
 					calbox.appendChild(calendar[0]);
@@ -94,7 +89,7 @@ module tui.ctrl {
 						self.value(tui.today());
 						pop.close();
 						self.focus();
-						this.doSubmit();
+						self.doSubmit();
 					});
 					var todayLine = document.createElement("div");
 					todayLine.appendChild(todayLink);
@@ -111,14 +106,14 @@ module tui.ctrl {
 						self.selectValue([list.activeItem()]);
 						pop.close();
 						self.focus();
-						this.doSubmit();
+						self.doSubmit();
 					});
 					list.on("keydown", (data) => {
 						if (data["event"].keyCode === 13) { // Enter
 							self.selectValue([list.activeItem()]);
 							pop.close();
 							self.focus();
-							this.doSubmit();
+							self.doSubmit();
 						}
 					});
 					list[0].style.width = self[0].offsetWidth + "px";
@@ -165,14 +160,14 @@ module tui.ctrl {
 						self.selectValue(list.checkedItems());
 						pop.close();
 						self.focus();
-						this.doSubmit();
+						self.doSubmit();
 					});
 					list.on("keydown", (data) => {
 						if (data["event"].keyCode === 13) { // Enter
 							self.selectValue(list.checkedItems());
 							pop.close();
 							self.focus();
-							this.doSubmit();
+							self.doSubmit();
 						}
 					});
 					bar.appendChild(okLink);
@@ -486,6 +481,15 @@ module tui.ctrl {
 								throw new Error("Invalid validator: '*min:...' must follow a number");
 							var ival = parseFloat(finalText);
 							if (isNaN(ival) || ival < imin) {
+								this._invalid = true;
+							}
+						} else if (k.substr(0, 6) === "*same:") {
+							var other = k.substr(6);
+							other = input(other);
+							if (other) {
+								if (finalText !== other.text())
+									this._invalid = true;
+							} else {
 								this._invalid = true;
 							}
 						} else {
