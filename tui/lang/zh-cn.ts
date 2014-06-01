@@ -31,7 +31,9 @@
 		"Select": "选择",
 		"Today": "今天",
 		"yyyy-MM-dd": "yyyy 年 M 月 d 日",
-		"Invalid input.": "输入内容无效。"
+		"Invalid input.": "输入内容无效。",
+		"Previous": "上一页",
+		"Next": "下一页"
 	};
 	tui.registerTranslator("zh-cn", (str: string): string => {
 		return dict[str] || str;

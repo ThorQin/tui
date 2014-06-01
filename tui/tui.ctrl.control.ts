@@ -41,8 +41,11 @@ module tui {
 		_tooltip.innerHTML = tooltip;
 		_tooltipTarget = target;
 		var pos = tui.fixedPosition(target);
-		_tooltip.style.left = pos.x + "px";
-		_tooltip.style.top = pos.y + 7 + target.offsetHeight + "px";
+		if (target.offsetWidth < 20)
+			_tooltip.style.left = (pos.x + target.offsetWidth / 2 - 17) + "px";
+		else
+			_tooltip.style.left = pos.x + "px";
+		_tooltip.style.top = pos.y + 8 + target.offsetHeight + "px";
 	}
 
 	export function closeTooltip() {

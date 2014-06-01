@@ -334,6 +334,16 @@ div.tui-mask {
 			.btn-color(#ef7a00 - #111, #ef7a00 - #111);
 		}
 	}
+	&[data-disabled] {
+		cursor:default;
+		&:hover {
+			.liner-color(@captionColor + #111, @captionColor);
+		}
+		&:active,&.tui-actived {
+			.liner-color(@captionColor + #111, @captionColor);
+		}
+		color: @captionColor - #333;
+	}
 }
 
 // Checkbox and Radriobox
@@ -433,6 +443,13 @@ div.tui-mask {
 				content:none;
 			}
 		}
+	}
+	&[data-disabled] {
+		cursor:default;
+		&:hover {
+			background-color:inherit;
+		}
+		color: @captionColor - #333;
 	}
 }
 
@@ -869,7 +886,7 @@ div.tui-mask {
 
 }
 
-.tui-btn-group {
+.tui-btn-group,.tui-paginator {
 	margin-left:2px;
 	margin-right:2px;
 	white-space:nowrap;
@@ -1321,6 +1338,10 @@ div.tui-mask {
 			.fa-check-square;
 		}
 	}
+}
+
+.tui-paginator {
+
 }
 
 

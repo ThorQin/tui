@@ -7,21 +7,29 @@ module tui.ctrl {
 		constructor(el?: HTMLElement) {
 			super("a", Radiobox.CLASS, el);
 
-			this.attr("tabIndex", "0");
+			this.disabled(this.disabled());
 			this.exposeEvents("mousedown mouseup mousemove mouseenter mouseleave");
 
 			$(this[0]).on("click", (e) => {
+				if (this.disabled())
+					return;
 				this.fire("click", { "ctrl": this[0], "event": e });
 				tui.fire(this.id(), { "ctrl": this[0], "event": e });
 			});
 			$(this[0]).on("mousedown", (e) => {
+				if (this.disabled())
+					return;
 				if (tui.ffVer > 0)
 					this.focus();
 			});
 			$(this[0]).on("mouseup", (e) => {
+				if (this.disabled())
+					return;
 				this.checked(true);
 			});
 			$(this[0]).on("keydown", (e) => {
+				if (this.disabled())
+					return;
 				var isButton = this[0].nodeName.toLowerCase() === "button";
 				if (e.keyCode === 32) {
 					this.actived(true);
@@ -39,6 +47,8 @@ module tui.ctrl {
 			});
 
 			$(this[0]).on("keyup", (e) => {
+				if (this.disabled())
+					return;
 				var isButton = this[0].nodeName.toLowerCase() === "button";
 				if (e.keyCode === 32) {
 					this.actived(false);
@@ -130,6 +140,19 @@ module tui.ctrl {
 				this.removeAttr("data-tooltip");
 				this.removeClass("tui-notify");
 			}
+		}
+
+		disabled(): boolean;
+		disabled(val: boolean): Radiobox;
+		disabled(val?: boolean): any {
+			var result = this.is("data-disabled", val);
+			if (typeof val === "boolean") {
+				if (val)
+					this.removeAttr("tabIndex");
+				else
+					this.attr("tabIndex", "0");
+			}
+			return result;
 		}
 
 	}

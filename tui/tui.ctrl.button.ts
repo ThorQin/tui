@@ -11,11 +11,13 @@ module tui.ctrl {
 		constructor(el?: HTMLElement) {
 			super("a", Button.CLASS, el);
 
-			this.attr("tabIndex", "0");
+			this.disabled(this.disabled());
 			this.selectable(false);
 			this.exposeEvents("mousedown mouseup mousemove mouseenter mouseleave");
 
 			$(this[0]).on("click", (e) => {
+				if (this.disabled())
+					return;
 				if (this.fire("click", { "ctrl": this[0], "event": e }) === false)
 					return;
 
@@ -30,6 +32,8 @@ module tui.ctrl {
 			});
 
 			$(this[0]).on("mousedown", (e) => {
+				if (this.disabled())
+					return;
 				this.actived(true);
 				var self = this;
 				function releaseMouse(e) {
@@ -41,6 +45,8 @@ module tui.ctrl {
 			
 
 			$(this[0]).on("keydown", (e) => {
+				if (this.disabled())
+					return;
 				var isButton = this[0].nodeName.toLowerCase() === "button";
 				if (e.keyCode === 32) {
 					this.actived(true);
@@ -57,6 +63,8 @@ module tui.ctrl {
 			});
 
 			$(this[0]).on("keyup", (e) => {
+				if (this.disabled())
+					return;
 				var isButton = this[0].nodeName.toLowerCase() === "button";
 				if (e.keyCode === 32) {
 					this.actived(false);
@@ -84,6 +92,32 @@ module tui.ctrl {
 			if (this[0])
 				return tui.elementText(this[0], t);
 			return null;
+		}
+
+		html(): string;
+		html(t: string): Button;
+		html(t?: string): any {
+			if (this[0]) {
+				if (typeof t !== undef) {
+					$(this[0]).html(t);
+					return this;
+				} else
+					return $(this[0]).html();
+			}
+			return null;
+		}
+
+		disabled(): boolean;
+		disabled(val: boolean): Button;
+		disabled(val?: boolean): any {
+			var result = this.is("data-disabled", val);
+			if (typeof val === "boolean") {
+				if (val)
+					this.removeAttr("tabIndex");
+				else
+					this.attr("tabIndex", "0");
+			}
+			return result;
 		}
 	}
 	

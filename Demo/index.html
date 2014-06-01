@@ -38,11 +38,12 @@
 	<script src="../tui/tui.ctrl.list.js"></script>
 	<script src="../tui/tui.ctrl.form.js"></script>
 	<script src="../tui/tui.ctrl.formagent.js"></script>
+	<script src="../tui/tui.ctrl.paginator.js"></script>
 	<!--#TUI END#-->
 	<script src="../tui/lang/zh-cn.js"></script>
 	<script src="../tui/lang/en-us.js"></script>
 	<script>
-		//tui.lang = "zh-cn";
+		tui.lang = "zh-cn";
 		$(function () {
 			var mixedMode = {
 				name: "htmlmixed",
@@ -193,6 +194,7 @@
 		<div><a href="#showFormAgent">表单代理</a> <i style="color:red" class="fa fa-star" data-tooltip="功能很多，需要详细了解。"></i></div>
 		<div><a href="#showTab">标签页</a></div>
 		<div><a href="#showPopup">弹出层</a></div>
+		<div><a href="#showPaginator">分页器</a></div>
 	</div>
 	<h1>TUI Framework</h1>
 	<div style="margin:0 20px;">
@@ -219,7 +221,7 @@
 	<hr>
 	<h2 id="showCheck">单选、复选</h2>
 	<div style="margin:0 20px;">
-		<a class="tui-checkbox">选项1</a><a class="tui-checkbox">选项2</a>
+		<a class="tui-checkbox">选项1</a><a class="tui-checkbox">选项2</a><a class="tui-checkbox" data-disabled="true">选项3</a>
 		<a class="tui-radiobox" data-group="abc">选项1</a><a class="tui-radiobox" data-group="abc">选项2</a>
 		<br><br>
 		换一种风格: .tui-underline <br>
@@ -657,5 +659,11 @@
 		<a id="poprB" class="tui-button">右吸附(r)，下对齐(B)</a>
 		<a id="poprb" class="tui-button">右吸附(r)，下吸附(b)</a>
 	</div>
+
+	<hr>
+	<h2 id="showPaginator">分页器</h2>
+	一个很简单实用的分页器<br><br>
+	<div class="tui-paginator" data-total-size="25" data-max-buttons="5" data-value="1"></div><br><br>
+	<div class="tui-paginator" data-total-size="2005" data-max-buttons="7" data-value="15"></div>
 </body>
 </html>

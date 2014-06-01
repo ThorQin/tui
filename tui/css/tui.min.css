@@ -538,6 +538,29 @@ div.tui-mask,
   background-image: -ms-linear-gradient(top, #cd5800, #cd5800);
   background-image: -o-linear-gradient(top, #cd5800, #cd5800);
 }
+.tui-button[data-disabled] {
+  cursor: default;
+  color: #c1c1c1;
+}
+.tui-button[data-disabled]:hover {
+  background-color: #fdfdfd;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f4f4f4');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f4f4f4));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -moz-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -ms-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -o-linear-gradient(top, #ffffff, #f4f4f4);
+}
+.tui-button[data-disabled]:active,
+.tui-button[data-disabled].tui-actived {
+  background-color: #fdfdfd;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f4f4f4');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f4f4f4));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -moz-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -ms-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -o-linear-gradient(top, #ffffff, #f4f4f4);
+}
 .tui-checkbox,
 .tui-radiobox {
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
@@ -672,6 +695,15 @@ div.tui-mask,
 .tui-checkbox.tui-solid[data-checked]:before,
 .tui-radiobox.tui-solid[data-checked]:before {
   content: none;
+}
+.tui-checkbox[data-disabled],
+.tui-radiobox[data-disabled] {
+  cursor: default;
+  color: #c1c1c1;
+}
+.tui-checkbox[data-disabled]:hover,
+.tui-radiobox[data-disabled]:hover {
+  background-color: inherit;
 }
 .tui-tab {
   border-bottom: 1px solid #cccccc;
@@ -1160,12 +1192,14 @@ div.tui-mask,
   animation: spin 2s infinite linear;
   color: #aaa;
 }
-.tui-btn-group {
+.tui-btn-group,
+.tui-paginator {
   margin-left: 2px;
   margin-right: 2px;
   white-space: nowrap;
 }
-.tui-btn-group > * {
+.tui-btn-group > *,
+.tui-paginator > * {
   float: left;
   margin-left: 0;
   margin-right: 0;
@@ -1174,10 +1208,12 @@ div.tui-mask,
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
-.tui-btn-group > *.tui-button {
+.tui-btn-group > *.tui-button,
+.tui-paginator > *.tui-button {
   min-width: 0px;
 }
-.tui-btn-group > *:first-child {
+.tui-btn-group > *:first-child,
+.tui-paginator > *:first-child {
   -webkit-border-top-left-radius: 3px;
   -moz-border-top-left-radius: 3px;
   border-top-left-radius: 3px;
@@ -1186,7 +1222,8 @@ div.tui-mask,
   border-bottom-left-radius: 3px;
   border-left: 1px solid #cccccc;
 }
-.tui-btn-group > *:last-child {
+.tui-btn-group > *:last-child,
+.tui-paginator > *:last-child {
   -webkit-border-top-right-radius: 3px;
   -moz-border-top-right-radius: 3px;
   border-top-right-radius: 3px;
@@ -1194,7 +1231,8 @@ div.tui-mask,
   -moz-border-bottom-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-.tui-btn-group:after {
+.tui-btn-group:after,
+.tui-paginator:after {
   display: block;
   content: "";
   clear: left;

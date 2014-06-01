@@ -33,7 +33,7 @@
     <TypeScriptCompile Include="tui\tui.ctrl.form.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.formagent.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.list.ts" />
-    <TypeScriptCompile Include="tui\tui.ctrl.pageIndicator.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.paginator.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.tab.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.textarea.ts" />
     <TypeScriptCompile Include="tui\tui.dataprovider.ts" />
