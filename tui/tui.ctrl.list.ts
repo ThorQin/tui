@@ -493,6 +493,24 @@ module tui.ctrl {
 			this._grid.scrollTo(rowIndex);
 		}
 
+
+		value(): any[];
+		value(keys: any[]): List;
+		value(keys?: any[]): any {
+			if (typeof keys !== undef) {
+				this.checkItems(keys);
+				return this;
+			} else {
+				var items = this.checkedItems();
+				var result = [];
+				for (var i = 0; i < items.length; i++) {
+					if (typeof items[i].key !== undef)
+						result.push(items[i].key);
+				}
+				return result;
+			}
+		}
+
 		/**
 		 * Return binded data provider
 		 */

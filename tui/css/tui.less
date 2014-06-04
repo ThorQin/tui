@@ -8,6 +8,7 @@
 @buttonRadius:3px;
 @winColor: #fff;
 @captionColor: #f4f4f4;
+@inputHeight:30px;
 
 .tui-spin {
   -webkit-animation: spin 2s infinite linear;
@@ -285,6 +286,14 @@ div.tui-mask {
 	z-index:@maskLayer;
 }
 
+.tui-lable {
+	.btn;
+	margin:2px;
+	color: #000;
+	background-color:@captionColor;
+	border: 1px solid @borderColor;
+	.border-radius(@buttonRadius);
+}
 
 // TUI button
 .tui-button {
@@ -297,8 +306,6 @@ div.tui-mask {
 	color: #000;
 	.btn-color(@captionColor + #111, @captionColor );
 	border: 1px solid @borderColor;
-	vertical-align:middle;
-	text-align:center;
 	min-width:40px;
 	&:hover {
 		color: #000;
@@ -604,7 +611,7 @@ div.tui-mask {
 	.border-radius(@radius);
 	outline:none;
 	width:200px;
-	height:30px;
+	height:@inputHeight;
 	vertical-align:middle;
 	background-color:@inputBackColor;
 	//overflow:hidden;
@@ -886,33 +893,6 @@ div.tui-mask {
 
 }
 
-.tui-btn-group,.tui-paginator {
-	margin-left:2px;
-	margin-right:2px;
-	white-space:nowrap;
-	> * {
-		float:left;
-		margin-left:0;
-		margin-right:0;
-		border-left:none;
-		.border-radius(0px);
-		&.tui-button {
-			min-width:0px;
-		}
-	}
-	> *:first-child {
-		.left-radius(@buttonRadius);
-		border-left:1px solid @borderColor;
-	}
-	> *:last-child {
-		.right-radius(@buttonRadius);
-	}
-	&:after {
-		display:block;
-		content:"";
-		clear:left;
-	}
-}
 
 @scrollWidth: 16px;
 @scrollBackColor: @captionColor;
@@ -1341,9 +1321,46 @@ div.tui-mask {
 	}
 }
 
-.tui-paginator {
-
+.tui-btn-group,.tui-input-group,.tui-paginator {
+	margin-left:2px;
+	margin-right:2px;
+	white-space:nowrap;
+	
+	> * {
+		float:left;
+		margin-left:0;
+		margin-right:0;
+		border-left:none;
+		.border-radius(0px);
+		&.tui-button {
+			min-width:0px;
+		}
+	}
+	> *:first-child {
+		.left-radius(@buttonRadius);
+		border-left:1px solid @borderColor;
+	}
+	> *:last-child {
+		.right-radius(@buttonRadius);
+	}
+	&:after {
+		display:block;
+		content:"";
+		clear:left;
+	}
 }
+
+.tui-input-group {
+	> * {
+		height:@inputHeight;
+		line-height:@inputHeight;
+	}
+	> .tui-button, > .tui-lable {
+		padding:0px 14px;
+	}
+}
+
+
 
 
 *[data-hidden=true], .tui-hidden, .tui-form, .tui-form-agent {

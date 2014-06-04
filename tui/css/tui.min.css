@@ -227,9 +227,26 @@ div.tui-mask,
   cursor: default;
   z-index: 2147483647;
 }
+.tui-lable {
+  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
+  padding: 6px 14px;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  display: inline-block;
+  margin: 2px;
+  color: #000;
+  background-color: #f4f4f4;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
 .tui-button {
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
   padding: 6px 14px;
+  text-align: center;
+  vertical-align: middle;
   display: inline-block;
   margin: 2px;
   cursor: pointer;
@@ -247,8 +264,6 @@ div.tui-mask,
   background-image: -o-linear-gradient(top, #ffffff, #f4f4f4);
   border-color: #e3e3e3;
   border: 1px solid #cccccc;
-  vertical-align: middle;
-  text-align: center;
   min-width: 40px;
 }
 .tui-button:hover {
@@ -1192,51 +1207,6 @@ div.tui-mask,
   animation: spin 2s infinite linear;
   color: #aaa;
 }
-.tui-btn-group,
-.tui-paginator {
-  margin-left: 2px;
-  margin-right: 2px;
-  white-space: nowrap;
-}
-.tui-btn-group > *,
-.tui-paginator > * {
-  float: left;
-  margin-left: 0;
-  margin-right: 0;
-  border-left: none;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-}
-.tui-btn-group > *.tui-button,
-.tui-paginator > *.tui-button {
-  min-width: 0px;
-}
-.tui-btn-group > *:first-child,
-.tui-paginator > *:first-child {
-  -webkit-border-top-left-radius: 3px;
-  -moz-border-top-left-radius: 3px;
-  border-top-left-radius: 3px;
-  -webkit-border-bottom-left-radius: 3px;
-  -moz-border-bottom-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-  border-left: 1px solid #cccccc;
-}
-.tui-btn-group > *:last-child,
-.tui-paginator > *:last-child {
-  -webkit-border-top-right-radius: 3px;
-  -moz-border-top-right-radius: 3px;
-  border-top-right-radius: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  -moz-border-bottom-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-.tui-btn-group:after,
-.tui-paginator:after {
-  display: block;
-  content: "";
-  clear: left;
-}
 .tui-scroll-space {
   display: inline-block;
   position: absolute;
@@ -1491,6 +1461,7 @@ div.tui-mask,
   filter: alpha(opacity=50);
 }
 .tui-grid {
+  text-align: left;
   vertical-align: middle;
   position: relative;
   border: 1px solid #cccccc;
@@ -1648,6 +1619,7 @@ div.tui-mask,
   display: none;
 }
 .tui-list {
+  text-align: left;
   vertical-align: middle;
   position: relative;
   border: 1px solid #cccccc;
@@ -1856,6 +1828,65 @@ div.tui-mask,
 }
 .tui-list .tui-list-checkbox.tui-half-checked:before {
   content: "\f14a";
+}
+.tui-btn-group,
+.tui-input-group,
+.tui-paginator {
+  margin-left: 2px;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+.tui-btn-group > *,
+.tui-input-group > *,
+.tui-paginator > * {
+  float: left;
+  margin-left: 0;
+  margin-right: 0;
+  border-left: none;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+.tui-btn-group > *.tui-button,
+.tui-input-group > *.tui-button,
+.tui-paginator > *.tui-button {
+  min-width: 0px;
+}
+.tui-btn-group > *:first-child,
+.tui-input-group > *:first-child,
+.tui-paginator > *:first-child {
+  -webkit-border-top-left-radius: 3px;
+  -moz-border-top-left-radius: 3px;
+  border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-bottom-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border-left: 1px solid #cccccc;
+}
+.tui-btn-group > *:last-child,
+.tui-input-group > *:last-child,
+.tui-paginator > *:last-child {
+  -webkit-border-top-right-radius: 3px;
+  -moz-border-top-right-radius: 3px;
+  border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-bottom-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+.tui-btn-group:after,
+.tui-input-group:after,
+.tui-paginator:after {
+  display: block;
+  content: "";
+  clear: left;
+}
+.tui-input-group > * {
+  height: 30px;
+  line-height: 30px;
+}
+.tui-input-group > .tui-button,
+.tui-input-group > .tui-lable {
+  padding: 0px 14px;
 }
 *[data-hidden=true],
 .tui-hidden,

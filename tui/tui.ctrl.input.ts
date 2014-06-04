@@ -347,9 +347,9 @@ module tui.ctrl {
 			for (var i = 0; i < val.length; i++) {
 				if (text.length > 0)
 					text += "; ";
-				var t = map[val[i].key];
+				var t = map[val[i][self._keyColumKey]];
 				if (typeof t === tui.undef)
-					t = validText(val[i].value);
+					t = validText(val[i][self._valueColumnKey]);
 				else
 					t = validText(t);
 				text += t;
@@ -400,7 +400,11 @@ module tui.ctrl {
 				}
 				return this;
 			} else {
-				type = this.attr("data-type").toLowerCase();
+				type = this.attr("data-type");
+				if (!type)
+					return "text";
+				else
+					type = type.toLowerCase()
 				if (Input._supportType.indexOf(type) >= 0) {
 					return type;
 				} else
@@ -673,8 +677,15 @@ module tui.ctrl {
 			var type = this.type();
 			if (typeof val !== tui.undef) {
 				if (type === "calendar") {
+					if (typeof val === "string") {
+						try {
+							val = tui.parseDate(val);
+						} catch (e) {
+							val = null;
+						}
+					}
 					if (val instanceof Date) {
-						this.attr("data-value", formatDate(val));
+						this.attr("data-value", formatDate(val, "yyyy-MM-dd"));
 						this.attr("data-text", formatDate(val, tui.str("yyyy-MM-dd")));
 						this._invalid = false;
 						this.refresh();
@@ -705,7 +716,7 @@ module tui.ctrl {
 				if (type === "calendar") {
 					if (val === null)
 						return null;
-					return tui.parseDate(val);
+					return val;
 				} else if (type === "file") {
 					if (val === null)
 						return null;
