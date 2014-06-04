@@ -10,6 +10,8 @@
 		"Second": "秒",
 		"Seconds": "秒",
 		"Failed": "失败",
+		"Error": "错误",
+		"Upload failed!": "文件上传失败！",
 		"success": "成功", 
 		"notmodified": "查询内容没有改变！", 
 		"error": "发生内部错误！", 

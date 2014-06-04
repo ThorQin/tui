@@ -78,8 +78,15 @@
 				$("#info").append("btnFile clicked!<br>");
 			});
 
-			tui.ctrl.input("fileInput").on("complete", function (data) {
-				$("#info").append(tui.format("Change {0} ,ext: {1}, fileid: {2}!<br>", data.file, data.ext, data.response.fileId));
+			//tui.ctrl.input("fileInput").on("complete", function (data) {
+			//	$("#info").append(tui.format("Change {0} ,ext: {1}, fileid: {2}!<br>", data.file, data.ext, data.response.fileId));
+			//});
+
+			tui.on("btnUncheck", function () {
+				tui.ctrl.list("listdiv").uncheckItems([4]);
+			});
+			tui.on("btnCheckAll", function () {
+				tui.ctrl.list("listdiv").checkAllItems();
 			});
 
 			tui.ctrl.input("inputUser").on("btnclick", function (data) {
@@ -165,6 +172,9 @@
 			left: 40px;
 			top: 40px;
 			width: 200px;
+		}
+		.tui-sidebar div {
+			padding:6px 40px;
 		}
 
 		hr {
@@ -296,7 +306,7 @@
 				{key:3, value:'选项3', checked:false}
 			 ]"></div>
 		<div id="fileInput" class="tui-input" data-type="file"
-			 data-upload-url="upload.ashx?" data-accept="image/png"
+			 data-upload-url="upload1.ashx?" data-accept="image/png"
 			 data-placeholder="请选择文件" data-validator="{'.*\.png$':'请选择PNG文件'}"></div>
 		<div class="tui-input" data-type="custom-text"
 			 data-placeholder="请输入" data-icon="fa-search"></div>
@@ -410,7 +420,10 @@
 	<h2 id="showList">列表框</h2>
 	<div style="margin:0 20px;">
 		<div style="display:inline-block;padding-right:20px;">
-			<div style="padding:10px;">三态列表框</div>
+			<div style="padding:10px;">三态列表框 
+				<a id="btnUncheck" class="tui-button">取消4</a>
+				<a id="btnCheckAll" class="tui-button">全选</a>
+			</div>
 			<div id="listdiv" class="tui-list"
 				 style="display:inline-block;width:200px;height:300px;"
 				 data-data="[

@@ -18,6 +18,9 @@ module tui.ctrl {
 			if (this.isAutoSubmit()) {
 				this.submit();
 			}
+			if (!this.hasAttr("data-target-property")) {
+				this.targetProperty("value");
+			}
 		}
 
 		isAutoSubmit(): boolean;
@@ -78,6 +81,16 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.attr("data-target");
+		}
+
+		targetProperty(): string;
+		targetProperty(val?: string): Form;
+		targetProperty(val?: string): any {
+			if (typeof val === "string") {
+				this.attr("data-target-property", val);
+				return this;
+			} else
+				return this.attr("data-target-property");
 		}
 
 		validate(): boolean {
@@ -160,6 +173,8 @@ module tui.ctrl {
 			}
 		}
 
+
+
 		submit() {
 			if (!this.validate())
 				return;
@@ -183,12 +198,13 @@ module tui.ctrl {
 					if (self.fire("complete", { jqXHR: jqXHR, status: status }) !== false) {
 						if (status === "success") {
 							var target: any = self.target();
+							var property: string = self.targetProperty();
 							if (target) {
 								target = document.getElementById(target);
 								if (target) {
 									if (target._ctrl) {
-										if (typeof target._ctrl.value === "function")
-											target._ctrl.value(jqXHR["responseJSON"]);
+										if (typeof target._ctrl[property] === "function")
+											target._ctrl[property](jqXHR["responseJSON"]);
 									} else {
 										$(target).attr("data-value", jqXHR.responseText);
 									}

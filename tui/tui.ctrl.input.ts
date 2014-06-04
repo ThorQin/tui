@@ -296,13 +296,16 @@ module tui.ctrl {
 				return result;
 			});
 			this._binding.on("complete", (data: {}) => {
+				data["ctrl"] = this[0];
+				if (this.fire("complete", data) === false)
+					return;
 				var response = data["response"];
 				if (response) {
 					response.file = data["file"];
 					this.value(response);
+				} else {
+					tui.errbox(str("Upload failed!"), str("Error"));
 				}
-				data["ctrl"] = this[0];
-				this.fire("complete", data);
 			});
 		}
 

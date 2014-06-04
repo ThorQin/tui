@@ -191,20 +191,27 @@ module tui.ctrl {
 			parent["__parent"] && this.checkParent(parent["__parent"]);
 		}
 
-		private onCheckRow(row, rowIndex: number, event) {
+		private checkRow(row, checkState: TriState) {
+			row[this._checkedColumnKey] = checkState;
 			if (this.triState()) {
-				var checkState = row[this._checkedColumnKey];
-				if (checkState === TriState.HalfChecked || !checkState)
-					checkState = TriState.Checked;
-				else
-					checkState = TriState.Unchecked;
-				row[this._checkedColumnKey] = checkState;
 				var children = row[this._childrenColumKey];
 				children && children.length > 0 && this.checkChildren(children, checkState);
 				var parent = row["__parent"];
 				parent && this.checkParent(parent);
+			}
+		}
+
+		private onCheckRow(row, rowIndex: number, event) {
+			var checkState;
+			if (this.triState()) {
+				checkState = row[this._checkedColumnKey];
+				if (checkState === TriState.HalfChecked || !checkState)
+					checkState = TriState.Checked;
+				else
+					checkState = TriState.Unchecked;
 			} else
-				row[this._checkedColumnKey] = !row[this._checkedColumnKey];
+				checkState = !row[this._checkedColumnKey];
+			this.checkRow(row, checkState);
 			this.fire("rowcheck", { event: event, checked: row[this._checkedColumnKey], row: row, index: rowIndex });
 			this.refresh();
 		}
@@ -359,7 +366,7 @@ module tui.ctrl {
 
 		private doCheck(keys: any[], checkState: TriState) {
 			var self = this;
-			var useTriState = this.triState();
+			//var useTriState = this.triState();
 			var map = {};
 			if (keys) {
 				for (var i = 0; i < keys.length; i++) {
@@ -371,7 +378,8 @@ module tui.ctrl {
 					if (!children[i])
 						continue;
 					if (keys === null || map[children[i][self._keyColumKey]]) {
-						children[i][self._checkedColumnKey] = checkState;
+						//children[i][self._checkedColumnKey] = checkState;
+						self.checkRow(children[i], checkState);
 					}
 					var myChilren = children[i][self._childrenColumKey];
 					if (myChilren && myChilren.length > 0)
@@ -381,9 +389,9 @@ module tui.ctrl {
 			var data: ArrayProvider = <ArrayProvider>this._grid.data();
 			if (data && typeof data.src === "function") {
 				checkChildren(keys, data.src());
-				if (useTriState) {
-					this.initTriState();
-				}
+				//if (useTriState) {
+				//	this.initTriState();
+				//}
 				this.refresh();
 			}
 		}

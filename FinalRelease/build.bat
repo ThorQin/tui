@@ -18,7 +18,8 @@ tsc -m amd --out tui/tui.all.js ^
 	../tui/tui.ctrl.textarea.ts ^
 	../tui/tui.ctrl.form.ts ^
 	../tui/tui.ctrl.formagent.ts ^
-	../tui/tui.ctrl.tab.ts
+	../tui/tui.ctrl.tab.ts ^
+	../tui/tui.ctrl.paginator.ts
 
 xcopy /Y /S ..\tui\css tui\css\
 xcopy /Y /S ..\tui\lang tui\lang\

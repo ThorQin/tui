@@ -201,7 +201,7 @@ module tui.ctrl {
 							if (tui.parseBoolean($(elem).attr("data-checked")))
 								values.push($(elem).attr("data-value"));
 						});
-						return values[0];
+						return values;
 					}
 				} else {
 					var elem = document.getElementById(target);
