@@ -107,6 +107,9 @@
 			tui.on("btninfo", function (e) {
 				tui.infobox("这是一个测试消息", "测试一下消息框");
 			});
+			tui.on("btnok", function (e) {
+				tui.okbox("这是一个测试消息", "测试一下消息框");
+			});
 			tui.on("btnerr", function (e) {
 				tui.errbox("这是一个测试消息", "测试一下消息框");
 			});
@@ -123,7 +126,7 @@
 				}, 1000);
 			});
 			tui.on("btnbigcontent", function () {
-				tui.msgbox("<div style='width:2000px;height:2000px;line-height:2000px;text-align:center'>大内容</div>","测试大内容");
+				tui.msgbox("<img style='width:2000px;height:1800px;' src='penguins.jpg'>", "测试大内容");
 			});
 
 			var cursor = new tui.RemoteCursorProvider();
@@ -259,7 +262,12 @@
 		</div><br>
 		输入框组：<br><br>
 		<div class="tui-input-group">
-			<div class="tui-input"></div><a class="tui-button">美元 <i class="fa fa-arrow-down"></i></a>
+			<div class="tui-input"></div><a class="tui-button">美元 <i class="fa fa-caret-down"></i></a>
+		</div>
+		<br><br>
+		<div class="tui-input-group">
+			<div class="tui-input"></div><a class="tui-button">美元</a>
+			<a class="tui-button tui-dropdown"></a>
 		</div>
 		<br><br>
 		<div style="display:inline-block;width:300px;">
@@ -338,9 +346,36 @@
 			 data-placeholder="请输入" data-icon="fa-search"></div>
 		<div id="inputUser" class="tui-input" data-type="custom-select"
 			 data-placeholder="请选择" data-icon="fa-user"></div>
-		<div class="tui-textarea" style="max-height:200px;"
+		<br>
+		<div class="tui-input"
+			 data-type="text" data-readonly="true" data-value="这是一个只读的文本框"></div>
+		<div id="fileInput" class="tui-input" data-type="file"
+			 data-readonly="true" data-placeholder="请选择文件" data-value="{file:'test.png', fileId:'123'}"></div>
+		<div class="tui-input" data-type="calendar"
+			 data-readonly="true"
+			 data-placeholder="请选择日期" data-value="2014-6-1"></div>
+		<div id="select2" data-placeholder="请选择项目" class="tui-input"
+			 data-type="multi-select"
+			 data-readonly="true"
+			 data-data="[
+				{key:1, value:'选项1', checked:false, children:[
+						{key:4, value:'选项4', checked: false },
+						{key:5, value:'选项5', checked: false },
+					]},
+				{key:2, value:'选项2', checked:false },
+				{key:3, value:'选项3', checked:false}
+			 ]"></div>
+		<div class="tui-textarea tui-inline" style="max-height:200px;"
 			 data-placeholder="请输入一段文字描述"
 			 data-validator="{'*any': '请输入文字内容'}"></div>
+		<div class="tui-textarea tui-inline" style="max-height:50px;"
+			 data-value="这是一段只读的文字
+			 asdfajdsfadfa as;dfa;sdfajds;fa 
+			 adsfja;sdfja;dsfa\n
+			 asdfja;sdfas;df&lt;adsfasdfadfadsf
+			 adsfadsfasdf
+			 adfasdfadsfasdfdf"
+			 data-readonly="true"></div>
 		<a id="btnVerify" class="tui-button">输入校验</a>
 	</div>
 
@@ -352,6 +387,7 @@
 	<div style="margin:0 20px;">
 		<a id="btnShowResource" class="tui-button">输入界面放入对话框</a>
 		<a id="btninfo" class="tui-button">消息</a>
+		<a id="btnok" class="tui-button">成功</a>
 		<a id="btnerr" class="tui-button">错误</a>
 		<a id="btnwarn" class="tui-button">警告</a>
 		<a id="btnask" class="tui-button">询问</a>

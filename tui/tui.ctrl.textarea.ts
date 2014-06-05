@@ -24,7 +24,8 @@ module tui.ctrl {
 				if (!this.disabled())
 					setTimeout(() => { this._textbox.focus(); }, 0);
 			});
-			this.refresh();
+			this.value(this.value());
+			//this.refresh();
 		}
 
 		private createTextbox() {
@@ -176,6 +177,17 @@ module tui.ctrl {
 				return this.attr("data-text");
 		}
 
+		readonly(): boolean;
+		readonly(val: boolean): Input;
+		readonly(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-readonly", val);
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-readonly");
+		}
+
 		value(): any;
 		value(val?: any): TextArea;
 		value(val?: any): any {
@@ -223,6 +235,10 @@ module tui.ctrl {
 			
 			if (this._textbox.value !== text)
 				this._textbox.value = text;
+			if (this.readonly())
+				this._textbox.readOnly = true;
+			else
+				this._textbox.readOnly = false;
 			this._textbox.style.display = "";
 			this._label.style.display = "none";
 			this._textbox.style.width = "";

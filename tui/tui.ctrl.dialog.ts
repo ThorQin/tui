@@ -407,6 +407,15 @@ module tui {
 		return dlg;
 	}
 
+	export function okbox(message: string, title?: string): ctrl.Dialog {
+		var dlg = tui.ctrl.dialog();
+		var wrap = document.createElement("div");
+		wrap.className = "tui-dlg-warp tui-dlg-ok";
+		wrap.innerHTML = message;
+		dlg.showElement(wrap, title);
+		return dlg;
+	}
+
 	export function errbox(message: string, title?: string): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
 		var wrap = document.createElement("div");

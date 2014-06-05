@@ -75,9 +75,16 @@ module tui.ctrl {
 					var calendar = tui.ctrl.calendar();
 					calendar.time(self.value());
 					calendar.on("picked", (e) => {
+						if (self.readonly()) {
+							pop.close();
+							self.focus();
+							return false;
+						}
 						self.value(e["time"]);
 						pop.close();
 						self.focus();
+						if (self.fire("select", { ctrl: self[0], type: self.type(), time: e["time"] }) === false)
+							return;
 						self.doSubmit();
 					});
 					var calbox = document.createElement("div");
@@ -86,9 +93,16 @@ module tui.ctrl {
 					todayLink.innerHTML = "<i class='fa fa-clock-o'></i> " + tui.str("Today") + ": " + tui.formatDate(tui.today(), "yyyy-MM-dd");
 					todayLink.href = "javascript:void(0)";
 					$(todayLink).click(function (e) {
+						if (self.readonly()) {
+							pop.close();
+							self.focus();
+							return false;
+						}
 						self.value(tui.today());
 						pop.close();
 						self.focus();
+						if (self.fire("select", { ctrl: self[0], type: self.type(), time: e["time"] }) === false)
+							return;
 						self.doSubmit();
 					});
 					var todayLine = document.createElement("div");
@@ -103,16 +117,30 @@ module tui.ctrl {
 					list.consumeMouseWheelEvent(true);
 					list.rowcheckable(false);
 					list.on("rowclick", (data) => {
+						if (self.readonly()) {
+							pop.close();
+							self.focus();
+							return false;
+						}
 						self.selectValue([list.activeItem()]);
 						pop.close();
 						self.focus();
+						if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
+							return;
 						self.doSubmit();
 					});
 					list.on("keydown", (data) => {
 						if (data["event"].keyCode === 13) { // Enter
+							if (self.readonly()) {
+								pop.close();
+								self.focus();
+								return false;
+							}
 							self.selectValue([list.activeItem()]);
 							pop.close();
 							self.focus();
+							if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
+								return;
 							self.doSubmit();
 						}
 					});
@@ -139,8 +167,7 @@ module tui.ctrl {
 					var pop = tui.ctrl.popup();
 					var list = tui.ctrl.list();
 					list.consumeMouseWheelEvent(true);
-					///////
-					// TODO
+
 					var calbox = document.createElement("div");
 					calbox.appendChild(list[0]);
 
@@ -157,16 +184,30 @@ module tui.ctrl {
 					okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Accept");
 					okLink.href = "javascript:void(0)";
 					$(okLink).click(function (e) {
+						if (self.readonly()) {
+							pop.close();
+							self.focus();
+							return false;
+						}
 						self.selectValue(list.checkedItems());
 						pop.close();
 						self.focus();
+						if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
+							return;
 						self.doSubmit();
 					});
 					list.on("keydown", (data) => {
 						if (data["event"].keyCode === 13) { // Enter
+							if (self.readonly()) {
+								pop.close();
+								self.focus();
+								return false;
+							}
 							self.selectValue(list.checkedItems());
 							pop.close();
 							self.focus();
+							if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
+								return;
 							self.doSubmit();
 						}
 					});
@@ -202,6 +243,24 @@ module tui.ctrl {
 				}
 			});
 
+			$(this[0]).on("keydown", (e) => {
+				if (e.keyCode !== 32)
+					return;
+				if (this.type() === "select" || this.type() === "multi-select" || this.type() === "calendar") {
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			});
+			$(this[0]).on("keyup", (e) => {
+				if (e.keyCode !== 32)
+					return;
+				if (this.type() === "select" || this.type() === "multi-select" || this.type() === "calendar") {
+					openPopup(e);
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			});
+
 			if (this.type() === "select" || this.type() === "multi-select") {
 				var predefined: any = this.attr("data-data");
 				if (predefined)
@@ -209,7 +268,8 @@ module tui.ctrl {
 				if (predefined)
 					this.data(predefined);
 			}
-			this.refresh();
+			this.value(this.value());
+			//this.refresh();
 		}
 
 		private doSubmit() {
@@ -655,8 +715,12 @@ module tui.ctrl {
 						this.attr("data-value", this.onlyKeyValue(val));
 						this.attr("data-text", this.formatSelectTextByData(val));
 						this._invalid = false;
-						this.refresh();
+					} else if (val === null) {
+						this.attr("data-value", "[]");
+						this.attr("data-text", "");
+						this._invalid = false;
 					}
+					this.refresh();
 				}
 				return this;
 			} else {
@@ -669,6 +733,17 @@ module tui.ctrl {
 				} else
 					return null;
 			}
+		}
+
+		readonly(): boolean;
+		readonly(val: boolean): Input;
+		readonly(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-readonly", val);
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-readonly");
 		}
 
 		value(): any;
@@ -688,8 +763,8 @@ module tui.ctrl {
 						this.attr("data-value", formatDate(val, "yyyy-MM-dd"));
 						this.attr("data-text", formatDate(val, tui.str("yyyy-MM-dd")));
 						this._invalid = false;
-						this.refresh();
 					}
+					this.refresh();
 				} else if (type === "file") {
 					if (val === null) {
 						this.attr("data-value", JSON.stringify(val));
@@ -762,7 +837,7 @@ module tui.ctrl {
 
 		refresh() {
 			var type = this.type().toLowerCase();
-			if (type === "file") {
+			if (type === "file" && !this.readonly()) {
 				this.makeFileUpload();
 			} else
 				this.unmakeFileUpload();
@@ -787,6 +862,10 @@ module tui.ctrl {
 			} else
 				this._button.className = "";
 			if (type === "text" || type === "password" || type === "custom-text") {
+				if (this.readonly())
+					this._textbox.readOnly = true;
+				else
+					this._textbox.readOnly = false;
 				if (this._textbox.value !== text)
 					this._textbox.value = text;
 				this.removeAttr("tabIndex");
