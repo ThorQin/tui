@@ -4,13 +4,15 @@ module tui.ctrl {
 		static CLASS: string = "tui-form-agent";
 		constructor(el?: HTMLElement) {
 			super("span", FormAgent.CLASS, el);
-
 			var parent = this[0].parentElement;
 			while (parent) {
 				if ($(parent).hasClass("tui-form")) {
 					this.ajaxForm($(parent).attr("id"));
 					break;
 				}
+			}
+			if (!this.hasAttr("data-target-property")) {
+				this.targetProperty("value");
 			}
 		}
 
@@ -144,14 +146,17 @@ module tui.ctrl {
 		// Dispatch data to target control(s)
 		value(val: any): Form;
 		value(val?: any): any {
+			var property = this.targetProperty();
 			var target = this.target();
 			var isGroup = this.isGroup();
 			if (typeof val !== tui.undef) {
 				var param = { value: val };
 				if (this.fire("setvalue", param) === false)
 					return this;
-				if (!target)
+				if (!target) {
+					this.attr("data-value", JSON.stringify(val));
 					return this;
+				}
 				if (isGroup) {
 					var controls = $("." + Radiobox.CLASS + "[data-group='" + target + "'],." + Checkbox.CLASS + "[data-group='" + target + "']");
 					var values: string[];
@@ -162,24 +167,36 @@ module tui.ctrl {
 
 					controls.each(function (index, elem) {
 						var ctrl = elem["_ctrl"];
-						if (values.indexOf(ctrl.value()) >= 0) {
-							ctrl.checked(true);
-						} else
-							ctrl.checked(false);
+						if (typeof ctrl[property] === "function") {
+							if (values.indexOf(ctrl[property]()) >= 0) {
+								ctrl.checked(true);
+							} else
+								ctrl.checked(false);
+						}
 					});
 				} else {
 					var elem = document.getElementById(target);
 					if (elem && elem["_ctrl"]) {
 						var ctrl = elem["_ctrl"];
-						if (typeof ctrl.value === "function") {
-							ctrl.value(val);
+						if (typeof ctrl[property] === "function") {
+							ctrl[property](val);
 						}
 					}
 				}
 				return this;
 			} else {
-				if (!target)
-					return null;
+				if (!target) {
+					var strval = this.attr("data-value");
+					if (strval === null) {
+						return null;
+					} else {
+						try {
+							return eval("(" + strval + ")");
+						} catch (err) {
+							return null;
+						}
+					}
+				}
 				var param = { value: null };
 				if (this.fire("getvalue", param) === false)
 					return param.value;
@@ -188,8 +205,14 @@ module tui.ctrl {
 					var values: string[] = [];
 					if (controls.length > 0) {
 						controls.each(function (index, elem) {
-							if (tui.parseBoolean($(elem).attr("data-checked")))
-								values.push($(elem).attr("data-value"));
+							var ctrl = elem["_ctrl"];
+							if (ctrl) {
+								if (typeof ctrl.checked === "function" &&
+									ctrl.checked() &&
+									typeof ctrl[property] === "function") {
+									values.push(ctrl[property]());
+								}
+							}
 						});
 						if (values.length > 0)
 							return values[0];
@@ -198,8 +221,14 @@ module tui.ctrl {
 					} else {
 						controls = $("." + Checkbox.CLASS + "[data-group='" + target + "']");
 						controls.each(function (index, elem) {
-							if (tui.parseBoolean($(elem).attr("data-checked")))
-								values.push($(elem).attr("data-value"));
+							var ctrl = elem["_ctrl"];
+							if (ctrl) {
+								if (typeof ctrl.checked === "function" &&
+									ctrl.checked() &&
+									typeof ctrl[property] === "function") {
+									values.push(ctrl[property]());
+								}
+							}
 						});
 						return values;
 					}
@@ -207,8 +236,8 @@ module tui.ctrl {
 					var elem = document.getElementById(target);
 					if (elem && elem["_ctrl"]) {
 						var ctrl = elem["_ctrl"];
-						if (typeof ctrl.value === "function") {
-							return ctrl.value();
+						if (typeof ctrl[property] === "function") {
+							return ctrl[property]();
 						}
 					}
 					return null;

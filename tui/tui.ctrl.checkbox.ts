@@ -12,8 +12,15 @@ module tui.ctrl {
 			$(this[0]).on("click", (e) => {
 				if (this.disabled())
 					return;
-				this.fire("click", { "ctrl": this[0], "event": e });
-				tui.fire(this.id(), { "ctrl": this[0], "event": e });
+				if (this.fire("click", { "ctrl": this[0], "event": e }) === false)
+					return;
+				if (tui.fire(this.id(), { "ctrl": this[0], "event": e }) === false)
+					return;
+				var formId = this.submitForm();
+				if (formId) {
+					var form = tui.ctrl.form(formId);
+					form && form.submit();
+				}
 			});
 			$(this[0]).on("mousedown", (e) => {
 				if (this.disabled())
@@ -102,7 +109,15 @@ module tui.ctrl {
 				return this;
 			} else {
 				val = this.attr("data-value");
-				return JSON.parse(val);
+				if (val === null) {
+					return null;
+				} else {
+					try {
+						return eval("(" + val + ")");
+					} catch (err) {
+						return null;
+					}
+				}
 			}
 		}
 
@@ -140,6 +155,16 @@ module tui.ctrl {
 					this.attr("tabIndex", "0");
 			}
 			return result;
+		}
+
+		submitForm(): string;
+		submitForm(formId: string): Button;
+		submitForm(formId?: string): any {
+			if (typeof formId === "string") {
+				this.attr("data-submit-form", formId);
+				return this;
+			} else
+				return this.attr("data-submit-form");
 		}
 	}
 

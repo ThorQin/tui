@@ -1913,6 +1913,26 @@ div.tui-mask,
   display: inline-block;
   vertical-align: middle;
 }
+.tui-shadow-tiny {
+  -webkit-box-shadow: 0 0 2px #cccccc;
+  -moz-box-shadow: 0 0 2px #cccccc;
+  box-shadow: 0 0 2px #cccccc;
+}
+.tui-shadow-small {
+  -webkit-box-shadow: 0 0 5px #cccccc;
+  -moz-box-shadow: 0 0 5px #cccccc;
+  box-shadow: 0 0 5px #cccccc;
+}
+.tui-shadow {
+  -webkit-box-shadow: 0 0 8px #cccccc;
+  -moz-box-shadow: 0 0 8px #cccccc;
+  box-shadow: 0 0 8px #cccccc;
+}
+.tui-shadow-big {
+  -webkit-box-shadow: 0 0 12px #cccccc;
+  -moz-box-shadow: 0 0 12px #cccccc;
+  box-shadow: 0 0 12px #cccccc;
+}
 *[data-hidden=true],
 .tui-hidden,
 .tui-form,

@@ -15,11 +15,14 @@ module tui.ctrl {
 			if (!this.hasAttr("data-timeout")) {
 				this.timeout(60000);
 			}
-			if (this.isAutoSubmit()) {
-				this.submit();
-			}
 			if (!this.hasAttr("data-target-property")) {
 				this.targetProperty("value");
+			}
+			var self = this;
+			if (this.isAutoSubmit()) {
+				tui.on("initialized", () => {
+					self.submit();
+				});
 			}
 		}
 
@@ -119,20 +122,29 @@ module tui.ctrl {
 					return this;
 				$("[data-ajax-form='" + id + "']").each(function (index, elem) {
 					var field;
-					var val;
 					if (this._ctrl) {
 						field = this._ctrl.ajaxField();
-						if (!field)
+						if (!field) {
 							return;
-						if (this._ctrl.value && typeof val[field] !== tui.undef) {
-							this._ctrl.value(val[field]);
+						} else if (field === "*") {
+							if (typeof this._ctrl.value === "function")
+								this._ctrl.value(val);
+						} else {
+							if (typeof this._ctrl.value === "function" &&
+								typeof val[field] !== tui.undef) {
+								this._ctrl.value(val[field]);
+							}
 						}
 					} else {
 						field = $(elem).attr("data-ajax-field");
-						if (typeof field !== "string")
+						if (!field) {
 							return;
-						if (typeof val[field] !== tui.undef) {
-							$(elem).attr("data-value", JSON.stringify(val[field]));
+						} else if (field === "*") {
+							$(elem).attr("data-value", JSON.stringify(val));
+						} else {
+							if (typeof val[field] !== tui.undef) {
+								$(elem).attr("data-value", JSON.stringify(val[field]));
+							}
 						}
 					}
 				});
@@ -167,7 +179,10 @@ module tui.ctrl {
 						} catch (e) {
 						}
 					}
-					result[field] = val;
+					if (field === "*")
+						result = val;
+					else if (result)
+						result[field] = val;
 				});
 				return result;
 			}

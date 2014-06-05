@@ -559,5 +559,6 @@ module tui.ctrl {
 
 	$(window.document).ready(function () {
 		initCtrls(document);
+		tui.fire("initialized", null);
 	});
 }

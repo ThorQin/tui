@@ -28,6 +28,7 @@ module tui.ctrl {
 					if (val < 1)
 						val = 1;
 					this.attr("data-value", val);
+					this.refresh();
 				}
 				return this;
 			} else
@@ -49,6 +50,7 @@ module tui.ctrl {
 					if (val <= 0)
 						val = 1;
 					this.attr("data-page-size", val);
+					this.refresh();
 				}
 				return this;
 			} else
@@ -61,6 +63,7 @@ module tui.ctrl {
 			if (typeof val !== tui.undef) {
 				if (typeof val === "number") {
 					this.attr("data-total-size", val);
+					this.refresh();
 				}
 				return this;
 			} else
@@ -85,6 +88,7 @@ module tui.ctrl {
 					if (val <= 0)
 						val = 1;
 					this.attr("data-max-buttons", val);
+					this.refresh();
 				}
 				return this;
 			} else
@@ -93,7 +97,7 @@ module tui.ctrl {
 
 		private changeValue(val: number) {
 			this.value(val);
-			this.refresh();
+			//this.refresh();
 			if (this.fire("change", { ctrl: this[0], value: this.value() }) === false)
 				return;
 			var formId = this.submitForm();

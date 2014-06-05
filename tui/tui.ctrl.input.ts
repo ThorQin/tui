@@ -556,7 +556,10 @@ module tui.ctrl {
 							var other = k.substr(6);
 							other = input(other);
 							if (other) {
-								if (finalText !== other.text())
+								var otherText = other.text();
+								if (otherText === null)
+									otherText = "";
+								if (finalText !== otherText)
 									this._invalid = true;
 							} else {
 								this._invalid = true;
