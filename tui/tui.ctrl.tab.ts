@@ -12,7 +12,7 @@ module tui.ctrl {
 			var activeIndex = 0;
 			for (var i = 0; i < this[0].childNodes.length; i++) {
 				var child = (<HTMLElement>this[0]).childNodes[i];
-				if (child.nodeName.toLowerCase() === "span") {
+				if (child.nodeName.toLowerCase() === "span" || child.nodeName.toLowerCase() === "a") {
 					$(child).addClass("tui-radiobox");
 					var button = tui.ctrl.radiobox(<HTMLElement>child);
 					button.group(this._tabId);
