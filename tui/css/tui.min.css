@@ -103,13 +103,18 @@ hr {
 .tui-blur {
   filter: url(blur.svg#blur);
   /* FireFox, Chrome, Opera */
-  -webkit-filter: blur(5px);
+  -webkit-filter: blur(10px);
   /* Chrome, Opera */
-  -moz-filter: blur(5px);
-  -ms-filter: blur(5px);
-  filter: blur(5px);
+  -moz-filter: blur(10px);
+  -ms-filter: blur(10px);
+  filter: blur(10px);
   /* IE6~IE9 */
-  /*filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=5, MakeShadow=false);*/
+  filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=10, MakeShadow=false);
+}
+.tui-bg-scale {
+  filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
 }
 body {
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
@@ -1114,6 +1119,7 @@ div.tui-mask,
   -moz-box-shadow: 0px 1px 30px #777777;
   box-shadow: 0px 1px 30px #777777;
   z-index: 2147483644;
+  text-align: left;
 }
 .tui-dialog > div {
   padding: 40px 20px;
@@ -1849,30 +1855,50 @@ div.tui-mask,
 }
 .tui-btn-group > *,
 .tui-input-group > *,
-.tui-paginator > * {
+.tui-paginator > *,
+.tui-btn-group > *.tui-focus,
+.tui-input-group > *.tui-focus,
+.tui-paginator > *.tui-focus,
+.tui-btn-group > *:focus,
+.tui-input-group > *:focus,
+.tui-paginator > *:focus {
+  vertical-align: middle;
+  display: inline-block;
   float: left;
   margin-left: 0;
   margin-right: 0;
-  border-left: none;
+  border-left-width: 0;
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
 .tui-btn-group > *.tui-button,
 .tui-input-group > *.tui-button,
-.tui-paginator > *.tui-button {
+.tui-paginator > *.tui-button,
+.tui-btn-group > *.tui-focus.tui-button,
+.tui-input-group > *.tui-focus.tui-button,
+.tui-paginator > *.tui-focus.tui-button,
+.tui-btn-group > *:focus.tui-button,
+.tui-input-group > *:focus.tui-button,
+.tui-paginator > *:focus.tui-button {
   min-width: 0px;
 }
 .tui-btn-group > *:first-child,
 .tui-input-group > *:first-child,
-.tui-paginator > *:first-child {
+.tui-paginator > *:first-child,
+.tui-btn-group > *.tui-focus:first-child,
+.tui-input-group > *.tui-focus:first-child,
+.tui-paginator > *.tui-focus:first-child,
+.tui-btn-group > *:first-child:focus,
+.tui-input-group > *:first-child:focus,
+.tui-paginator > *:first-child:focus {
   -webkit-border-top-left-radius: 3px;
   -moz-border-top-left-radius: 3px;
   border-top-left-radius: 3px;
   -webkit-border-bottom-left-radius: 3px;
   -moz-border-bottom-left-radius: 3px;
   border-bottom-left-radius: 3px;
-  border-left: 1px solid #cccccc;
+  border-left-width: 1px;
 }
 .tui-btn-group > *:last-child,
 .tui-input-group > *:last-child,
@@ -1918,20 +1944,40 @@ div.tui-mask,
   -moz-box-shadow: 0 0 2px #cccccc;
   box-shadow: 0 0 2px #cccccc;
 }
+.tui-shadow-dark-tiny {
+  -webkit-box-shadow: 0 0 2px #555555;
+  -moz-box-shadow: 0 0 2px #555555;
+  box-shadow: 0 0 2px #555555;
+}
 .tui-shadow-small {
   -webkit-box-shadow: 0 0 5px #cccccc;
   -moz-box-shadow: 0 0 5px #cccccc;
   box-shadow: 0 0 5px #cccccc;
 }
+.tui-shadow-dark-small {
+  -webkit-box-shadow: 0 0 5px #555555;
+  -moz-box-shadow: 0 0 5px #555555;
+  box-shadow: 0 0 5px #555555;
+}
 .tui-shadow {
-  -webkit-box-shadow: 0 0 8px #cccccc;
-  -moz-box-shadow: 0 0 8px #cccccc;
-  box-shadow: 0 0 8px #cccccc;
+  -webkit-box-shadow: 0 0 10px #cccccc;
+  -moz-box-shadow: 0 0 10px #cccccc;
+  box-shadow: 0 0 10px #cccccc;
+}
+.tui-shadow-dark {
+  -webkit-box-shadow: 0 0 10px #555555;
+  -moz-box-shadow: 0 0 10px #555555;
+  box-shadow: 0 0 10px #555555;
 }
 .tui-shadow-big {
-  -webkit-box-shadow: 0 0 12px #cccccc;
-  -moz-box-shadow: 0 0 12px #cccccc;
-  box-shadow: 0 0 12px #cccccc;
+  -webkit-box-shadow: 0 0 16px #cccccc;
+  -moz-box-shadow: 0 0 16px #cccccc;
+  box-shadow: 0 0 16px #cccccc;
+}
+.tui-shadow-dark-big {
+  -webkit-box-shadow: 0 0 16px #555555;
+  -moz-box-shadow: 0 0 16px #555555;
+  box-shadow: 0 0 16px #555555;
 }
 *[data-hidden=true],
 .tui-hidden,
