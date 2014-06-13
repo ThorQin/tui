@@ -13,6 +13,16 @@
   cursor: default;
   z-index: 2147483647;
 }
+.tui-round {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.tui-round-big {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
 .tui-spin {
   -webkit-animation: spin 2s infinite linear;
   -moz-animation: spin 2s infinite linear;
@@ -1819,9 +1829,6 @@ a:hover {
 }
 .tui-tips {
   padding: 10px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
   border: 1px solid #cccccc;
   position: relative;
   padding-right: 40px;
@@ -2104,4 +2111,7 @@ a:hover {
 .tui-form,
 .tui-form-agent {
   display: none;
+}
+.tui-invisible {
+  visibility: hidden;
 }

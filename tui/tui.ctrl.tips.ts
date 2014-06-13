@@ -3,9 +3,12 @@ module tui.ctrl {
 	export class Tips extends Control<Tips> {
 		static CLASS: string = "tui-tips";
 
+		private _closeButton = null;
+
 		constructor(el?: HTMLElement) {
 			super("div", Tips.CLASS, el);
 			var btn = document.createElement("span");
+			this._closeButton = btn;
 			btn.className = "tui-tips-close";
 			this[0].appendChild(btn);
 			$(btn).click((e) => {
@@ -13,14 +16,34 @@ module tui.ctrl {
 			});
 		}
 
+		useVisible(): boolean;
+		useVisible(val: boolean): Form;
+		useVisible(val?: boolean): any {
+			if (typeof val !== tui.undef) {
+				this.is("data-use-visible", !!val);
+				return this;
+			} else
+				return this.is("data-use-visible");
+		}
+
 		show();
 		show(msg: string);
 		show(msg?: string) {
+			if (typeof msg !== undef) {
+				tui.removeNode(this._closeButton);
+				this[0].innerHTML = msg;
+				this[0].appendChild(this._closeButton);
+			}
+			this.removeClass("tui-invisible");
 			this.removeClass("tui-hidden");
 		}
 
 		close() {
-			this.addClass("tui-hidden");
+			this.fire("close", {ctrl:this[0]});
+			if (this.useVisible())
+				this.addClass("tui-invisible");
+			else
+				this.addClass("tui-hidden");
 		}
 	}
 	export function tips(elem: HTMLElement): Tips;
