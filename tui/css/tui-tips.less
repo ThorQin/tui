@@ -1,0 +1,38 @@
+﻿@import 'tui-common.less';
+
+.tui-tips {
+	padding:10px;
+	.border-radius(@panelBorderRadius);
+	border:1px solid @borderColor;
+	position:relative;
+	padding-right:40px;
+	.tui-tips-close {
+		display:inline-block;
+		position:absolute;
+		top:10px;
+		right:10px;
+		width:20px;
+		text-align:center;
+		&:before {
+			.icon-base();
+			.fa-times;
+		}
+		color:#555;
+		cursor:pointer;
+	}
+	&.tui-success {
+		color:#00a000;
+		background-color:#ddffec;
+		border-color:#6dde6d;
+	}
+	&.tui-error {
+		color:red;
+		background-color:#ffeded;
+		border-color:#ffadad;
+	}
+	&.tui-warning {
+		color:#808000;
+		background-color:#ffffd0;
+		border-color:#e0d000;
+	}
+}

@@ -1,0 +1,82 @@
+﻿@import 'tui-common.less';
+
+.tui-spin {
+  -webkit-animation: spin 2s infinite linear;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear;
+}
+@-moz-keyframes spin {
+  0% { -moz-transform: rotate(0deg); }
+  100% { -moz-transform: rotate(359deg); }
+}
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(359deg); }
+}
+@-o-keyframes spin {
+  0% { -o-transform: rotate(0deg); }
+  100% { -o-transform: rotate(359deg); }
+}
+@-ms-keyframes spin {
+  0% { -ms-transform: rotate(0deg); }
+  100% { -ms-transform: rotate(359deg); }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(359deg); }
+}
+
+.tui-fadein {
+  -webkit-animation: fadein 0.1s linear;
+  -moz-animation: fadein 0.1s linear;
+  -o-animation: fadein 0.1s linear;
+  animation: fadein 0.1s linear;
+}
+@-moz-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@-webkit-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@-o-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@-ms-keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+@keyframes fadein {
+  0% { .opacity(0); }
+  100% { .opacity(1); }
+}
+
+.tui-fadeout {
+  -webkit-animation: fadeout 0.1s linear;
+  -moz-animation: fadeout 0.1s linear;
+  -o-animation: fadeout 0.1s linear;
+  animation: fadeout 0.1s linear;
+}
+@-moz-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@-webkit-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@-o-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@-ms-keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}
+@keyframes fadeout {
+  0% { .opacity(1); }
+  100% { .opacity(0); }
+}

@@ -1,0 +1,76 @@
+﻿@import 'tui-common.less';
+
+.tui-textarea {
+	@radius: @buttonBorderRadius;
+	@borderFocusColor: @inputBorderFocusColor;
+	@inputBackColor: #fff;
+	@buttonWidth:34px;
+	margin:2px;
+	display:block;
+	position:relative;
+	border:1px solid @borderColor;
+	.border-radius(@radius);
+	outline:none;
+	width:200px;
+	min-height:64px;
+	vertical-align:middle;
+	background-color:@inputBackColor;
+	&[data-readonly='true'] {
+		background-color:@captionColor;
+	}
+	//overflow:hidden;
+	.tui-placeholder {
+		color:#ccc;
+	}
+	&.tui-focus,&:focus {
+		border:1px solid @borderFocusColor;
+		.shadow(0px, 0px, 5px, @inputFocusedShadowColor);
+	}
+	> textarea {
+		margin:0;
+		position:absolute;
+		left:0;
+		top:0;
+		border:none;
+		outline:none;
+		padding:4px 8px;
+		padding-top:4px;
+		background-color:transparent;
+		font-size: 14px;
+		font-family: 'Microsoft YaHei';
+		resize:none;
+		overflow:auto;
+	}
+
+	> label {
+		display: inline-block;
+		padding:4px 8px;
+		position:absolute;
+		white-space:nowrap;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		left:0;
+		top:0;
+		right:0;
+		top:0;
+		bottom:0;
+	}
+	> div {
+		.icon-base;
+		line-height:30px;
+		font-size:14px;
+		position:absolute;
+		width:@buttonWidth;
+		top:0;
+		right:0;
+		bottom:0;
+		cursor:default;
+		color:@iconWarnColor;
+		text-align:center;
+		background-color:@inputBackColor;
+		.border-radius(@radius);
+		&:before {
+			.fa-exclamation-triangle;
+		}
+	}
+}

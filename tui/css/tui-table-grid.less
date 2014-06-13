@@ -1,0 +1,213 @@
+﻿@import 'tui-common.less';
+
+.tui-table {
+	.border-radius(@tableBorderRadius);
+	padding:0px;
+	border:none;
+	border-spacing:0px;
+	background-color: @tableBackgroundColor;
+	position:relative;
+	overflow:hidden;
+	tr {
+		position:relative;
+		th, td {
+			// Column border
+			border-right:1px solid @borderColor;
+			border-bottom:1px solid @borderColor;
+			padding:8px @tableCellPadding;
+			color:@tableTextColor;
+		}
+		.tui-table-head {
+			background-color:@captionColor;
+			color:@tableCaptionTextColor;
+			font-weight:normal;
+			text-align:center;
+		}
+		th:first-child, td:first-child {
+			border-left:1px solid @borderColor;
+		}
+		&:first-child {
+			td,th {
+				border-top:1px solid @borderColor;
+			}
+			td:first-child,th:first-child {
+				.top-left-radius(@tableBorderRadius);
+			}
+			td:last-child,th:last-child {
+				.top-right-radius(@tableBorderRadius);
+			}
+		}
+		&:last-child {
+			td:first-child,th:first-child {
+				.bottom-left-radius(@tableBorderRadius);
+			}
+			td:last-child,th:last-child {
+				.bottom-right-radius(@tableBorderRadius);
+			}
+		}
+	}
+	&.tui-table-fixed,&[data-resizable=true] {
+		table-layout:fixed;
+		.tui-table-splitter {
+			display:inline-block;
+			.transparent;
+			position:absolute;
+			width:5px;
+			top:0;
+			right:0;
+			cursor:col-resize;
+		}
+	
+		th,td {
+			white-space:nowrap;
+			>div,>span {
+				overflow:hidden;
+				text-overflow:ellipsis;
+			}
+		}
+	}
+}
+.tui-splitter-move {
+	display:inline-block;
+	position:absolute;
+	width:5px;
+	background-color:black;
+	top:0;
+	right:0;
+	cursor:col-resize;
+	.opacity(0.5);
+}
+
+
+.grid(@lineHeight: 38px) {
+	text-align:left;
+	vertical-align:middle;
+	position:relative;
+	border:1px solid @borderColor;
+	background-color:@tableBackgroundColor;
+	.border-radius(@tableBorderRadius);
+	-webkit-mask-image: -webkit-radial-gradient(circle, white, black);
+	overflow:hidden;
+	outline:none;
+	width:500px;
+	height:200px;
+	
+	.tui-scrollbar {
+		.border-radius(0);
+	}
+	.tui-scrollbar[data-direction=horizontal] {
+		position:absolute;
+		left:0;
+		bottom:0;
+		right:@scrollBarWidth;
+		.right-radius(0px);
+		.top-left-radius(0px);
+	}
+	.tui-scrollbar[data-direction=vertical] {
+		position:absolute;
+		top:0;
+		right:0;
+		bottom:@scrollBarWidth;
+		.bottom-radius(0px);
+		.top-left-radius(0px);
+	}
+	.tui-scroll-space {
+		.bottom-right-radius(@tableBorderRadius);
+	}
+	.tui-grid-line,.tui-grid-head {
+		display:block;
+		position:absolute;
+		left:0px;
+		right:0px;
+		height:@lineHeight;
+		line-height:@lineHeight;
+		border-bottom:1px solid @borderColor;
+		white-space: nowrap;
+		color:@tableTextColor;
+	}
+	.tui-grid-head {
+		top:0;
+		background-color:@captionColor;
+		.top-radius(@tableBorderRadius);
+		color:@tableCaptionTextColor;
+	}
+	.tui-grid-cell,.tui-grid-head-cell {
+		display:inline-block;
+		position:relative;
+
+		height:@lineHeight;
+		line-height:@lineHeight;
+		padding:0 @tableCellPadding;
+		border-right: 1px solid @borderColor;
+		.tui-grid-cell-content {
+			display:block;
+			overflow:hidden;
+			text-overflow:ellipsis;
+			white-space:nowrap;
+			height:@lineHeight;
+			line-height:@lineHeight;
+		}
+		white-space:nowrap;
+	}
+	.tui-grid-head-cell {
+		&.tui-grid-sortable {
+			cursor:pointer;
+		}
+		&.tui-grid-cell-sort-asc .tui-grid-cell-content:before {
+			.icon-base;
+			.fa-arrow-up;
+			margin-right:5px;
+		}
+		&.tui-grid-cell-sort-desc .tui-grid-cell-content:before {
+			.icon-base;
+			.fa-arrow-down;
+			margin-right:5px;
+		}
+	}
+	.tui-grid-cell {
+		&.tui-grid-sort-cell {
+			background-color:#f8f8f8;
+		}
+	}
+	
+	.tui-grid-splitter {
+		display:inline-block;
+		.transparent;
+		position:absolute;
+		width:5px;
+		top:0;
+		right:0;
+		bottom:0;
+		cursor:col-resize;
+		&.tui-splitter-move {
+			background-color:black;
+			.opacity(0.5);
+		}
+	}
+	.tui-grid-line.tui-grid-line-selected {
+		background-color:@lineSelectUnfocusedBackgroundColor;
+		.tui-grid-cell {
+			&.tui-grid-sort-cell {
+				background-color:#bbb;
+			}
+		}
+	}
+	&.tui-focus {
+		.tui-grid-line.tui-grid-line-selected {
+			background-color:@lineSelectfocusedBackgroundColor;
+			.tui-grid-cell {
+				color:@lineSelectfocusedForeColor;
+				&.tui-grid-sort-cell {
+					background-color:@lineSelectfocusedBackgroundColor;
+				}
+			}
+		}
+	}
+	.tui-hidden {
+		display:none;
+	}
+}
+
+.tui-grid {
+	.grid(@tableLineHeight);
+}

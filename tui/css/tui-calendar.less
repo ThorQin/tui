@@ -1,0 +1,80 @@
+﻿@import 'tui-common.less';
+
+// Calendar Control
+.tui-calendar {
+	padding:2px;
+	border: 1px solid @borderColor;
+	white-space:nowrap;
+	display:inline-block;
+	font-family: Calibri;
+	font-size:14px;
+	vertical-align:middle;
+	td {
+		padding:3px;
+		text-align:center;
+		width: 24px;
+		border:1px solid transparent;
+		&[colspan='3'] {
+			width:inherit;
+		}
+		&.tui-prev-month,&.tui-next-month {
+			color:#d0d0d0;
+		}
+		&.tui-weekend {
+			background-color:#fafafa;
+		}
+		&.tui-today {
+			color:#f00;
+			border:1px solid #017bce;
+		}
+		&.tui-actived {
+			background-color:#017bce;
+			color:#fff;
+		}
+		&.tui-prev-month-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-left;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+		&.tui-prev-year-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-double-left;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+		&.tui-next-month-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-right;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+		&.tui-next-year-btn {
+			cursor:pointer;
+			&:before {
+				.icon;
+				.fa-angle-double-right;
+			}
+			&:hover {
+				background-color:#f5f5f5;
+			}
+		}
+	}
+	.tui-week {
+		background-color: #017bce;
+		color:#fff;
+		font-size:12px;
+	}
+}

@@ -1,0 +1,45 @@
+﻿@import 'tui-table-grid.less';
+
+
+.tui-list {
+	.grid(@listLineHeight);
+	.tui-grid-line,.tui-grid-head {
+		border-bottom:none;
+	}
+	.tui-grid-cell,.tui-grid-head-cell {
+		border-right:none;
+	}
+	.tui-list-space {
+		display:inline-block;
+		width:12px;
+	}
+	.tui-list-fold {
+		display:inline-block;
+		width:12px;
+		margin-right:4px;
+		text-align:center;
+		&:before {
+			.icon-base;
+		}
+		&.tui-list-fold-expand:before {
+			.fa-caret-down;
+		}
+		&.tui-list-fold-unexpand:before {
+			.fa-caret-right;
+		}
+	}
+	.tui-list-checkbox {
+		display:inline-block;
+		width:16px;
+		&:before {
+			.icon-base;
+			.fa-square-o;
+		}
+		&.tui-checked:before {
+			.fa-check-square-o;
+		}
+		&.tui-half-checked:before {
+			.fa-check-square;
+		}
+	}
+}

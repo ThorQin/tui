@@ -36,6 +36,7 @@
     <TypeScriptCompile Include="tui\tui.ctrl.paginator.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.tab.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.textarea.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.tips.ts" />
     <TypeScriptCompile Include="tui\tui.dataprovider.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.grid.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.popup.ts" />
@@ -53,6 +54,20 @@
     <Content Include="Demo\upload.ashx" />
     <Content Include="FinalRelease\build.bat" />
     <Content Include="Demo\query.ashx" />
+    <Content Include="tui\css\tui-dialog.less" />
+    <Content Include="tui\css\tui-common.less" />
+    <Content Include="tui\css\tui-animation.less" />
+    <Content Include="tui\css\tui-table-grid.less" />
+    <Content Include="tui\css\tui-button.less" />
+    <Content Include="tui\css\tui-checkbox.less" />
+    <Content Include="tui\css\tui-calendar.less" />
+    <Content Include="tui\css\tui-tab.less" />
+    <Content Include="tui\css\tui-popup.less" />
+    <Content Include="tui\css\tui-input.less" />
+    <Content Include="tui\css\tui-textarea.less" />
+    <Content Include="tui\css\tui-scrollbar.less" />
+    <Content Include="tui\css\tui-list.less" />
+    <Content Include="tui\css\tui-tips.less" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

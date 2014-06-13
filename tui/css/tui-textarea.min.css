@@ -1,0 +1,83 @@
+.transparent {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAXSURBVBiVY/z//z8DMYCJKFWjCqmmEADVEgMRPT897AAAAABJRU5ErkJggg==);
+}
+.tui-textarea {
+  margin: 2px;
+  display: block;
+  position: relative;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  outline: none;
+  width: 200px;
+  min-height: 64px;
+  vertical-align: middle;
+  background-color: #ffffff;
+}
+.tui-textarea[data-readonly='true'] {
+  background-color: #f4f4f4;
+}
+.tui-textarea .tui-placeholder {
+  color: #ccc;
+}
+.tui-textarea.tui-focus,
+.tui-textarea:focus {
+  border: 1px solid #71b2e6;
+  -webkit-box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+  -moz-box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+  box-shadow: 0px 0px 5px rgba(113, 178, 230, 0.5);
+}
+.tui-textarea > textarea {
+  margin: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: none;
+  outline: none;
+  padding: 4px 8px;
+  padding-top: 4px;
+  background-color: transparent;
+  font-size: 14px;
+  font-family: 'Microsoft YaHei';
+  resize: none;
+  overflow: auto;
+}
+.tui-textarea > label {
+  display: inline-block;
+  padding: 4px 8px;
+  position: absolute;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+.tui-textarea > div {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 30px;
+  font-size: 14px;
+  position: absolute;
+  width: 34px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  cursor: default;
+  color: #feb000;
+  text-align: center;
+  background-color: #ffffff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.tui-textarea > div:before {
+  content: "\f071";
+}

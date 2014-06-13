@@ -1,0 +1,118 @@
+﻿@import 'tui-common.less';
+@import 'tui-animation.less';
+
+.tui-dialog-mask:extend(div.tui-mask) {
+	background-color:#888;
+	.opacity(0.5);
+	z-index:@dialogLayer;
+}
+.tui-dialog {
+	@lineColor: #e0e0e0;
+	@captionHeight: 40px;
+	@backColor:#fff;
+
+	//.tui-fadein;
+	outline:none;
+	display:block;
+	position:fixed;
+	background-color:white;
+	.border-radius(@dialogBorderRadius);
+	min-width:340px;
+	border:1px solid @lineColor;
+	.shadow(0px, 1px, 30px, #777);
+	z-index:@dialogLayer;
+	text-align:left;
+	> div {
+		padding:40px 20px;
+		background-color:@backColor;
+		overflow:auto;
+	}
+	> .tui-dlg-title-bar {
+		.top-radius(@dialogBorderRadius);
+		//position:relative;
+		overflow:hidden;
+		padding:5px 20px;
+		border-bottom:1px solid @lineColor;
+		background-color: (@captionColor);
+		height:@captionHeight;
+		line-height:@captionHeight;
+		//font-weight:bold;
+		//font-size:16px;
+		font-family:'Microsoft YaHei';
+		.tui-dlg-close {
+			position:absolute;
+			top:10px;
+			right:10px;
+			width:30px;
+			height:30px;
+			line-height:30px;
+			text-align:center;
+			padding:0;
+			background-color:transparent;
+			border:0;
+			cursor:pointer;
+			outline:none;
+			.border-radius(@buttonBorderRadius);
+			&:hover {
+				background-color:(@captionColor - #111);
+			}
+			&:before {
+				.icon-base;
+				.fa-times;
+			}
+		}
+	}
+	> .tui-dlg-btn-bar {
+		.bottom-radius(@dialogBorderRadius);
+		overflow:hidden;
+		padding:5px 20px;
+		border-top:1px solid @lineColor;
+		background-color:@captionColor;
+		min-height:@captionHeight;
+		text-align:right;
+		white-space:nowrap;
+		.tui-button {
+			margin:2px 4px;
+		}
+	}
+
+	.tui-dlg-msg {
+		text-align:center;
+	}
+	.tui-dlg-warp {
+		text-align:center;
+		&:before {
+			.icon-base;
+			font-size:3em;
+			margin:-8px 0;
+			margin-right:20px;
+			vertical-align:middle;
+		}
+		&.tui-dlg-info:before {
+			.fa-info-circle;
+			color:@iconInfoColor;
+		}
+		&.tui-dlg-ok:before {
+			.fa-check-circle;
+			color:@iconSuccessColor;
+		}
+		&.tui-dlg-warn:before {
+			.fa-warning;
+			color:@iconWarnColor;
+		}
+		&.tui-dlg-err:before {
+			.fa-times-circle;
+			color:red;
+		}
+		&.tui-dlg-ask:before {
+			.fa-question-circle;
+			color:@iconInfoColor;
+		}
+		&.tui-dlg-wait:before {
+			.fa-gear;
+			.tui-spin;
+			color:#aaa;
+		}
+	}
+
+}

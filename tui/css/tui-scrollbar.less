@@ -1,0 +1,163 @@
+﻿@import 'tui-common.less';
+
+.tui-scroll-space {
+	display:inline-block;
+	position:absolute;
+	width:@scrollBarWidth;
+	height:@scrollBarWidth;
+	right:0;
+	bottom:0;
+	background-color:@scrollBackColor;
+}
+.tui-scrollbar {
+	@iconColor:#bbb;
+	@iconActiveColor:#333;
+	@backColor:@scrollBackColor;
+	@thumbColor:@iconColor;
+	@thumbActiveColor:#666;
+	@borderSize:4px;
+	@space:4px;
+	@radius:5px;
+	@buttonPadding:4px;
+
+	font-size:9px;
+	margin:0;
+	padding:0;
+	display:inline-block;
+	position:relative;
+	width:@scrollBarWidth;
+	background-color:@backColor;
+	vertical-align:middle;
+	cursor:default;
+	//.border-radius(@radius);
+	span {
+		display:inline-block;
+		position:absolute;
+		left:0;
+		right:0;
+		margin:0;
+		padding:0;
+		text-align:center;
+		vertical-align:middle;
+	}
+	.tui-scroll-head {
+		top:0;
+		height:@scrollBarWidth;
+		padding-top:@buttonPadding;
+		line-height:@scrollBarWidth;
+		&:before {
+			display:inline-block;
+			position:relative;
+			content:"";
+			width:0;
+			height:0;
+			border:@borderSize solid transparent;
+			border-bottom:4px solid @iconColor;
+			top:-2px;
+			left:auto;
+		}
+		&:hover:before,&.tui-actived:before {
+			border-bottom-color:@iconActiveColor;
+		}
+	}
+	.tui-scroll-thumb {
+		left:1px;
+		right:1px;
+		background-color:@thumbColor;
+		//.border-radius(6px);
+		border-left:(@space - 1) solid @backColor;
+		border-right:(@space - 1) solid @backColor;
+		&:hover,&.tui-actived {
+			background-color:@thumbActiveColor;
+		}
+	}
+	.tui-scroll-foot {
+		bottom:0;
+		height:@scrollBarWidth;
+		line-height:@scrollBarWidth;
+		padding-bottom:@buttonPadding;
+		&:before {
+			display:inline-block;
+			position:relative;
+			content:"";
+			width:0;
+			height:0;
+			border:@borderSize solid transparent;
+			border-top:4px solid @iconColor;
+			top:2px;
+			left:auto;
+		}
+
+		&:hover:before,&.tui-actived:before {
+			border-top-color:@iconActiveColor;
+		}
+	}
+
+	&[data-direction=horizontal] {
+		height:@scrollBarWidth;
+		width:auto;
+
+		span {
+			top:0;
+			bottom:0;
+			left:auto;
+			right:auto;
+		}
+		.tui-scroll-head {
+			left:0;
+			width:@scrollBarWidth;
+			line-height:@scrollBarWidth;
+			padding-left:@buttonPadding;
+			padding-top:0;
+			&:before {
+				display:inline-block;
+				position:relative;
+				content:"";
+				width:0;
+				height:0;
+				border:@borderSize solid transparent;
+				border-right:4px solid @iconColor;
+				left:-2px;
+				top:auto;
+			}
+			&:hover:before,&.tui-actived:before {
+				border-right-color:@iconActiveColor;
+			}
+		}
+		.tui-scroll-thumb {
+			top:1px;
+			bottom:1px;
+			left:auto;
+			right:auto;
+			background-color:@thumbColor;
+			border-top:(@space - 1) solid @backColor;
+			border-bottom:(@space - 1) solid @backColor;
+			border-left:0;
+			border-right:0;
+			&:hover,&.tui-actived {
+				background-color:@thumbActiveColor;
+			}
+		}
+		.tui-scroll-foot {
+			right:0;
+			width:@scrollBarWidth;
+			line-height:@scrollBarWidth;
+			padding-right:@buttonPadding;
+			padding-bottom:0;
+			&:before {
+				display:inline-block;
+				position:relative;
+				content:"";
+				width:0;
+				height:0;
+				border:@borderSize solid transparent;
+				border-left:4px solid @iconColor;
+				left:2px;
+				top:auto;
+			}
+			&:hover:before,&.tui-actived:before {
+				border-left-color:@iconActiveColor;
+			}
+		}
+	}
+}

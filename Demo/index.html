@@ -39,6 +39,7 @@
 	<script src="../tui/tui.ctrl.form.js"></script>
 	<script src="../tui/tui.ctrl.formagent.js"></script>
 	<script src="../tui/tui.ctrl.paginator.js"></script>
+	<script src="../tui/tui.ctrl.tips.js"></script>
 	<!--#TUI END#-->
 	<script src="../tui/lang/zh-cn.js"></script>
 	<script src="../tui/lang/en-us.js"></script>
@@ -208,6 +209,7 @@
 		<div><a href="#showTab">标签页</a></div>
 		<div><a href="#showPopup">弹出层</a></div>
 		<div><a href="#showPaginator">分页器</a></div>
+		<div><a href="#showTips">提示条</a></div>
 	</div>
 	<h1>TUI Framework</h1>
 	<div style="margin:0 20px;">
@@ -657,8 +659,8 @@
 	</div>
 	<div style="margin:0 20px;">
 		<div style="padding:10px;">看一下效果，这次我们把结果集放到下面的普通表格中：</div>
-		<a id="gender1" class="tui-radiobox" data-group="gender" data-value="男">男</a>
-		<a id="gender2" class="tui-radiobox" data-group="gender" data-value="女">女</a>
+		<a id="gender1" class="tui-radiobox" data-group="gender" data-value="'男'">男</a>
+		<a id="gender2" class="tui-radiobox" data-group="gender" data-value="'女'">女</a>
 		<a class="tui-button" data-submit-form="queryForm1">查询</a>
 		<span id="queryForm1" class="tui-form"
 			  data-action="query.ashx"
@@ -740,5 +742,12 @@
 	一个很简单实用的分页器<br><br>
 	<div class="tui-paginator" data-total-size="25" data-max-buttons="5" data-value="1"></div><br><br>
 	<div class="tui-paginator" data-total-size="2005" data-max-buttons="7" data-value="15"></div>
+
+	<hr>
+	<h2 id="showTips">提示条</h2>
+	一个简单的提示条，经常可以用在对话框或表单中校验失败，或者返回结果失败时的提示信息。<br><br>
+	<div class="tui-tips tui-success">成功的消息。</div><br>
+	<div class="tui-tips tui-error">失败的错误提示。</div><br>
+	<div class="tui-tips tui-warning">警告消息。</div>
 </body>
 </html>

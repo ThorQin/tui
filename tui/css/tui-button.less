@@ -1,0 +1,67 @@
+﻿@import 'tui-common.less';
+
+// TUI button
+.tui-button {
+	.btn;
+	margin:2px;
+	cursor:pointer;
+	.border-radius(@buttonBorderRadius);
+	//.shadow(0px, 1px, 2px);
+	text-decoration: none;
+	color: #000;
+	.btn-color(@captionColor + #111, @captionColor );
+	border: 1px solid @borderColor;
+	min-width:40px;
+	&:hover {
+		color: #000;
+	}
+	&[data-checked] {
+		.btn-color(@captionColor - #111, @captionColor - #111);
+	}
+	&.tui-dropdown {
+		padding-left:5px;
+		padding-right:5px;
+		&:before {
+			.icon-base;
+			.fa-caret-down;
+		}
+	}
+	&.tui-success {
+		color: #fff;
+		.btn-color(#00c555, #00b545);
+		&[data-checked] {
+			.btn-color(#00b545 - #111, #00b545 - #111);
+		}
+	}
+	&.tui-primary {
+		color: #fff;
+		.btn-color(#0085f5, #0075e5);
+		&[data-checked] {
+			.btn-color(#0075e5 - #111, #0075e5 - #111);
+		}
+	}
+	&.tui-danger {
+		color: #fff;
+		.btn-color(#f51500, #e50500);
+		&[data-checked] {
+			.btn-color(#e50500 - #111, #e50500 - #111);
+		}
+	}
+	&.tui-warning {
+		color: #fff;
+		.btn-color(#ff8a00, #ef7a00);
+		&[data-checked] {
+			.btn-color(#ef7a00 - #111, #ef7a00 - #111);
+		}
+	}
+	&[data-disabled] {
+		cursor:default;
+		&:hover {
+			.liner-color(@captionColor + #111, @captionColor);
+		}
+		&:active,&.tui-actived {
+			.liner-color(@captionColor + #111, @captionColor);
+		}
+		color: @captionColor - #333;
+	}
+}

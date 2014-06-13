@@ -1,0 +1,21 @@
+﻿@import 'tui-common.less';
+
+
+// Popup Control
+.tui-popup {
+	display:inline-block;
+	position:fixed;
+	left:0;
+	top:0;
+	padding:0px;
+	outline:none;
+	z-index:@popupLayer;
+	.shadow(1px, 2px, 7px, rgba(0,0,0,0.2));
+	.border-radius(4px);
+	border: 1px solid @borderColor;
+	background-color: #fff;
+	.tui-calendar,.tui-list {
+		border:none;
+		outline:none;
+	}
+}

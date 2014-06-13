@@ -18,6 +18,10 @@ module tui.ctrl {
 			if (!this.hasAttr("data-target-property")) {
 				this.targetProperty("value");
 			}
+			if (!this.hasAttr("data-show-error")) {
+				this.isShowError(true);
+			}
+
 			var self = this;
 			if (this.isAutoSubmit()) {
 				tui.on("initialized", () => {
@@ -34,6 +38,16 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.is("data-auto-submit");
+		}
+
+		isShowError(): boolean;
+		isShowError(val: boolean): Form;
+		isShowError(val?: boolean): any {
+			if (typeof val !== tui.undef) {
+				this.is("data-show-error", !!val);
+				return this;
+			} else
+				return this.is("data-show-error");
 		}
 
 		action(): string;
@@ -200,7 +214,7 @@ module tui.ctrl {
 			if (!id)
 				return;
 			var data = this.value();
-			if (this.fire("beforecommit", { id: this.id(), data: data }) === false)
+			if (this.fire("submit", { id: this.id(), data: data }) === false)
 				return;
 			var self = this;
 			$.ajax({
@@ -210,24 +224,35 @@ module tui.ctrl {
 				"contentType": "application/json",
 				"data": (this.method() === "GET" ? data : JSON.stringify(data)),
 				"complete": function (jqXHR: JQueryXHR, status) {
-					if (self.fire("complete", { jqXHR: jqXHR, status: status }) !== false) {
-						if (status === "success") {
-							var target: any = self.target();
-							var property: string = self.targetProperty();
+					if (status === "success") {
+						if (self.fire("success", { jqXHR: jqXHR, status: status }) === false) {
+							return;
+						}
+					} else {
+						if (self.fire("error", { jqXHR: jqXHR, status: status }) === false) {
+							return;
+						}
+					}
+					if (self.fire("complete", { jqXHR: jqXHR, status: status }) === false) {
+						return;
+					}
+					if (status === "success") {
+						var target: any = self.target();
+						var property: string = self.targetProperty();
+						if (target) {
+							target = document.getElementById(target);
 							if (target) {
-								target = document.getElementById(target);
-								if (target) {
-									if (target._ctrl) {
-										if (typeof target._ctrl[property] === "function")
-											target._ctrl[property](jqXHR["responseJSON"]);
-									} else {
-										$(target).attr("data-value", jqXHR.responseText);
-									}
+								if (target._ctrl) {
+									if (typeof target._ctrl[property] === "function")
+										target._ctrl[property](jqXHR["responseJSON"]);
+								} else {
+									$(target).attr("data-value", jqXHR.responseText);
 								}
 							}
-						} else {
-							tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
 						}
+					} else {
+						if (self.isShowError())
+							tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
 					}
 				},
 				"processData": (this.method() === "GET" ? true : false)

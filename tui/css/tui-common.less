@@ -1,0 +1,155 @@
+﻿@import 'awesome4.less';
+
+@fontSize:14px;
+@borderColor: #cccccc;
+@captionColor: #f4f4f4;
+// Input shadow color
+@inputBorderFocusColor: rgb(113, 178, 230);
+@inputFocusedShadowColor:rgba(113,178,230,0.5);
+// Link
+@linkForeColor: #017bce;
+@linkVisitedForeColor:#017bce;
+@linkHoverForeColor:red;
+// Tooltips
+@tooltipBackgroundColor:#555;
+@tooltipForeColor:#ddd;
+// Scrollbar
+@scrollBackColor: @captionColor;
+// Table
+@tableBackgroundColor:#fff;
+@tableTextColor:#555;
+@tableCaptionTextColor:#000;
+// Usually used in list control
+@lineSelectUnfocusedBackgroundColor:#d8d8d8;
+@lineSelectfocusedBackgroundColor:#017bce;
+@lineSelectfocusedForeColor:#fff;
+// Used for dialog icon
+@iconWarnColor:#feb000;
+@iconInfoColor:#359eee;
+@iconSuccessColor:#33d500;
+// Define z-index value of different kind of objects.
+@maskLayer:2147483647;
+@tooltipLayer: 2147483646;
+@popupLayer:2147483645;
+@dialogLayer:2147483644;
+// Define border radius value of different kind of objects.
+@buttonBorderRadius:3px;
+@panelBorderRadius:5px;
+@dialogBorderRadius:0px;
+@tableBorderRadius:5px;
+// Some control sizes
+@tableCellPadding:8px;
+@inputHeight:32px;
+@scrollBarWidth:16px; // Or height if it's a horizontal scrollbar
+@tableLineHeight:38px;
+// List Control
+@listLineHeight:30px;
+// button
+@buttonPaddingTopBottom:6px;
+@buttonPaddingLeftRight:14px;
+
+
+
+.font() {
+	font:normal @fontSize 'Microsoft Yahei',Arial,Verdana;
+}
+.btn() {
+	.font;
+	padding:@buttonPaddingTopBottom @buttonPaddingLeftRight;
+	text-align:center;
+	vertical-align:middle;
+	text-decoration:none;
+	display:inline-block;
+}
+.shadow(@x, @y, @blur, @color : rgba(0,0,0,.1)) {
+	-webkit-box-shadow: @x @y @blur @color;
+	-moz-box-shadow: @x @y @blur @color;
+	box-shadow: @x @y @blur @color;
+}
+.border-radius(@size) {
+	-webkit-border-radius:@size;
+	-moz-border-radius:@size;
+	border-radius:@size;
+}
+.top-left-radius(@size) {
+	-webkit-border-top-left-radius:@size;
+	-moz-border-top-left-radius:@size;
+	border-top-left-radius:@size;
+}
+.top-right-radius(@size) {
+	-webkit-border-top-right-radius:@size;
+	-moz-border-top-right-radius:@size;
+	border-top-right-radius:@size;
+}
+.bottom-left-radius(@size) {
+	-webkit-border-bottom-left-radius:@size;
+	-moz-border-bottom-left-radius:@size;
+	border-bottom-left-radius:@size;
+}
+.bottom-right-radius(@size) {
+	-webkit-border-bottom-right-radius:@size;
+	-moz-border-bottom-right-radius:@size;
+	border-bottom-right-radius:@size;
+}
+.right-radius(@size) {
+	.top-right-radius(@size);
+	.bottom-right-radius(@size);
+}
+.left-radius(@size) {
+	.top-left-radius(@size);
+	.bottom-left-radius(@size);
+}
+.top-radius(@size) {
+	.top-left-radius(@size);
+	.top-right-radius(@size);
+}
+.bottom-radius(@size) {
+	.bottom-left-radius(@size);
+	.bottom-right-radius(@size);
+}
+
+.liner-color(@begin, @end) {
+	background-color: (@begin + @end) / 2;
+	filter:e(%("progid:DXImageTransform.Microsoft.gradient(startColorstr='%d', endColorstr='%d')", @begin, @end));
+	background-image: -webkit-gradient(linear, left top, left bottom, from(@begin), to(@end));
+	background-image: -webkit-linear-gradient(top, @begin, @end);
+	background-image: -moz-linear-gradient(top,  @begin, @end);
+	background-image: -ms-linear-gradient(top, @begin, @end);  
+	background-image: -o-linear-gradient(top, @begin, @end);
+}
+.btn-color(@begin, @end) {
+	.liner-color(@begin,@end);
+	border-color: @end - #111;
+	&:hover {
+		.liner-color(@end,@begin);
+	}
+	&:active,&.tui-actived {
+		.liner-color(@end - #111, @end - #111);
+	}
+}
+.icon-base() {
+	display: inline-block;
+	font-family: FontAwesome;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icon() {
+	.icon-base;
+	font-size:@fontSize;
+	width:14px;
+	//margin-right:4px;
+}
+
+.opacity(@value) {
+	opacity:@value;
+	@filterValue: @value * 100;
+	filter:alpha(opacity=@filterValue);
+}
+
+.transparent {
+	background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAXSURBVBiVY/z//z8DMYCJKFWjCqmmEADVEgMRPT897AAAAABJRU5ErkJggg==);
+}
