@@ -149,7 +149,7 @@
 					};
 					queryInfo.update(info);
 				}, 50);
-				console.log("Request times: " + (sum++));
+				//console.log("Request times: " + (sum++));
 			});
 			var grid = tui.ctrl.grid("gridTest").data(cursor);
 
@@ -366,7 +366,7 @@
 					]},
 				{key:2, value:'选项2', checked:false },
 				{key:3, value:'选项3', checked:false}
-			 ]"></div>
+			 ]"></div><br>
 		<div class="tui-textarea tui-inline" style="max-height:200px;"
 			 data-placeholder="请输入一段文字描述"
 			 data-validator="{'*any': '请输入文字内容'}"></div>
@@ -748,6 +748,10 @@
 	一个简单的提示条，经常可以用在对话框或表单中校验失败，或者返回结果失败时的提示信息。<br><br>
 	<div class="tui-tips tui-success">成功的消息。</div><br>
 	<div class="tui-tips tui-error">失败的错误提示。</div><br>
-	<div class="tui-tips tui-warning">警告消息。</div>
+	<div class="tui-tips tui-warning">警告消息。</div><br>
+	没有文字的样式：<br>
+	<div class="tui-tips tui-warning"></div>
+	有多行文字的样式：<br>
+	<div class="tui-tips tui-warning">文字内容第一行<br>文字内容第二行。</div>
 </body>
 </html>
