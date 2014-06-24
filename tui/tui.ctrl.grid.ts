@@ -487,7 +487,9 @@ module tui.ctrl {
 				if (["center", "left", "right"].indexOf(col.headAlign) >= 0)
 					cell.style.textAlign = col.headAlign;
 			}
-			if (typeof value === "object" && value.nodeName) {
+			if (value === null) {
+				contentSpan.innerHTML = "";
+			} else if (typeof value === "object" && value.nodeName) {
 				contentSpan.innerHTML = "";
 				contentSpan.appendChild(value);
 			} else {

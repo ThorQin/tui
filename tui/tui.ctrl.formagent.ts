@@ -181,6 +181,12 @@ module tui.ctrl {
 						if (typeof ctrl[property] === "function") {
 							ctrl[property](val);
 						}
+					} else if (elem) {
+						if (typeof elem[property] === "function") {
+							elem[property](val);
+						} else {
+							elem[property] = val;
+						}
 					}
 				}
 				return this;
@@ -238,6 +244,12 @@ module tui.ctrl {
 						var ctrl = elem["_ctrl"];
 						if (typeof ctrl[property] === "function") {
 							return ctrl[property]();
+						}
+					} else if (elem) {
+						if (typeof elem[property] === "function") {
+							return elem[property]();
+						} else {
+							return elem[property];
 						}
 					}
 					return null;
