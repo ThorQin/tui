@@ -241,12 +241,16 @@ module tui.ctrl {
 						var property: string = self.targetProperty();
 						if (target) {
 							target = document.getElementById(target);
-							if (target) {
-								if (target._ctrl) {
-									if (typeof target._ctrl[property] === "function")
-										target._ctrl[property](jqXHR["responseJSON"]);
+							if (target && target["_ctrl"]) {
+								var ctrl = target["_ctrl"];
+								if (typeof ctrl[property] === "function") {
+									ctrl[property](jqXHR["responseJSON"]);
+								}
+							} else if (target) {
+								if (typeof target[property] === "function") {
+									target[property](jqXHR.responseText);
 								} else {
-									$(target).attr("data-value", jqXHR.responseText);
+									target[property] = jqXHR.responseText;
 								}
 							}
 						}
