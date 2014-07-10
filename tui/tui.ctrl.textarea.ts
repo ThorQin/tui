@@ -192,8 +192,13 @@ module tui.ctrl {
 		value(val?: any): TextArea;
 		value(val?: any): any {
 			if (typeof val !== tui.undef) {
-				this.attr("data-text", val);
-				this.attr("data-value", val);
+				if (val === null) {
+					this.attr("data-text", "");
+					this.attr("data-value", "");
+				} else {
+					this.attr("data-text", val);
+					this.attr("data-value", val);
+				}
 				this._invalid = false;
 				this.refresh();
 				return this;

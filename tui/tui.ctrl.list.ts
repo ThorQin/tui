@@ -498,7 +498,9 @@ module tui.ctrl {
 		value(keys: any[]): List;
 		value(keys?: any[]): any {
 			if (typeof keys !== undef) {
-				this.checkItems(keys);
+				this.uncheckAllItems();
+				if (keys != null)
+					this.checkItems(keys);
 				return this;
 			} else {
 				var items = this.checkedItems();

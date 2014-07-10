@@ -163,7 +163,9 @@ module tui.ctrl {
 		value(data: any[]): Grid;
 		value(data: { data: any[]; head?: string[]; length?: number; }): Grid;
 		value(data?: any): any {
-			if (data) {
+			if (data === null) {
+				return this.data([]);
+			} else if (data) {
 				return this.data(data);
 			} else {
 				var result = [];

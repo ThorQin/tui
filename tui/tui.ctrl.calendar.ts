@@ -159,6 +159,15 @@ module tui.ctrl {
 			} else
 				return this._time;
 		}
+		value(t: Date): Calendar;
+		value(): Date;
+		value(t?: Date): any {
+			if (t === null) {
+				this.time(tui.today());
+				return this;
+			}
+			return this.time(t);
+		}
 		prevMonth() {
 			var y = this.year(), m = this.month(), d = this.day();
 			if (m === 1) {

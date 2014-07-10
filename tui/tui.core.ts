@@ -15,6 +15,10 @@ module tui {
 		return typeof undefined;
 	})();
 
+	export var undefVal = ((undefined?): any => {
+		return undefined;
+	})();
+
 	export var lang = ((): string => {
 		return (navigator.language || navigator.browserLanguage || navigator.userLanguage).toLowerCase();
 	})();
@@ -50,7 +54,7 @@ module tui {
 	export var uuid = (function () {
 		var id = 0;
 		return function () {
-			var uid = 'tid-' + id++;
+			var uid = 'tuid' + id++;
 			return uid;
 		};
 	})();

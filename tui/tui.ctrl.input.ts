@@ -754,15 +754,17 @@ module tui.ctrl {
 		value(val?: any): any {
 			var type = this.type();
 			if (typeof val !== tui.undef) {
-				if (type === "calendar") {
+				if (val == null) {
+					this.removeAttr("data-value");
+					this.attr("data-text", "");
+				} else if (type === "calendar") {
 					if (typeof val === "string") {
 						try {
 							val = tui.parseDate(val);
 						} catch (e) {
 							val = null;
 						}
-					}
-					if (val instanceof Date) {
+					} else if (val instanceof Date) {
 						this.attr("data-value", formatDate(val, "yyyy-MM-dd"));
 						this.attr("data-text", formatDate(val, tui.str("yyyy-MM-dd")));
 						this._invalid = false;

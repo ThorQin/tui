@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.ctrl.form.ts" />
+﻿/// <reference path="tui.ctrl.control.ts" />
 module tui.ctrl {
 	export class FormAgent extends Control<FormAgent> {
 		static CLASS: string = "tui-form-agent";
@@ -144,7 +144,7 @@ module tui.ctrl {
 		// Extract data from target control(s)
 		value(): any;
 		// Dispatch data to target control(s)
-		value(val: any): Form;
+		value(val: any): FormAgent;
 		value(val?: any): any {
 			var property = this.targetProperty();
 			var target = this.target();
@@ -162,6 +162,8 @@ module tui.ctrl {
 					var values: string[];
 					if (val && typeof val.length === "number")
 						values = val;
+					else if (val === null)
+						values = [];
 					else
 						values = [val];
 

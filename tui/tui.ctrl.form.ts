@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.ctrl.control.ts" />
+﻿/// <reference path="tui.ctrl.formagent.ts" />
 module tui.ctrl {
 	export class Form extends Control<Form> {
 		static CLASS: string = "tui-form";
@@ -6,6 +6,9 @@ module tui.ctrl {
 		static STATUS: string[] = [
 			"success", "notmodified", "error", "timeout", "abort", "parsererror"
 		];
+
+		private _immediateValue: any;
+
 		constructor(el?: HTMLElement) {
 			super("span", Form.CLASS, el);
 
@@ -20,6 +23,17 @@ module tui.ctrl {
 			}
 			if (!this.hasAttr("data-show-error")) {
 				this.isShowError(true);
+			}
+
+			if (this.id() === null)
+				this.id(tui.uuid());
+
+			// Initialize child SPAN to FormAgent control
+			for (var i = 0; i < this[0].childNodes.length; i++) {
+				if ((<string>this[0].childNodes[i].nodeName).toLowerCase() === "span") {
+					var agent = tui.ctrl.formAgent(this[0].childNodes[i]);
+					agent.ajaxForm(this.id());
+				}
 			}
 
 			var self = this;
@@ -110,10 +124,30 @@ module tui.ctrl {
 				return this.attr("data-target-property");
 		}
 
+		targetRedirect(): string;
+		targetRedirect(val?: string): Form;
+		targetRedirect(val?: string): any {
+			if (typeof val === "string") {
+				this.attr("data-target-redirect", val);
+				return this;
+			} else
+				return this.attr("data-target-redirect");
+		}
+
+		targetSubmitForm(): string;
+		targetSubmitForm(val?: string): Form;
+		targetSubmitForm(val?: string): any {
+			if (typeof val === "string") {
+				this.attr("data-target-submit-form", val);
+				return this;
+			} else
+				return this.attr("data-target-submit-form");
+		}
+
 		validate(): boolean {
 			var id = this.id();
 			if (!id) {
-				return false;
+				return true;
 			}
 			var valid = true;
 			$("[data-ajax-form='" + id + "']").each(function (index, elem) {
@@ -124,6 +158,16 @@ module tui.ctrl {
 			return valid;
 		}
 
+		immediateValue(): any;
+		immediateValue(val: any): Form;
+		immediateValue(val?: any): any {
+			if (typeof val !== tui.undef) {
+				this._immediateValue = val;
+				return this;
+			} else
+				return this._immediateValue;
+		}
+
 		// Extract data from form field controls
 		value(): any;
 		// Dispatch data to form field controls
@@ -132,9 +176,7 @@ module tui.ctrl {
 			if (typeof val !== tui.undef) {
 				// Dispatch data to other controls
 				var id = this.id();
-				if (!id)
-					return this;
-				$("[data-ajax-form='" + id + "']").each(function (index, elem) {
+				id && $("[data-ajax-form='" + id + "']").each(function (index, elem) {
 					var field;
 					if (this._ctrl) {
 						field = this._ctrl.ajaxField();
@@ -167,10 +209,7 @@ module tui.ctrl {
 				var result: any = {};
 				// Collect all fields from other controls
 				var id = this.id();
-				if (!id) {
-					return null;
-				}
-				$("[data-ajax-form='" + id + "']").each(function (index, elem) {
+				id && $("[data-ajax-form='" + id + "']").each(function (index, elem) {
 					var field ;
 					var val;
 					if (this._ctrl) {
@@ -202,7 +241,19 @@ module tui.ctrl {
 			}
 		}
 
-
+		clear() {
+			this._immediateValue = tui.undefVal;
+			var id = this.id();
+			id && $("[data-ajax-form='" + id + "']").each(function (index, elem: any) {
+				if (elem._ctrl) {
+					if (typeof elem._ctrl.value === "function")
+						elem._ctrl.value(null);
+				} else {
+					$(elem).attr("data-value", "");
+					$(elem).removeAttr("data-value");
+				}
+			});
+		}
 
 		submit() {
 			if (!this.validate())
@@ -213,7 +264,9 @@ module tui.ctrl {
 			var id = this.id();
 			if (!id)
 				return;
-			var data = this.value();
+			var data = this.immediateValue();
+			if (typeof data === tui.undef)
+				data = this.value();
 			if (this.fire("submit", { id: this.id(), data: data }) === false)
 				return;
 			var self = this;
@@ -237,6 +290,11 @@ module tui.ctrl {
 						return;
 					}
 					if (status === "success") {
+						var targetRedirect: string = self.targetRedirect();
+						if (targetRedirect) {
+							window.location.assign(targetRedirect);
+							return;
+						}
 						var target: any = self.target();
 						var property: string = self.targetProperty();
 						if (target) {
@@ -253,6 +311,11 @@ module tui.ctrl {
 									target[property] = jqXHR.responseText;
 								}
 							}
+						}
+						var targetSubmitForm: string = self.targetSubmitForm();
+						if (targetSubmitForm) {
+							var form = tui.ctrl.form(targetSubmitForm);
+							form && form.submit();
 						}
 					} else {
 						if (self.isShowError())
