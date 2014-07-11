@@ -1548,6 +1548,7 @@ a:hover {
 }
 .tui-grid .tui-grid-cell .tui-grid-cell-content,
 .tui-grid .tui-grid-head-cell .tui-grid-cell-content {
+  cursor: default;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1582,6 +1583,18 @@ a:hover {
 }
 .tui-grid .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;
+}
+.tui-grid .tui-grid-cell .tui-grid-text-editor {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  border: none;
+  outline: none;
+  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
+  padding: 0px 8px;
+  color: #555555;
 }
 .tui-grid .tui-grid-splitter {
   display: inline-block;
@@ -1706,6 +1719,7 @@ a:hover {
 }
 .tui-list .tui-grid-cell .tui-grid-cell-content,
 .tui-list .tui-grid-head-cell .tui-grid-cell-content {
+  cursor: default;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1740,6 +1754,18 @@ a:hover {
 }
 .tui-list .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;
+}
+.tui-list .tui-grid-cell .tui-grid-text-editor {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  border: none;
+  outline: none;
+  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
+  padding: 0px 8px;
+  color: #555555;
 }
 .tui-list .tui-grid-splitter {
   display: inline-block;

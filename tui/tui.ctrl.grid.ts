@@ -5,8 +5,12 @@ module tui.ctrl {
 		cell: HTMLSpanElement;	// Drawing cell
 		value: any;				// Cell content either is HTML node or text content
 		row: any;				// Row data
+		col: GridColumn;		// Column definition
+		colKey: any;			// Via this key can either get or set row value
 		rowIndex: number;		// Drawing row, if row index is -1 means this line a head line
 		colIndex: number;		// Column index
+		isRowActived: boolean;	// Indicate whether the current row are selected.
+		grid: Grid;
 	}
 
 	export interface GridColumn {
@@ -479,7 +483,7 @@ module tui.ctrl {
 			}
 		}
 
-		private drawCell(cell: HTMLSpanElement, contentSpan: HTMLSpanElement, col: GridColumn, value: any, row: any, rowIndex: number, colIndex: number) {
+		private drawCell(cell: HTMLSpanElement, contentSpan: HTMLSpanElement, col: GridColumn, colKey: any, value: any, row: any, rowIndex: number, colIndex: number) {
 			if (rowIndex >= 0) {
 				if (["center", "left", "right"].indexOf(col.align) >= 0)
 					cell.style.textAlign = col.align;
@@ -500,8 +504,12 @@ module tui.ctrl {
 					cell: cell,
 					value: value,
 					row: row,
+					col: col,
+					colKey: colKey,
 					rowIndex: rowIndex,
-					colIndex: colIndex
+					colIndex: colIndex,
+					isRowActived: rowIndex === this._activerow,
+					grid: this
 				});
 			}
 			if (this._sortColumn === colIndex)
@@ -521,6 +529,12 @@ module tui.ctrl {
 			this._splitters.length = 0;
 			for (var i = 0; i < columns.length; i++) {
 				var col = columns[i];
+				var key = null;
+				if (typeof col.key !== tui.undef && col.key !== null) {
+					key = this._columnKeyMap[col.key]
+					if (typeof key === tui.undef)
+						key = col.key;
+				}
 				var cell = document.createElement("span");
 				cell.setAttribute("unselectable", "on");
 				cell.className = "tui-grid-head-cell tui-grid-" + this._tableId + "-" + i;
@@ -528,7 +542,7 @@ module tui.ctrl {
 				var contentSpan = document.createElement("span");
 				contentSpan.className = "tui-grid-cell-content";
 				cell.appendChild(contentSpan);
-				this.drawCell(cell, contentSpan, col, col.name, null, -1, i);
+				this.drawCell(cell, contentSpan, col, key, col.name, null, -1, i);
 				this.bindSort(cell, col, i);
 				if (this.resizable()) {
 					var splitter = this.bindSplitter(cell, col, i);
@@ -575,7 +589,7 @@ module tui.ctrl {
 						key = col.key;
 				}
 				var value = (key !== null && rowData ? rowData[key] : " ");
-				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, value, rowData, index, i);
+				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, key, value, rowData, index, i);
 			}
 
 			if (!bindEvent)
@@ -586,8 +600,10 @@ module tui.ctrl {
 			});
 			$(line).mousedown(function (e) {
 				var index = line["_rowIndex"];
-				if (self.rowselectable())
+				if (self.rowselectable()) {
 					self.activerow(index);
+					self.scrollTo(index);
+				}
 				self.fire("rowmousedown", { "event": e, "index": index, "row": line });
 			});
 			$(line).mouseup( function (e) {
@@ -760,10 +776,12 @@ module tui.ctrl {
 			cell.style.visibility = "hidden";
 			cell.style.width = "auto";
 			document.body.appendChild(cell);
-			var key = columnIndex;
-			if (typeof col.key === "string" && col.key ||
-				typeof col.key === "number" && !isNaN(col.key))
-				key = col.key;
+			var key = null;
+			if (typeof col.key !== tui.undef && col.key !== null) {
+				key = this._columnKeyMap[col.key]
+					if (typeof key === tui.undef)
+					key = col.key;
+			}
 			var data = this.myData();
 			var begin = displayedOnly ? this._bufferedBegin : 0;
 			var end = displayedOnly ? this._bufferedEnd : data.length();
@@ -781,8 +799,12 @@ module tui.ctrl {
 						cell: cell,
 						value: v,
 						row: rowData,
+						col: col,
+						colKey: key,
 						rowIndex: i,
-						colIndex: columnIndex
+						colIndex: columnIndex,
+						isRowActived: i === this._activerow,
+						grid: this
 					});
 				if (maxWidth < cell.offsetWidth - this._borderWidth)
 					maxWidth = cell.offsetWidth - this._borderWidth;
@@ -945,6 +967,47 @@ module tui.ctrl {
 			this.drawLines();
 		}
 
+
+
+		static textEditor(whenDoubleClick: boolean = true) {
+			return function (data: IColumnFormatInfo) {
+				if (data.rowIndex < 0)
+					return;
+				var eventName = (whenDoubleClick ? "dblclick" : "mousedown");
+				$(data.cell.firstChild).on(eventName, function (e) {
+					if (!tui.isLButton(e.button))
+						return;
+					data.grid.scrollTo(data.rowIndex);
+					var txtBox = document.createElement("input");
+					txtBox.className = "tui-grid-text-editor";
+					txtBox.style.width = $(data.cell).innerWidth() - 16 + "px";
+					txtBox.style.height = $(data.cell).innerHeight() + "px";
+					txtBox.value = data.value;
+					txtBox.width = "1";
+					$(txtBox).mousedown(function (e) {
+						e.stopPropagation();
+						e.stopImmediatePropagation();
+					});
+					$(txtBox).change(function (e) {
+						data.row[data.colKey] = txtBox.value;
+						(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
+						data.value = txtBox.value;
+					});
+					$(txtBox).blur(function () {
+						data.cell.removeChild(txtBox);
+						data.row[data.colKey] = txtBox.value;
+						(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
+						data.value = txtBox.value;
+					});
+					data.cell.appendChild(txtBox);
+					setTimeout(function () {
+						txtBox.focus();
+						txtBox.selectionStart = txtBox.value.length;
+					}, 20);
+
+				});
+			};
+		}
 	}
 
 	export function grid(param: HTMLElement): Grid;

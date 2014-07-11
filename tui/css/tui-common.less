@@ -1,6 +1,7 @@
 ﻿@import 'awesome4.less';
 
 @fontSize:14px;
+@pageFont:normal @fontSize 'Microsoft Yahei',Arial,Verdana;
 @borderColor: #cccccc;
 @captionColor: #f4f4f4;
 // Input shadow color
@@ -51,7 +52,7 @@
 
 
 .font() {
-	font:normal @fontSize 'Microsoft Yahei',Arial,Verdana;
+	font:@pageFont;
 }
 .btn() {
 	.font;

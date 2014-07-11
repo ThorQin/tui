@@ -140,6 +140,7 @@
 		padding:0 @tableCellPadding;
 		border-right: 1px solid @borderColor;
 		.tui-grid-cell-content {
+			cursor:default;
 			display:block;
 			overflow:hidden;
 			text-overflow:ellipsis;
@@ -167,6 +168,18 @@
 	.tui-grid-cell {
 		&.tui-grid-sort-cell {
 			background-color:#f8f8f8;
+		}
+		.tui-grid-text-editor {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			right: 0px;
+			bottom: 0px;
+			border: none;
+			outline:none;
+			font:@pageFont;
+			padding: 0px 8px;
+			color:@tableTextColor;
 		}
 	}
 	

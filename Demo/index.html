@@ -446,19 +446,19 @@
 		<div id="gridDemo1"
 			 class="tui-grid" style="display:inline-block;width:500px;height:272px;"
 			 data-columns="[{'name':'姓名', 'sort':true, 'key': 0 },
-			{'name':'年龄', 'sort':true, 'key': 1 },
-			{'name':'性别', 'key': 2 },
-			{'name':'身高', 'key': 3 }]"
-			 data-data="[
-			['张三',29,'男',173],
-			 ['李四',23,'男',172],
-			 ['王五',15,'男',174],
-			 ['赵六',33,'男',176],
-			 ['薛丁山',20,'男',179],
-			 ['樊梨花',18,'男',172],
-			 ['薛仁贵',40,'男',182],
-			 ['薛平贵',40,'男',180]
-		 ]"
+				{'name':'年龄', 'sort':true, 'key': 1 },
+				{'name':'性别', 'key': 2 },
+				{'name':'身高', 'key': 3 }]"
+				 data-data="[
+				['张三',29,'男',173],
+				 ['李四',23,'男',172],
+				 ['王五',15,'男',174],
+				 ['赵六',33,'男',176],
+				 ['薛丁山',20,'男',179],
+				 ['樊梨花',18,'男',172],
+				 ['薛仁贵',40,'男',182],
+				 ['薛平贵',40,'男',180]
+			 ]"
 			 data-resizable="true"
 			 data-rowselectable="true">
 		</div><br><br>
@@ -474,6 +474,27 @@
 			 data-resizable="true"
 			 data-rowselectable="true"
 			 data-has-hscroll="false">
+		</div><br><br>
+
+		<div>支持行内编辑</div>
+		<div id="gridDemo2"
+			 class="tui-grid" style="display:inline-block;width:500px;height:272px;"
+			 data-columns="[{'name':'姓名', 'sort':true, 'key': 0, format: tui.ctrl.Grid.textEditor()},
+				{'name':'年龄', 'sort':true, 'key': 1 },
+				{'name':'性别', 'key': 2 },
+				{'name':'身高', 'key': 3 }]"
+			 data-data="[
+				['张三',29,'男',173],
+				 ['李四',23,'男',172],
+				 ['王五',15,'男',174],
+				 ['赵六',33,'男',176],
+				 ['薛丁山',20,'男',179],
+				 ['樊梨花',18,'男',172],
+				 ['薛仁贵',40,'男',182],
+				 ['薛平贵',40,'男',180]
+			 ]"
+			 data-resizable="true"
+			 data-rowselectable="true">
 		</div>
 	</div>
 
