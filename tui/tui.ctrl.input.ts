@@ -757,6 +757,8 @@ module tui.ctrl {
 				if (val == null) {
 					this.removeAttr("data-value");
 					this.attr("data-text", "");
+					this._invalid = false;
+					this.refresh();
 				} else if (type === "calendar") {
 					if (typeof val === "string") {
 						try {
@@ -764,7 +766,8 @@ module tui.ctrl {
 						} catch (e) {
 							val = null;
 						}
-					} else if (val instanceof Date) {
+					}
+					if (val instanceof Date) {
 						this.attr("data-value", formatDate(val, "yyyy-MM-dd"));
 						this.attr("data-text", formatDate(val, tui.str("yyyy-MM-dd")));
 						this._invalid = false;
