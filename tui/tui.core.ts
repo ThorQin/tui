@@ -372,6 +372,11 @@ module tui {
 		return isAncestry(child, elem);
 	}
 
+	export function isFireInside(elem: Node, event: any): boolean {
+		var target = event.target || event.srcElement;
+		return isPosterity(elem, target);
+	}
+
 	/**
 	 * Detect whether the element is inside the document
 	 * @param {type} elem

@@ -53,12 +53,9 @@ module tui.ctrl {
 
 
 		constructor(el?: HTMLElement, type?: string) {
-			super("span", Input.CLASS, el);
+			super("span", Input.CLASS, el === null ? undefined: el);
 			var self = this;
 
-			if (typeof type !== tui.undef)
-				this.type(type);
-			
 			this._button = document.createElement("span");
 			this._label = document.createElement("label");
 			this._notify = document.createElement("div");
@@ -67,7 +64,12 @@ module tui.ctrl {
 			this[0].appendChild(this._button);
 			this[0].appendChild(this._notify);
 
-			this.createTextbox();
+			if (typeof type !== tui.undef)
+				this.type(type);
+			else
+				this.type(this.type());
+
+			//this.createTextbox();
 
 			var openPopup = (e) => {
 				if (this.type() === "calendar") {
@@ -234,6 +236,8 @@ module tui.ctrl {
 			$(this._button).on("click", openPopup);
 
 			$(this._label).on("mousedown", (e) => {
+				if (!this.useLabelClick())
+					return;
 				if (!this.disabled() && (this.type() === "text" || this.type() === "password" || this.type() === "custom-text"))
 					setTimeout(() => { this._textbox.focus(); }, 0);
 				else if (this.type() === "select" || this.type() === "multi-select" || this.type() === "calendar") {
@@ -268,6 +272,8 @@ module tui.ctrl {
 				if (predefined)
 					this.data(predefined);
 			}
+			if (!this.hasAttr("data-label-click"))
+				this.useLabelClick(true);
 			this.value(this.value());
 			//this.refresh();
 		}
@@ -438,6 +444,16 @@ module tui.ctrl {
 			return JSON.stringify(result);
 		}
 
+		useLabelClick(): boolean;
+		useLabelClick(val: boolean): Input;
+		useLabelClick(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-label-click", val);
+				return this;
+			} else
+				return this.is("data-label-click");
+		}
+
 		fileId(): string {
 			return this._fileId;
 		}
@@ -447,17 +463,13 @@ module tui.ctrl {
 		type(txt?: string): any {
 			var type: string;
 			if (typeof txt === "string") {
-				type = this.type();
-				if (type === txt) {
-					this.refresh();
-					return this;
-				}
 				txt = txt.toLowerCase();
 				if (Input._supportType.indexOf(txt) >= 0) {
 					this.attr("data-type", txt);
-					this.createTextbox();
-					this.refresh();
-				}
+				} else
+					this.attr("data-type", "text");
+				this.createTextbox();
+				this.refresh();
 				return this;
 			} else {
 				type = this.attr("data-type");
@@ -857,11 +869,15 @@ module tui.ctrl {
 				text = "";
 			var withBtn = false;
 			if (type !== "text" && type !== "password") {
-				withBtn = true;
 				this._button.style.height = "";
 				this._button.style.height = ($(this[0]).innerHeight() - ($(this._button).outerHeight() - $(this._button).height())) + "px"
 				this._button.style.lineHeight = this._button.style.height;
 				this._button.style.display = "";
+				if ($(this[0]).width() < this._button.offsetWidth) {
+					this._button.style.display = "none";
+				} else {
+					withBtn = true;
+				}
 			} else {
 				this._button.style.display = "none";
 			}
@@ -896,9 +912,14 @@ module tui.ctrl {
 				this._label.innerHTML = text;
 				this._textbox.style.display = "none";
 				this._label.style.display = "";
-				this._label.style.right = "";
 				this.attr("tabIndex", "0");
 				this._label.style.lineHeight = $(this._label).height() + "px";
+				this._label.style.width = "";
+				if (withBtn) {
+					this._label.style.right = "";
+				} else {
+					this._label.style.right = "0px";
+				}
 			}
 			if (placeholder && !text) {
 				this._label.innerHTML = placeholder;

@@ -164,6 +164,12 @@
 			.fa-arrow-down;
 			margin-right:5px;
 		}
+		.tui-checkbox {
+			color:@tableTextColor;
+			&:active,&.tui-actived {
+				background:inherit;
+			}
+		}
 	}
 	.tui-grid-cell {
 		&.tui-grid-sort-cell {
@@ -180,6 +186,29 @@
 			font:@pageFont;
 			padding: 0px 8px;
 			color:@tableTextColor;
+		}
+		.tui-checkbox {
+			color:@tableTextColor;
+			&:active,&.tui-actived {
+				background:inherit;
+			}
+		}
+		.tui-grid-selector {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			right: 0px;
+			bottom: 0px;
+			border: none;
+			outline:none;
+			margin:0;
+			.border-radius(0px);
+			&>span {
+				.border-radius(0px);
+				background: none;
+				border-left:none;
+				color:@tableTextColor;
+			}
 		}
 	}
 	
@@ -203,6 +232,9 @@
 			&.tui-grid-sort-cell {
 				background-color:#bbb;
 			}
+			.tui-grid-selector {
+				background-color:@lineSelectUnfocusedBackgroundColor;
+			}
 		}
 	}
 	&.tui-focus {
@@ -210,6 +242,16 @@
 			background-color:@lineSelectfocusedBackgroundColor;
 			.tui-grid-cell {
 				color:@lineSelectfocusedForeColor;
+				.tui-checkbox {
+					color:@lineSelectfocusedForeColor;
+				}
+				.tui-grid-selector {
+					color:@lineSelectfocusedForeColor;
+					background-color:@lineSelectfocusedBackgroundColor;
+					&>span {
+						color:@lineSelectfocusedForeColor;
+					}
+				}
 				&.tui-grid-sort-cell {
 					background-color:@lineSelectfocusedBackgroundColor;
 				}

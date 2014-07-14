@@ -478,16 +478,22 @@
 
 		<div>支持行内编辑</div>
 		<div id="gridDemo2"
-			 class="tui-grid" style="display:inline-block;width:500px;height:272px;"
-			 data-columns="[{'name':'姓名', 'sort':true, 'key': 0, format: tui.ctrl.Grid.textEditor()},
+			 class="tui-grid" style="display:inline-block;width:800px;height:272px;"
+			 data-columns="[
+				{'name':'', 'key': 'sel', format: tui.ctrl.Grid.chechBox(true), width:30, fixed:true},
+			    {'name':'姓名', 'sort':true, 'key': 0, format: tui.ctrl.Grid.textEditor()},
 				{'name':'年龄', 'sort':true, 'key': 1 },
-				{'name':'性别', 'key': 2 },
-				{'name':'身高', 'key': 3 }]"
+				{'name':'性别', 'key': 2, format: tui.ctrl.Grid.selector([{key:'男', value:'男'},{key:'女', value:'女'}]) },
+				{'name':'身高', 'key': 3 },
+				{'name':'生日', width:170, 'key': 4 ,format: tui.ctrl.Grid.calendarSelector()},
+				{'name':'附件', 'key': 5 ,format: tui.ctrl.Grid.fileSelector()},
+				{'name':'其它信息', 'key': 6 ,format: tui.ctrl.Grid.customSelector(function(data){tui.infobox('custom info.','demo');})}
+			 ]"
 			 data-data="[
-				['张三',29,'男',173],
-				 ['李四',23,'男',172],
-				 ['王五',15,'男',174],
-				 ['赵六',33,'男',176],
+				['张三',29,'男',173, new Date('2001-01-01')],
+				 ['李四',23,'男',172, tui.today()],
+				 ['王五',15,'男',174, tui.today()],
+				 ['赵六',33,'男',176, tui.today()],
 				 ['薛丁山',20,'男',179],
 				 ['樊梨花',18,'男',172],
 				 ['薛仁贵',40,'男',182],

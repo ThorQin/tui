@@ -610,6 +610,19 @@ a:hover {
   content: "\f046";
   text-align: left;
 }
+.tui-checkbox[data-tri-state]:before {
+  display: inline-block;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  width: 14px;
+  content: "\f14a";
+  text-align: left;
+}
 .tui-checkbox:hover {
   color: inherit;
 }
@@ -737,6 +750,7 @@ a:hover {
   font-family: Calibri;
   font-size: 14px;
   vertical-align: middle;
+  cursor: default;
 }
 .tui-calendar td {
   padding: 3px;
@@ -855,11 +869,15 @@ a:hover {
   border-radius: 4px;
   border: 1px solid #cccccc;
   background-color: #fff;
+  overflow: hidden;
 }
 .tui-popup .tui-calendar,
 .tui-popup .tui-list {
   border: none;
   outline: none;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
 }
 .tui-dialog-mask {
   background-color: #888;
@@ -1111,7 +1129,7 @@ a:hover {
 }
 .tui-input[data-type=select] > span:before,
 .tui-input[data-type=multi-select] > span:before {
-  content: "\f078";
+  content: "\f0d7";
 }
 .tui-input[data-type=calendar] > span:before {
   content: "\f073";
@@ -1581,6 +1599,29 @@ a:hover {
   content: "\f063";
   margin-right: 5px;
 }
+.tui-grid .tui-grid-head-cell .tui-checkbox {
+  color: #555555;
+}
+.tui-grid .tui-grid-head-cell .tui-checkbox:active,
+.tui-grid .tui-grid-head-cell .tui-checkbox.tui-actived {
+  background: inherit;
+}
+.tui-grid .tui-grid-cell {
+  /*.tui-grid-selector-icon-list {
+			&>span {
+				&:before {
+					.fa-sort-down;
+				}
+			}
+		}
+		.tui-grid-selector-icon-file {
+			&>span {
+				&:before {
+					.fa-file;
+				}
+			}
+		}*/
+}
 .tui-grid .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;
 }
@@ -1594,6 +1635,34 @@ a:hover {
   outline: none;
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
   padding: 0px 8px;
+  color: #555555;
+}
+.tui-grid .tui-grid-cell .tui-checkbox {
+  color: #555555;
+}
+.tui-grid .tui-grid-cell .tui-checkbox:active,
+.tui-grid .tui-grid-cell .tui-checkbox.tui-actived {
+  background: inherit;
+}
+.tui-grid .tui-grid-cell .tui-grid-selector {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  border: none;
+  outline: none;
+  margin: 0;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+.tui-grid .tui-grid-cell .tui-grid-selector > span {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  background: none;
+  border-left: none;
   color: #555555;
 }
 .tui-grid .tui-grid-splitter {
@@ -1617,10 +1686,23 @@ a:hover {
 .tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
+.tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+  background-color: #d8d8d8;
+}
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected {
   background-color: #017bce;
 }
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell {
+  color: #ffffff;
+}
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox {
+  color: #ffffff;
+}
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+  color: #ffffff;
+  background-color: #017bce;
+}
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector > span {
   color: #ffffff;
 }
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
@@ -1752,6 +1834,29 @@ a:hover {
   content: "\f063";
   margin-right: 5px;
 }
+.tui-list .tui-grid-head-cell .tui-checkbox {
+  color: #555555;
+}
+.tui-list .tui-grid-head-cell .tui-checkbox:active,
+.tui-list .tui-grid-head-cell .tui-checkbox.tui-actived {
+  background: inherit;
+}
+.tui-list .tui-grid-cell {
+  /*.tui-grid-selector-icon-list {
+			&>span {
+				&:before {
+					.fa-sort-down;
+				}
+			}
+		}
+		.tui-grid-selector-icon-file {
+			&>span {
+				&:before {
+					.fa-file;
+				}
+			}
+		}*/
+}
 .tui-list .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;
 }
@@ -1765,6 +1870,34 @@ a:hover {
   outline: none;
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
   padding: 0px 8px;
+  color: #555555;
+}
+.tui-list .tui-grid-cell .tui-checkbox {
+  color: #555555;
+}
+.tui-list .tui-grid-cell .tui-checkbox:active,
+.tui-list .tui-grid-cell .tui-checkbox.tui-actived {
+  background: inherit;
+}
+.tui-list .tui-grid-cell .tui-grid-selector {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  border: none;
+  outline: none;
+  margin: 0;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+.tui-list .tui-grid-cell .tui-grid-selector > span {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  background: none;
+  border-left: none;
   color: #555555;
 }
 .tui-list .tui-grid-splitter {
@@ -1788,10 +1921,23 @@ a:hover {
 .tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
+.tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+  background-color: #d8d8d8;
+}
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected {
   background-color: #017bce;
 }
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell {
+  color: #ffffff;
+}
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox {
+  color: #ffffff;
+}
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+  color: #ffffff;
+  background-color: #017bce;
+}
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector > span {
   color: #ffffff;
 }
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {

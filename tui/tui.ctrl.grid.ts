@@ -364,26 +364,29 @@ module tui.ctrl {
 				var totalNoBorderWidth = this._contentWidth - this._borderWidth * cols;
 				var totalNoImportantWidth = totalNoBorderWidth;
 				var totalNeedComputed = 0;
-				var important = null;
+				var totalImportantWidth = 0;
+				var important: number[] = [];
 				for (var i = 0; i < columns.length; i++) {
 					if (typeof columns[i].width !== "number" ||
 						isNaN(columns[i].width))
 						columns[i].width = defaultWidth;
 					else if (columns[i].width < 0)
 						columns[i].width = 0;
-					if (columns[i]["_important"]) {
-						important = i;
+					if (columns[i]["_important"] ||
+						(columns[i]["fixed"] && typeof columns[i].width === "number")) {
+						important.push(i);
 						delete columns[i]["_important"];
 						columns[i].width = Math.round(columns[i].width);
-						if (columns[i].width > totalNoBorderWidth) {
-							columns[i].width = totalNoBorderWidth;
+						if (columns[i].width > totalNoBorderWidth - totalImportantWidth) {
+							columns[i].width = totalNoBorderWidth - totalImportantWidth;
 						}
+						totalImportantWidth += columns[i].width;
 						totalNoImportantWidth -= columns[i].width;
 					} else
 						totalNeedComputed += Math.round(columns[i].width);
 				}
 				for (var i = 0; i < columns.length; i++) {
-					if (i !== important) {
+					if (important.indexOf(i) < 0) {
 						if (totalNeedComputed === 0)
 							columns[i].width = 0;
 						else
@@ -684,7 +687,6 @@ module tui.ctrl {
 				}
 				// Clear buffer cause row click event cannot be raised, 
 				// so never do this when we only want to change row selection status.
-				// this.clearBufferLines();
 				this.drawLines();
 			}
 			return this._selectrows;
@@ -967,9 +969,9 @@ module tui.ctrl {
 			this.drawLines();
 		}
 
+		/// Following static methods are used for column format
 
-
-		static textEditor(whenDoubleClick: boolean = true) {
+		static textEditor(whenDoubleClick: boolean = true): (data: IColumnFormatInfo) => void {
 			return function (data: IColumnFormatInfo) {
 				if (data.rowIndex < 0)
 					return;
@@ -983,31 +985,166 @@ module tui.ctrl {
 					txtBox.style.width = $(data.cell).innerWidth() - 16 + "px";
 					txtBox.style.height = $(data.cell).innerHeight() + "px";
 					txtBox.value = data.value;
-					txtBox.width = "1";
 					$(txtBox).mousedown(function (e) {
 						e.stopPropagation();
 						e.stopImmediatePropagation();
 					});
 					$(txtBox).change(function (e) {
-						data.row[data.colKey] = txtBox.value;
+						if (typeof data.colKey !== tui.undef)
+							data.row[data.colKey] = txtBox.value;
 						(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
 						data.value = txtBox.value;
 					});
-					$(txtBox).blur(function () {
-						data.cell.removeChild(txtBox);
-						data.row[data.colKey] = txtBox.value;
+					function finishEdit() {
+						tui.removeNode(txtBox);
+						if (typeof data.colKey !== tui.undef)
+							data.row[data.colKey] = txtBox.value;
 						(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
 						data.value = txtBox.value;
+						data.grid.focus();
+					}
+					$(txtBox).blur(function () {
+						setTimeout(finishEdit, 0);
+					});
+					$(txtBox).keydown(function (e) {
+						if (e.keyCode === 13) {
+							finishEdit();
+						}
+						e.stopPropagation();
 					});
 					data.cell.appendChild(txtBox);
 					setTimeout(function () {
 						txtBox.focus();
 						txtBox.selectionStart = txtBox.value.length;
-					}, 20);
+					}, 10);
 
 				});
 			};
-		}
+		} // end of textEditor
+
+		static chechBox(withHeader: boolean = true): (data: IColumnFormatInfo)=>void {
+			return function (data: IColumnFormatInfo) {
+				if (data.rowIndex < 0) {
+					if (withHeader) {
+						var headCheck = tui.ctrl.checkbox();
+						(<HTMLElement>data.cell.firstChild).innerHTML = "";
+						data.cell.firstChild.appendChild(headCheck[0]);
+						data.cell.style.textAlign = "center";
+						
+						var dataSet = data.grid.data();
+						var totalLen = dataSet.length();
+						var checkedCount = 0;
+						var uncheckCount = 0;
+						for (var i = 0; i < totalLen; i++) {
+							if (dataSet.at(i)[data.colKey])
+								checkedCount++;
+							else
+								uncheckCount++;
+						}
+						if (totalLen === uncheckCount) {
+							headCheck.checked(false);
+							headCheck.triState(false);
+						} else if (totalLen === checkedCount) {
+							headCheck.checked(true);
+							headCheck.triState(false);
+						} else
+							headCheck.triState(true);
+						headCheck.on("click", function () {
+							if (typeof data.colKey !== tui.undef) {
+								
+								for (var i = 0; i < totalLen; i++) {
+									dataSet.at(i)[data.colKey] = headCheck.checked();
+								}
+							}
+							data.value = headCheck.checked();
+							data.grid.refresh();
+						});
+					}
+					return;
+				}
+				(<HTMLElement>data.cell.firstChild).innerHTML = "";
+				var chk = tui.ctrl.checkbox();
+				data.cell.firstChild.appendChild(chk[0]);
+				data.cell.style.textAlign = "center";
+				chk.checked(data.value);
+				chk.on("click", function () {
+					if (typeof data.colKey !== tui.undef)
+						data.row[data.colKey] = chk.checked();
+					data.value = chk.checked();
+					setTimeout(function () {
+						data.grid.refresh();
+					}, 0);
+				});
+			};
+		} // end of chechBox
+
+
+		static selector(listData): (data: IColumnFormatInfo) => void {
+			return function (data: IColumnFormatInfo) {
+				if (data.rowIndex < 0 /*|| !data.isRowActived*/) {
+					return;
+				}
+				var select = tui.ctrl.input(null, "select");
+				select.useLabelClick(false);
+				select.addClass("tui-grid-selector");
+				select.data(listData);
+				data.cell.appendChild(select[0]);
+				select.value(data.value);
+				select[0].style.width = $(data.cell).innerWidth() + "px";
+				select[0].style.height = $(data.cell).innerHeight() + "px";
+				select.refresh();
+			};
+		} // end of selector
+
+		static fileSelector(): (data: IColumnFormatInfo) => void {
+			return function (data: IColumnFormatInfo) {
+				if (data.rowIndex < 0 /*|| !data.isRowActived*/) {
+					return;
+				}
+				var select = tui.ctrl.input(null, "file");
+				select.useLabelClick(false);
+				select.addClass("tui-grid-selector");
+				data.cell.appendChild(select[0]);
+				select.value(data.value);
+				select[0].style.width = $(data.cell).innerWidth() + "px";
+				select[0].style.height = $(data.cell).innerHeight() + "px";
+				select.refresh();
+			};
+		} // end of fileSelector
+
+		static calendarSelector(): (data: IColumnFormatInfo) => void {
+			return function (data: IColumnFormatInfo) {
+				if (data.rowIndex < 0 /*|| !data.isRowActived*/) {
+					return;
+				}
+				var select = tui.ctrl.input(null, "calendar");
+				select.useLabelClick(false);
+				select.addClass("tui-grid-selector");
+				data.cell.appendChild(select[0]);
+				select.value(data.value);
+				select[0].style.width = $(data.cell).innerWidth() + "px";
+				select[0].style.height = $(data.cell).innerHeight() + "px";
+				select.refresh();
+			};
+		} // end of calendarSelector
+
+		static customSelector(func: (data: any) => any, icon: string = "fa-ellipsis-h"): (data: IColumnFormatInfo) => void {
+			return function (data: IColumnFormatInfo) {
+				if (data.rowIndex < 0 /*|| !data.isRowActived*/) {
+					return;
+				}
+				var select = tui.ctrl.input(null, "custom-select");
+				select.useLabelClick(false);
+				select.icon(icon);
+				select.addClass("tui-grid-selector");
+				select.on("btnclick", func);
+				data.cell.appendChild(select[0]);
+				select.value(data.value);
+				select[0].style.width = $(data.cell).innerWidth() + "px";
+				select[0].style.height = $(data.cell).innerHeight() + "px";
+				select.refresh();
+			};
+		} // end of calendarSelector
 	}
 
 	export function grid(param: HTMLElement): Grid;
