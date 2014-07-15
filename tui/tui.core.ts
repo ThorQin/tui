@@ -201,9 +201,11 @@ module tui {
 		}
 	}
 
-	export function toElement (html: string): Node {
+	export function toElement (html: string, withParent: boolean = false): Node {
 		var div = document.createElement('div');
-		div.innerHTML = html;
+		div.innerHTML = $.trim(html);
+		if (withParent)
+			return div;
 		var el = div.firstChild;
 		return div.removeChild(el);
 	}

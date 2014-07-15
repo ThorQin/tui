@@ -68,27 +68,45 @@ module tui {
 				super("div", Dialog.CLASS, null);
 			}
 
+			/**
+			 * Show HTML content
+			 */
 			showContent(content: string, title?: string, buttons?: DialogButton[]) {
 				if (this[0])
 					return this;
 				this._resourceElement = null;
-				return this.showElement(<HTMLElement>tui.toElement(content), title, buttons);
+				return this.showElement(<HTMLElement>tui.toElement(content, true), title, buttons);
 			}
 
-			showResource(elemId: string, title?: string, buttons?: DialogButton[]) {
+			/**
+			 * Show resource form <script type="text/html"> ... </script>
+			 */
+			showResource(resourceId: string, title?: string, buttons?: DialogButton[]) {
 				if (this[0])
 					return this;
-				var elem = document.getElementById(elemId);
+				var elem = document.getElementById(resourceId);
 				if (!elem) {
-					throw new Error("Resource id not found: " + elemId);
+					throw new Error("Resource id not found: " + resourceId);
 				}
-				this._resourceElement = elem;
-				return this.showElement(elem, title, buttons);
+				return this.showContent(elem.innerHTML, title, buttons);
 			}
 
-			showElement(elem: HTMLElement, title?: string, buttons?: DialogButton[]) {
+			/**
+		     * Show a element from page, put the element into the dialog, 
+			 * if pass an element id to method then when close dialog the selected element
+			 * will be put back to body.
+			 */
+			showElement(elem: any, title?: string, buttons?: DialogButton[]) {
 				if (this[0])
 					return this;
+				if (typeof elem === "string") {
+					var elemId = elem;
+					elem = document.getElementById(elem);
+					if (!elem) {
+						throw new Error("Resource id not found: " + elemId);
+					}
+					this._resourceElement = elem;
+				}
 				// Temporary inhibit refresh to prevent unexpected calculation
 				this._noRefresh = true;
 				this.elem("div", Dialog.CLASS);

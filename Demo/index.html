@@ -102,7 +102,7 @@
 
 			tui.on("btnShowResource", function (e) {
 				var dlg = tui.ctrl.dialog();
-				dlg.showResource("dlgResource", "测试资源");
+				dlg.showElement("dlgResource", "测试资源");
 			});
 
 			tui.on("btninfo", function (e) {
@@ -734,64 +734,10 @@
 				内容1
 			</div>
 			<div id="tab2" style="color:blue;height:100px;line-height:100px;text-align:center;overflow:auto" class="tui-hidden">
-				<div id="gridDemoHidden"
-					 class="tui-grid" style="display:inline-block;width:500px;height:272px;"
-					 data-columns="[{'name':'姓名', 'sort':true, 'key': 0 },
-				{'name':'年龄', 'sort':true, 'key': 1 },
-				{'name':'性别', 'key': 2 },
-				{'name':'身高', 'key': 3 }]"
-					 data-data="[
-				['张三',29,'男',173],
-				 ['李四',23,'男',172],
-				 ['王五',15,'男',174],
-				 ['赵六',33,'男',176],
-				 ['薛丁山',20,'男',179],
-				 ['樊梨花',18,'男',172],
-				 ['薛仁贵',40,'男',182],
-				 ['薛平贵',40,'男',180]
-			 ]"
-					 data-resizable="true"
-					 data-rowselectable="true">
-				</div>
+				内容2
 			</div>
 			<div id="tab3" style="color:green;height:100px;line-height:100px;text-align:center;overflow:auto" class="tui-hidden">
-				<div class="tui-input"
-					 data-type="text"
-					 data-placeholder="用户名称"
-					 data-validator="{'*any':'请输入用户名','*email':'必须是邮件格式'}"></div>
-				<div class="tui-input" data-type="password" data-placeholder="用户密码"
-					 data-validator='{"*any":"请输入密码","*password":"密码必须包含数字英文大小写和符号且不能小于6位"}'></div>
-				<div class="tui-input" data-type="calendar"
-					 data-placeholder="请选择日期" data-validator="{'*any':'请选择日期'}"></div>
-				<div id="select1" data-placeholder="请选择项目" class="tui-input"
-					 data-type="select"
-					 data-data="[
-				{key:1, value:'选项1', checked:false, children:[
-						{key:4, value:'选项4', checked: false },
-						{key:5, value:'选项5', checked: false },
-					]},
-				{key:2, value:'选项2', checked:false },
-				{key:3, value:'选项3', checked:false}
-			 ]"></div>
-				<br>
-				<div id="select2" data-placeholder="请选择项目" class="tui-input"
-					 data-type="multi-select"
-					 data-data="[
-				{key:1, value:'选项1', checked:false, children:[
-						{key:4, value:'选项4', checked: false },
-						{key:5, value:'选项5', checked: false },
-					]},
-				{key:2, value:'选项2', checked:false },
-				{key:3, value:'选项3', checked:false}
-			 ]"></div>
-				<div id="fileInput" class="tui-input" data-type="file"
-					 data-upload-url="upload1.ashx?" data-accept="image/png"
-					 data-placeholder="请选择文件" data-validator="{'.*\.png$':'请选择PNG文件'}"></div>
-				<div class="tui-input" data-type="custom-text"
-					 data-placeholder="请输入" data-icon="fa-search"></div>
-				<div id="inputUser" class="tui-input" data-type="custom-select"
-					 data-placeholder="请选择" data-icon="fa-user"></div>
-				<br>
+				内容3
 			</div>
 		</div>
 	</div>
