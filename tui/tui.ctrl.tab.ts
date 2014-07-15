@@ -34,6 +34,7 @@ module tui.ctrl {
 			tabId = "#" + tabId;
 			if (data.ctrl.checked()) {
 				$(tabId).removeClass("tui-hidden");
+				tui.ctrl.initCtrls($(tabId)[0]);
 			} else {
 				$(tabId).addClass("tui-hidden");
 			}

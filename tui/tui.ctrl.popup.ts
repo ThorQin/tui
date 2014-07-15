@@ -23,7 +23,7 @@ module tui.ctrl {
 		private _parent: Node = null;
 		private _parentPopup: Popup = null;
 		private _childPopup: Popup = null;
-
+		private _checkInterval = null;
 		constructor() {
 			super("div", Popup.CLASS, null);
 		}
@@ -81,11 +81,27 @@ module tui.ctrl {
 				}
 				tui.ctrl.initCtrls(elem);
 				this.refresh();
+				if (this._bindElem) {
+					var pos = tui.fixedPosition(this._bindElem);
+					this._checkInterval = setInterval(() => {
+						var currentPos = tui.fixedPosition(this._bindElem);
+						if (currentPos.x !== pos.x || currentPos.y !== pos.y) {
+							this.close();
+						}
+					}, 100);
+				}
 			}
 		}
 
 		close(): void {
-			this._parent.removeChild(this[0]);
+			if (this._checkInterval) {
+				clearInterval(this._checkInterval);
+				this._checkInterval = null;
+			}
+			try {
+				this._parent.removeChild(this[0]);
+			} catch (e) {
+			}
 			_currentPopup = this.parent();
 			this.parent(null);
 			if (_currentPopup)

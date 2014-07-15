@@ -858,7 +858,6 @@ a:hover {
   position: fixed;
   left: 0;
   top: 0;
-  padding: 0px;
   outline: none;
   z-index: 2147483645;
   -webkit-box-shadow: 1px 2px 7px rgba(0, 0, 0, 0.2);
@@ -869,15 +868,14 @@ a:hover {
   border-radius: 4px;
   border: 1px solid #cccccc;
   background-color: #fff;
-  overflow: hidden;
 }
 .tui-popup .tui-calendar,
 .tui-popup .tui-list {
   border: none;
   outline: none;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
 .tui-dialog-mask {
   background-color: #888;
@@ -1029,6 +1027,7 @@ a:hover {
   height: 32px;
   vertical-align: middle;
   background-color: #ffffff;
+  text-align: left;
 }
 .tui-input[data-readonly='true'] {
   background-color: #f4f4f4;
@@ -1064,6 +1063,7 @@ a:hover {
   text-overflow: ellipsis;
   left: 0;
   right: 34px;
+  line-height: 32px;
   top: 0;
   bottom: 0;
 }
@@ -1606,22 +1606,6 @@ a:hover {
 .tui-grid .tui-grid-head-cell .tui-checkbox.tui-actived {
   background: inherit;
 }
-.tui-grid .tui-grid-cell {
-  /*.tui-grid-selector-icon-list {
-			&>span {
-				&:before {
-					.fa-sort-down;
-				}
-			}
-		}
-		.tui-grid-selector-icon-file {
-			&>span {
-				&:before {
-					.fa-file;
-				}
-			}
-		}*/
-}
 .tui-grid .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;
 }
@@ -1840,22 +1824,6 @@ a:hover {
 .tui-list .tui-grid-head-cell .tui-checkbox:active,
 .tui-list .tui-grid-head-cell .tui-checkbox.tui-actived {
   background: inherit;
-}
-.tui-list .tui-grid-cell {
-  /*.tui-grid-selector-icon-list {
-			&>span {
-				&:before {
-					.fa-sort-down;
-				}
-			}
-		}
-		.tui-grid-selector-icon-file {
-			&>span {
-				&:before {
-					.fa-file;
-				}
-			}
-		}*/
 }
 .tui-list .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;

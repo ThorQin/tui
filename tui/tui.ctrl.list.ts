@@ -21,6 +21,7 @@ module tui.ctrl {
 			super("div", List.CLASS, null);
 			var self = this;
 			this._grid = grid(el);
+			this._grid.noRefresh(true);
 			this[0] = this._grid[0];
 			this[0]._ctrl = this;
 			this.addClass(List.CLASS);
@@ -152,7 +153,11 @@ module tui.ctrl {
 			if (!this.hasAttr("data-rowcheckable"))
 				this.rowcheckable(true);
 			if (this._grid.data()) {
+				this._grid.noRefresh(false);
 				this.data(this._grid.data());
+			} else {
+				this._grid.noRefresh(false);
+				this.refresh();
 			}
 		}
 
@@ -519,8 +524,10 @@ module tui.ctrl {
 		data(): tui.IDataProvider;
 		data(data: tui.IDataProvider): List;
 		data(data?: tui.IDataProvider): any {
-			var ret = this._grid.data(data);
-			if (data) {
+			if (typeof data !== undef) {
+				var noRef = this._grid.noRefresh();
+				this._grid.noRefresh(true);
+				this._grid.data(data);
 				var data = this._grid.data();
 				if (data)
 					this._columnKeyMap = data.columnKeyMap();
@@ -536,9 +543,11 @@ module tui.ctrl {
 					this.initTriState();
 				else
 					this.initData();
+				this._grid.noRefresh(noRef);
 				this.formatData();
-			}
-			return ret;
+				return this;
+			} else
+				return this._grid.data();
 		}
 
 		lineHeight() {

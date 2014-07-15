@@ -369,6 +369,8 @@ module tui.ctrl {
 				if (response) {
 					response.file = data["file"];
 					this.value(response);
+					if (this.fire("select", { ctrl: this[0], type: this.type(), file: response }) === false)
+						return;
 				} else {
 					tui.errbox(str("Upload failed!"), str("Error"));
 				}
@@ -468,6 +470,12 @@ module tui.ctrl {
 					this.attr("data-type", txt);
 				} else
 					this.attr("data-type", "text");
+				type = this.type();
+				if (type === "text" || type === "password" || type === "custom-text") {
+					this.removeAttr("tabIndex");
+				} else {
+					this.attr("tabIndex", "0");
+				}
 				this.createTextbox();
 				this.refresh();
 				return this;
@@ -608,6 +616,7 @@ module tui.ctrl {
 		uploadUrl(url?: string): any {
 			if (typeof url === "string") {
 				this.attr("data-upload-url", url);
+				this.unmakeFileUpload();
 				this.refresh();
 				return this;
 			} else
@@ -636,6 +645,7 @@ module tui.ctrl {
 			var type = this.type();
 			if (typeof txt === "string") {
 				this.attr("data-accept", txt);
+				this.unmakeFileUpload();
 				this.refresh();
 				return this;
 			} else
@@ -823,6 +833,23 @@ module tui.ctrl {
 			}
 		}
 
+		textAlign(): string;
+		textAlign(align?: string): Input;
+		textAlign(align?: string): any {
+			if (typeof align === "string") {
+				if (align === "left" || align === "center" || align === "right") {
+					this.attr("data-text-algin", align);
+					this.refresh();
+				}
+				return this;
+			} else {
+				align = this.attr("data-text-algin");
+				if (align === null)
+					align = "left";
+				return align;
+			}
+		}
+
 		icon(): string;
 		icon(txt?: string): Input;
 		icon(txt?: string): any {
@@ -867,25 +894,73 @@ module tui.ctrl {
 			var text = this.text();
 			if (text === null)
 				text = "";
-			var withBtn = false;
+
+			// BUTTON
+			var hasBtn = false;
 			if (type !== "text" && type !== "password") {
+				if ($(this[0]).width() < this._button.offsetWidth) {
+					hasBtn = false;
+				} else {
+					hasBtn = true;
+				}
+			} else {
+				hasBtn = false;
+			}
+			if (hasBtn) {
 				this._button.style.height = "";
 				this._button.style.height = ($(this[0]).innerHeight() - ($(this._button).outerHeight() - $(this._button).height())) + "px"
 				this._button.style.lineHeight = this._button.style.height;
 				this._button.style.display = "";
-				if ($(this[0]).width() < this._button.offsetWidth) {
-					this._button.style.display = "none";
-				} else {
-					withBtn = true;
-				}
 			} else {
 				this._button.style.display = "none";
 			}
+
+			// BUTTON ICON
 			if (this.icon()) {
 				$(this._button).addClass(this.icon());
 			} else
 				this._button.className = "";
+
+			var align = this.textAlign();
+			// SHOW LABEL
+			var hasLabel = false;
+			var hasTextbox = false;
 			if (type === "text" || type === "password" || type === "custom-text") {
+				hasTextbox = true;
+				if (!text) {
+					hasLabel = true;
+				} else
+					hasLabel = false;
+			} else {
+				hasLabel = true;
+				hasTextbox = false;
+			}
+			if (hasLabel) {
+				if (placeholder && !text) {
+					this._label.innerHTML = placeholder;
+					$(this._label).addClass("tui-placeholder");
+				} else {
+					this._label.innerHTML = text;
+					$(this._label).removeClass("tui-placeholder");
+				}
+				this._label.style.textAlign = align;
+				this._label.style.display = "";
+				if (hasBtn) {
+					this._label.style.width = "";
+					this._label.style.width = ($(this[0]).innerWidth() - ($(this._label).outerWidth() - $(this._label).width()) - $(this._button).outerWidth()) + "px";
+				} else {
+					this._label.style.width = "";
+					this._label.style.width = ($(this[0]).innerWidth() - ($(this._label).outerWidth() - $(this._label).width())) + "px";
+				}
+				this._label.style.height = "";
+				this._label.style.height = ($(this[0]).innerHeight() - ($(this._label).outerHeight() - $(this._label).height())) + "px";
+				this._label.style.lineHeight = this._label.style.height;
+			} else {
+				this._label.style.display = "none";
+			}
+
+			// TEXTBOX
+			if (hasTextbox) {
 				if (this.readonly())
 					this._textbox.readOnly = true;
 				else
@@ -893,51 +968,28 @@ module tui.ctrl {
 				if (this._textbox.value !== text)
 					this._textbox.value = text;
 				this.removeAttr("tabIndex");
+				this._textbox.style.textAlign = align;
 				this._textbox.style.display = "";
-				this._label.style.display = "none";
-				if (withBtn) {
-					this._button.style.display = "";
+				if (hasBtn) {
 					this._textbox.style.width = "";
 					this._textbox.style.width = ($(this[0]).innerWidth() - ($(this._textbox).outerWidth() - $(this._textbox).width()) - $(this._button).outerWidth()) + "px";
 				} else {
-					this._button.style.display = "none";
 					this._textbox.style.width = "";
 					this._textbox.style.width = ($(this[0]).innerWidth() - ($(this._textbox).outerWidth() - $(this._textbox).width())) + "px";
 				}
 				this._textbox.style.height = "";
-				this._textbox.style.height = ($(this[0]).innerHeight() - ($(this._textbox).outerHeight() - $(this._textbox).height())) + "px"
+				this._textbox.style.height = ($(this[0]).innerHeight() - ($(this._textbox).outerHeight() - $(this._textbox).height())) + "px";
 				this._textbox.style.lineHeight = this._textbox.style.height;
-				this._label.style.width = this._textbox.style.width;
 			} else {
-				this._label.innerHTML = text;
 				this._textbox.style.display = "none";
-				this._label.style.display = "";
-				this.attr("tabIndex", "0");
-				this._label.style.lineHeight = $(this._label).height() + "px";
-				this._label.style.width = "";
-				if (withBtn) {
-					this._label.style.right = "";
-				} else {
-					this._label.style.right = "0px";
-				}
 			}
-			if (placeholder && !text) {
-				this._label.innerHTML = placeholder;
-				this._label.style.display = "";
-				$(this._label).addClass("tui-placeholder");
-				this._label.style.lineHeight = $(this._label).height() + "px";
-			} else {
-				$(this._label).removeClass("tui-placeholder");
-			}
+
+			/// INVALID NOTIFY MESSAGE
 			if (this._invalid) {
-				//if (tui.ieVer > 0 && tui.ieVer < 9)
-				//	$(this._notify).attr("title", this._message);
-				//else
-				//	$(this._notify).attr("data-warning", this._message);
 				$(this._notify).attr("data-tooltip", this._message);
 				$(this._notify).css({
 					"display": "",
-					"right": (withBtn ? this._button.offsetWidth : 0) + "px"
+					"right": (hasBtn ? this._button.offsetWidth : 0) + "px"
 				});
 				$(this._notify).css({
 					"line-height": this._notify.offsetHeight + "px"

@@ -67,6 +67,9 @@ module tui.ctrl {
 		private _selectrows: number[] = [];
 		private _activerow: number = null;
 		private _columnKeyMap: {} = null;
+		private _noRefresh = false;
+		private _initialized = false;
+		private _initInterval = null;
 
 		constructor(el?: HTMLElement) {
 			super("div", Grid.CLASS, el);
@@ -226,7 +229,22 @@ module tui.ctrl {
 				predefined = eval("(" + predefined + ")");
 			if (predefined)
 				this.data(predefined);
-			this.refresh();
+			else
+				this.refresh();
+			//if (!this._initialized) {
+			//	this._initInterval = setInterval(() => {
+			//		self.refresh();
+			//		if (self._initialized) {
+			//			clearInterval(self._initInterval);
+			//			self._initInterval = null;
+			//		}
+			//	}, 100);
+			//}
+		}
+
+		release() {
+			if (this._initInterval)
+				clearInterval(this._initInterval);
 		}
 
 		// Make sure not access null object
@@ -932,6 +950,7 @@ module tui.ctrl {
 					typeof data.sort !== "function" ||
 					typeof data.at !== "function" ||
 					typeof data.columnKeyMap !== "function") {
+					this.refresh();
 					throw new Error("TUI Grid: need a data provider.");
 				}
 				this._data && this._data.onupdate && this._data.onupdate(null);
@@ -959,9 +978,26 @@ module tui.ctrl {
 				return this.is("data-consume-mwe");
 		}
 
+		noRefresh(): boolean;
+		noRefresh(val: boolean): Grid;
+		noRefresh(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this._noRefresh = val;
+				return this;
+			} else
+				return this._noRefresh;
+		}
+		refreshHead() {
+			this.drawHead();
+		}
 		refresh() {
-			if (!this[0])
+			if (this._noRefresh)
 				return;
+			if (!this[0] || this[0].parentElement === null)
+				return;
+			if (this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
+				return;
+			this._initialized = true;
 			this.computeScroll();
 			this.clearBufferLines();
 			this._columnKeyMap = this.myData().columnKeyMap();
@@ -969,7 +1005,7 @@ module tui.ctrl {
 			this.drawLines();
 		}
 
-		/// Following static methods are used for column format
+		/// Following static methods are used for cell formatting.
 
 		static textEditor(whenDoubleClick: boolean = true): (data: IColumnFormatInfo) => void {
 			return function (data: IColumnFormatInfo) {
@@ -1071,9 +1107,7 @@ module tui.ctrl {
 					if (typeof data.colKey !== tui.undef)
 						data.row[data.colKey] = chk.checked();
 					data.value = chk.checked();
-					setTimeout(function () {
-						data.grid.refresh();
-					}, 0);
+					data.grid.refreshHead();
 				});
 			};
 		} // end of chechBox
@@ -1090,22 +1124,36 @@ module tui.ctrl {
 				select.data(listData);
 				data.cell.appendChild(select[0]);
 				select.value(data.value);
+				select.on("select", function () {
+					if (typeof data.colKey !== tui.undef)
+						data.row[data.colKey] = select.value();
+					data.value = select.value();
+					data.grid.focus();
+				});
 				select[0].style.width = $(data.cell).innerWidth() + "px";
 				select[0].style.height = $(data.cell).innerHeight() + "px";
 				select.refresh();
 			};
 		} // end of selector
 
-		static fileSelector(): (data: IColumnFormatInfo) => void {
+		static fileSelector(address: string, accept: string): (data: IColumnFormatInfo) => void {
 			return function (data: IColumnFormatInfo) {
 				if (data.rowIndex < 0 /*|| !data.isRowActived*/) {
 					return;
 				}
 				var select = tui.ctrl.input(null, "file");
+				select.uploadUrl(address);
+				select.accept(accept);
 				select.useLabelClick(false);
 				select.addClass("tui-grid-selector");
 				data.cell.appendChild(select[0]);
 				select.value(data.value);
+				select.on("select", function () {
+					if (typeof data.colKey !== tui.undef)
+						data.row[data.colKey] = select.value();
+					data.value = select.value();
+					data.grid.focus();
+				});
 				select[0].style.width = $(data.cell).innerWidth() + "px";
 				select[0].style.height = $(data.cell).innerHeight() + "px";
 				select.refresh();
@@ -1122,6 +1170,12 @@ module tui.ctrl {
 				select.addClass("tui-grid-selector");
 				data.cell.appendChild(select[0]);
 				select.value(data.value);
+				select.on("select", function () {
+					if (typeof data.colKey !== tui.undef)
+						data.row[data.colKey] = select.value();
+					data.value = select.value();
+					data.grid.focus();
+				});
 				select[0].style.width = $(data.cell).innerWidth() + "px";
 				select[0].style.height = $(data.cell).innerHeight() + "px";
 				select.refresh();
@@ -1138,6 +1192,12 @@ module tui.ctrl {
 				select.icon(icon);
 				select.addClass("tui-grid-selector");
 				select.on("btnclick", func);
+				select.on("select", function () {
+					if (typeof data.colKey !== tui.undef)
+						data.row[data.colKey] = select.value();
+					data.value = select.value();
+					data.grid.focus();
+				});
 				data.cell.appendChild(select[0]);
 				select.value(data.value);
 				select[0].style.width = $(data.cell).innerWidth() + "px";
