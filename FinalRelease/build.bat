@@ -20,7 +20,10 @@ tsc -m amd --out tui/tui.all.js ^
 	../tui/tui.ctrl.formagent.ts ^
 	../tui/tui.ctrl.tab.ts ^
 	../tui/tui.ctrl.paginator.ts ^
-	../tui/tui.ctrl.tips.ts
+	../tui/tui.ctrl.tips.ts ^
+	../tui/tui.ctrl.accordiongroup.ts ^
+	../tui/tui.ctrl.accordion.ts ^
+	../tui/tui.ctrl.navbar.ts
 
 xcopy /Y /S ..\tui\css tui\css\
 xcopy /Y /S ..\tui\lang tui\lang\

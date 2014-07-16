@@ -2,7 +2,7 @@
 
 // Input Control
 .tui-input {
-	@buttonWidth: 34px;
+	@buttonWidth: @inputButtonWidth;
 	@radius: @buttonBorderRadius;
 	@borderFocusColor: @inputBorderFocusColor;
 	@buttonBackColor: @captionColor;
@@ -70,7 +70,8 @@
 		top:0;
 		bottom:0;
 		cursor:pointer;
-		background-color:@buttonBackColor;
+		.btn-color(@captionColor + #111, @captionColor );
+		//background-color:@buttonBackColor;
 		.right-radius(@radius);
 		color:#000;
 		border-left:1px solid @borderColor;

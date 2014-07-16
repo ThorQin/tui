@@ -134,14 +134,14 @@ module tui.ctrl {
 				return this.attr("data-target-redirect");
 		}
 
-		targetSubmitForm(): string;
-		targetSubmitForm(val?: string): Form;
-		targetSubmitForm(val?: string): any {
+		submitForm(): string;
+		submitForm(val?: string): Form;
+		submitForm(val?: string): any {
 			if (typeof val === "string") {
-				this.attr("data-target-submit-form", val);
+				this.attr("data-submit-form", val);
 				return this;
 			} else
-				return this.attr("data-target-submit-form");
+				return this.attr("data-submit-form");
 		}
 
 		validate(): boolean {
@@ -312,7 +312,7 @@ module tui.ctrl {
 								}
 							}
 						}
-						var targetSubmitForm: string = self.targetSubmitForm();
+						var targetSubmitForm: string = self.submitForm();
 						if (targetSubmitForm) {
 							var form = tui.ctrl.form(targetSubmitForm);
 							form && form.submit();

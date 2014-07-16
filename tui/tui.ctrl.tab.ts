@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.ctrl.form.ts" />
+﻿/// <reference path="tui.ctrl.control.ts" />
 module tui.ctrl {
 	export class Tab extends Control<Tab> {
 		static CLASS: string = "tui-tab";

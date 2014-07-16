@@ -139,7 +139,10 @@ module tui {
 	 * @param {String} dtStr Data string
 	 */
 	export function parseDate(dtStr: string): Date {
-		var now = new Date();
+		var now = new Date(dtStr);
+		if (!isNaN(now.getTime()))
+			return now;
+		now = new Date();
 		var year: number = now.getFullYear();
 		var month: number = now.getMonth();
 		var day: number = now.getDate();

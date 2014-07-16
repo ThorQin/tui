@@ -12,19 +12,34 @@
 	.btn-color(@captionColor + #111, @captionColor );
 	border: 1px solid @borderColor;
 	min-width:40px;
+	&[data-data]:after {
+		.icon-base;
+		font-size:@fontSize;
+		margin-left:6px;
+		.fa-caret-down;
+	}
 	&:hover {
 		color: #000;
 	}
 	&[data-checked] {
 		.btn-color(@captionColor - #111, @captionColor - #111);
 	}
-	&.tui-dropdown {
+	&.tui-dropdown,&.tui-text-dropdown {
 		padding-left:5px;
 		padding-right:5px;
 		&:before {
 			.icon-base;
 			.fa-caret-down;
 		}
+		&:after {
+			content: "";
+			margin-left:0px;
+		}
+	}
+	&.tui-text-dropdown {
+		width:@inputButtonWidth;
+		padding-left:0px;
+		padding-right:0px;
 	}
 	&.tui-success {
 		color: #fff;

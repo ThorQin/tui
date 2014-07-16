@@ -25,6 +25,8 @@
     <TypeScriptCompile Include="tui\jquery.d.ts" />
     <TypeScriptCompile Include="tui\lang\en-us.ts" />
     <TypeScriptCompile Include="tui\lang\zh-cn.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.accordion.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.accordiongroup.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.button.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.calendar.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.checkbox.ts" />
@@ -37,6 +39,7 @@
     <TypeScriptCompile Include="tui\tui.ctrl.tab.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.textarea.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.tips.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.navbar.ts" />
     <TypeScriptCompile Include="tui\tui.dataprovider.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.grid.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.popup.ts" />
@@ -68,6 +71,9 @@
     <Content Include="tui\css\tui-scrollbar.less" />
     <Content Include="tui\css\tui-list.less" />
     <Content Include="tui\css\tui-tips.less" />
+    <Content Include="tui\css\tui-accordion.less" />
+    <Content Include="tui\css\tui-accordion-group.less" />
+    <Content Include="tui\css\tui-navbar.less" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

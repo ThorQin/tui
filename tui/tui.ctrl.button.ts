@@ -8,6 +8,11 @@ module tui.ctrl {
 
 	export class Button extends Control<Button> implements IButton {
 		static CLASS: string = "tui-button";
+		private _data: IDataProvider = null;
+		private _keyColumnKey: string;
+		private _valueColumnKey: string;
+		private _childrenColumnKey: string;
+		private _columnKeyMap: {} = null;
 
 		constructor(el?: HTMLElement) {
 			super("a", Button.CLASS, el);
@@ -15,18 +20,113 @@ module tui.ctrl {
 			this.disabled(this.disabled());
 			this.selectable(false);
 			this.exposeEvents("mousedown mouseup mousemove mouseenter mouseleave keydown keyup");
+
+			var self = this;
+			function openMenu() {
+				var pop = tui.ctrl.popup();
+				var list = tui.ctrl.list();
+				list.consumeMouseWheelEvent(true);
+				list.rowcheckable(false);
+				pop.on("close", function () {
+					self.actived(false);
+				});
+				function doSelectItem(data) {
+					var item = list.activeItem();
+					var link = item["link"];
+					if (link) {
+						pop.close();
+						window.location.href = link;
+						return;
+					}
+					var action = item["action"];
+					if (typeof action !== undef) {
+						if (typeof action === "function") {
+							action();
+						}
+						pop.close();
+						self.focus();
+						self.fireClick(data["event"]);
+						return;
+					}
+					self.value(item[self._keyColumnKey]);
+					var targetElem = self.menuBind();
+					if (targetElem === null)
+						self.text(item[self._valueColumnKey]);
+					else {
+						targetElem = document.getElementById(targetElem);
+						if (targetElem) {
+							if (targetElem._ctrl) {
+								if (typeof targetElem._ctrl.text === "function")
+									targetElem._ctrl.text(item[self._valueColumnKey]);
+							} else
+								targetElem.innerHTML = item[self._valueColumnKey];
+						}
+					}
+					pop.close();
+					self.focus();
+					self.fireClick(data["event"]);
+				}
+
+				list.on("rowclick", (data) => {
+					doSelectItem(data);
+				});
+				list.on("keydown", (data) => {
+					if (data["event"].keyCode === 13) { // Enter
+						doSelectItem(data);
+					}
+				});
+
+				var testDiv = document.createElement("span");
+				testDiv.className = "tui-list-test-width-cell";
+				document.body.appendChild(testDiv);
+
+				var listWidth = self[0].offsetWidth;
+				for (var i = 0; i < self._data.length(); i++) {
+					var item = self._data.at(i);
+					testDiv.innerHTML = item[self._valueColumnKey];
+					if (testDiv.offsetWidth + 40 > listWidth) {
+						listWidth = testDiv.offsetWidth + 40;
+					}
+				}
+				document.body.removeChild(testDiv);
+
+				list[0].style.width = listWidth + "px";
+				list.data(self._data);
+				pop.show(list[0], self[0], "Rb");
+
+				var items = self._data ? self._data.length() : 0;
+				if (items < 1)
+					items = 1;
+				else if (items > 15)
+					items = 15;
+
+				list[0].style.height = items * list.lineHeight() + 4 + "px";
+				list.refresh();
+				pop.refresh();
+				var val = self.value();
+				if (val && val.length > 0) {
+					list.activeRowByKey(val);
+					list.scrollTo(list.activerow());
+				}
+				list.focus();
+			}
+
 			$(this[0]).on("mousedown", (e) => {
 				if (this.disabled())
 					return;
 				this.actived(true);
 				var self = this;
-				function releaseMouse(e) {
-					self.actived(false);
-					if (tui.isFireInside(self[0], e))
-						self.fireClick(e);
-					$(document).off("mouseup", releaseMouse);
+				if (this.data()) {
+					openMenu();
+				} else {
+					function releaseMouse(e) {
+						self.actived(false);
+						if (tui.isFireInside(self[0], e))
+							self.fireClick(e);
+						$(document).off("mouseup", releaseMouse);
+					}
+					$(document).on("mouseup", releaseMouse);
 				}
-				$(document).on("mouseup", releaseMouse);
 			});
 			
 
@@ -39,10 +139,15 @@ module tui.ctrl {
 				}
 				if (e.keyCode === 13) {
 					e.preventDefault();
-					e.type = "click";
-					setTimeout(() => {
-						this.fireClick(e);
-					}, 100);
+					if (this.data()) {
+						this.actived(true);
+						openMenu();
+					} else {
+						e.type = "click";
+						setTimeout(() => {
+							this.fireClick(e);
+						}, 100);
+					}
 				}
 			});
 
@@ -50,13 +155,24 @@ module tui.ctrl {
 				if (this.disabled())
 					return;
 				if (e.keyCode === 32) {
-					this.actived(false);
-					e.type = "click";
-					setTimeout(() => {
-						this.fireClick(e);
-					}, 50);
+					if (this.data()) {
+						openMenu();
+					} else {
+						this.actived(false);
+						e.type = "click";
+						setTimeout(() => {
+							this.fireClick(e);
+						}, 50);
+					}
 				}
 			});
+
+			var predefined: any = this.attr("data-data");
+			if (predefined) {
+				predefined = eval("(" + predefined + ")");
+			}
+			if (predefined)
+				this.data(predefined);
 		}
 
 		fireClick(e) {
@@ -81,23 +197,85 @@ module tui.ctrl {
 				return this.attr("data-submit-form");
 		}
 
-		text(t?: string): string {
-			if (this[0])
-				return tui.elementText(this[0], t);
-			return null;
+		value(): any;
+		value(val?: any): Button;
+		value(val?: any): any {
+			if (typeof val !== tui.undef) {
+				this.attr("data-value", JSON.stringify(val));
+				return this;
+			} else {
+				val = this.attr("data-value");
+				if (val === null) {
+					return null;
+				} else {
+					try {
+						return eval("(" + val + ")");
+					} catch (err) {
+						return null;
+					}
+				}
+			}
+		}
+
+		menuBind(val?: string): any {
+			if (typeof val !== undef) {
+				this.attr("data-menu-bind", val);
+				return this;
+			} else
+				return this.attr("data-menu-bind");
+		}
+
+		private columnKey(key: string): any {
+			var val = this._columnKeyMap[key];
+			if (typeof val === "number" && val >= 0)
+				return val;
+			else
+				return key;
+		}
+
+		data(): tui.IDataProvider;
+		data(data: tui.IDataProvider): Button;
+		data(data: any[]): Button;
+		data(data: { data: any[]; head?: string[]; length?: number; }): Button;
+		data(data?: any): any {
+			if (data) {
+				var self = this;
+				if (data instanceof Array || data.data && data.data instanceof Array) {
+					data = new ArrayProvider(data);
+				}
+				if (typeof data.length !== "function" ||
+					typeof data.sort !== "function" ||
+					typeof data.at !== "function" ||
+					typeof data.columnKeyMap !== "function") {
+					throw new Error("TUI Button: need a data provider.");
+				}
+				this._data = data;
+				if (data)
+					this._columnKeyMap = data.columnKeyMap();
+				else
+					this._columnKeyMap = {};
+				this._keyColumnKey = this.columnKey("key");
+				this._valueColumnKey = this.columnKey("value");
+				this._childrenColumnKey = this.columnKey("children");
+				return this;
+			} else
+				return this._data;
+		}
+
+		text(): string;
+		text(val?: string): Button;
+		text(val?: string): any {
+			if (typeof val !== tui.undef) {
+				$(this[0]).html(val);
+				return this;
+			} else
+				return $(this[0]).html();
 		}
 
 		html(): string;
-		html(t: string): Button;
-		html(t?: string): any {
-			if (this[0]) {
-				if (typeof t !== undef) {
-					$(this[0]).html(t);
-					return this;
-				} else
-					return $(this[0]).html();
-			}
-			return null;
+		html(val?: string): Button;
+		html(val?: string): any {
+			return this.text(val);
 		}
 
 		disabled(): boolean;

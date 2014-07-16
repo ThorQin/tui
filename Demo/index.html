@@ -45,6 +45,11 @@
 	<script src="../tui/lang/en-us.js"></script>
 	<script>
 		tui.lang = "zh-cn";
+		var money = [
+			{ key: 'usd', value: '美元' },
+			{ key: 'eur', value: '欧元' },
+			{ key: 'cny', value: '人民币' }
+		];
 		$(function () {
 			var mixedMode = {
 				name: "htmlmixed",
@@ -264,12 +269,17 @@
 		</div><br>
 		输入框组：<br><br>
 		<div class="tui-input-group">
-			<div class="tui-input"></div><a class="tui-button">美元 <i class="fa fa-caret-down"></i></a>
+			<div class="tui-input"></div>
+			<a class="tui-button" style="width:60px;" data-data="money">美元</a>
 		</div>
 		<br><br>
 		<div class="tui-input-group">
-			<div class="tui-input"></div><a class="tui-button">美元</a>
-			<a class="tui-button tui-dropdown"></a>
+			<div class="tui-input"></div><a id="moneyBtn" style="width:40px;" class="tui-button">美元</a>
+			<a class="tui-button tui-dropdown" data-data="money" data-menu-bind="moneyBtn"></a>
+		</div>
+		<div class="tui-input-group">
+			<div id="moneyText" class="tui-input"></div>
+			<a class="tui-button tui-text-dropdown" data-data="money" data-menu-bind="moneyText"></a>
 		</div>
 		<br><br>
 		<div style="display:inline-block;width:300px;">

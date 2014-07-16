@@ -106,6 +106,7 @@ module tui.ctrl {
 			this.parent(null);
 			if (_currentPopup)
 				_currentPopup.child(null);
+			this.fire("close", {});
 		}
 
 		closeChild(): void {
