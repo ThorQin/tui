@@ -28,8 +28,16 @@ module tui {
 	/**
 	 * Register a translation engine.
 	 */
-	export function registerTranslator(lang: string, func: (str: string) => string): void {
-		_translate[lang] = func;
+	export function registerTranslator(lang: string, dict: {}): void;
+	export function registerTranslator(lang: string, func: (str: string) => string): void;
+	export function registerTranslator(lang: string, translator: any): void {
+		if (typeof translator === "function")
+			_translate[lang] = translator;
+		else if (typeof translator === "object" && translator !== null) {
+			_translate[lang] = function(str: string) {
+				return translator[str] || str;
+			};
+		}
 	}
 
 	/**

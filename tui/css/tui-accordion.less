@@ -2,21 +2,39 @@
 
 .tui-accordion {
 	display:block;
+	position:relative;
 	.border-radius(@panelBorderRadius);
 	border:1px solid @borderColor;
-	background-color:(@captionColor + #0a0a0a);
-	list-style-type:none;
-	margin:0;
-	padding:0;
-	li,div {
-		margin:0;
-		display:block;
-		padding:10px 40px;
-		border-top:1px dotted @borderColor + #111;
-		list-style-type:none;
-		&:first-child {
-			border-top:none;
+	overflow:hidden;
+	.tui-accordion-caption {
+		background-color:@captionColor;
+		height:34px;
+		line-height:34px;
+		text-align:center;
+		font-size:@fontSize + 2;
+		.top-radius(@panelBorderRadius);
+		border-bottom:1px solid @borderColor;
+		cursor:pointer;
+		&.tui-folded {
+			border-bottom:none;
 		}
 	}
-	-webkit-transform: translateZ(0);
+
+	.tui-list {
+		.border-radius(0px);
+		.bottom-radius(@panelBorderRadius);
+		border:none;
+		.tui-grid-line {
+			cursor:pointer;
+			.tui-grid-cell .tui-grid-cell-content {
+				cursor:pointer;
+			}
+			&.tui-grid-line-selected {
+				background-color:#f4fdff;
+				.tui-grid-cell {
+					color:@tableTextColor;
+				}
+			}
+		}
+	}
 }

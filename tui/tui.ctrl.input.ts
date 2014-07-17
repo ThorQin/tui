@@ -430,6 +430,8 @@ module tui.ctrl {
 			var val = this._columnKeyMap[key];
 			if (typeof val === "number" && val >= 0)
 				return val;
+			else if (typeof val === "string")
+				return val;
 			else
 				return key;
 		}
@@ -871,6 +873,38 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.attr("data-placeholder");
+		}
+
+		getSelectRow(): any {
+			if (this.type() === "select") {
+				var list = tui.ctrl.list();
+				list.data(this._data);
+				list.activeRowByKey(this.value());
+				return list.activeItem();
+			} else if (this.type() === "multi-select") {
+				var list = tui.ctrl.list();
+				list.data(this._data);
+				list.checkItems(this.value());
+				return list.checkedItems();
+			} else
+				return null;
+		}
+
+		getSelectExtraValue(key: any) {
+			if (this._data == null)
+				return null;
+			var row = this.getSelectRow();
+			if (this.type() === "select") {
+				return row[this._data.mapKey(key)];
+			} else if (this.type() === "multi-select") {
+				var result = [];
+				var k = this._data.mapKey(key);
+				for (var i = 0; i < row.length; i++) {
+					result.push(row[i][k]);
+				}
+				return result;
+			} else
+				return null;
 		}
 
 		submitForm(): string;

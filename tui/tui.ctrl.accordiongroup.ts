@@ -7,31 +7,14 @@ module tui.ctrl {
 	export class AccordionGroup extends Control<Tab> {
 		static CLASS: string = "tui-accordion-group";
 
-		private _caption = null;
-		private _list = null;
+
 
 		constructor(el?: HTMLElement) {
 			super("div", AccordionGroup.CLASS, el);
-			this._caption = document.createElement("div");
-			this[0].innerHTML = "";
-			this[0].appendChild(this._caption);
-			this._list = tui.ctrl.list();
-			this[0].appendChild(this._list[0]);
-		}
-
-		shrinked(): boolean;
-		shrinked(val: boolean): Button;
-		shrinked(val?: boolean): any {
-			if (typeof val === "boolean") {
-				this.is("data-shrinked", val);
-				return this;
-			} else
-				return this.is("data-shrinked");
-		}
-
-		refresh() {
 
 		}
+
+		
 	}
 
 	export function accordionGroup(elem: HTMLElement): AccordionGroup;

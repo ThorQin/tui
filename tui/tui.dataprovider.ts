@@ -20,8 +20,12 @@ module tui {
 		length(): number;
 		at(index: number): any;
 		columnKeyMap(): {};
+		addKeyMap(key: any, mapTo: any);
+		removeKeyMap(key: any);
+		cell(index: number, key: any): any;
 		sort(key: any, desc: boolean, func?: (a: any, b: any) => number): IDataProvider;
 		onupdate? (callback: (updateInfo: IUpdateInfo) => void);
+		mapKey(key: any): any;
 	}
 
 	export interface IQueryResult {
@@ -35,6 +39,8 @@ module tui {
 		private _data: any[] = null;
 		private _head: string[] = null;
 		private _headCache: {} = {};
+		private _mapping = {};
+		private _realKeyMap = null;
 
 		constructor(result: IQueryResult);
 		constructor(data: any[]);
@@ -62,15 +68,59 @@ module tui {
 			else
 				return null;
 		}
+		cell(index: number, key: any): any {
+			var row = this.at(index);
+			if (!row)
+				return null;
+			var map = this.columnKeyMap();
+			var realKey = map[key];
+			if (realKey != null) {
+				return row[realKey];
+			} else {
+				return row[key];
+			}
+		}
 		columnKeyMap(): {} {
+			if (this._realKeyMap !== null)
+				return this._realKeyMap;
 			if (this._head) {
 				var map = {};
 				for (var i = 0; i < this._head.length; i++) {
 					map[this._head[i]] = i;
 				}
+				for (var k in this._mapping) {
+					if (!this._mapping.hasOwnProperty(k))
+						continue;
+					var mapTo = this._mapping[k];
+					if (map.hasOwnProperty(mapTo)) {
+						map[k] = map[mapTo];
+					} else {
+						map[k] = mapTo;
+					}
+				}
+				this._realKeyMap = map;
 				return map;
-			} else
-				return {};
+			} else {
+				this._realKeyMap = this._mapping;
+				return this._mapping;
+			}
+		}
+		mapKey(key: any): any {
+			var map = this.columnKeyMap();
+			var realKey = map[key];
+			if (realKey != null) {
+				return realKey;
+			} else {
+				return key;
+			}
+		}
+		addKeyMap(key: any, mapTo: any) {
+			this._mapping[key] = mapTo;
+			this._realKeyMap = null;
+		}
+		removeKeyMap(key: any) {
+			delete this._mapping[key];
+			this._realKeyMap = null;
 		}
 		sort(key: any, desc: boolean, func: (a: any, b: any) => number = null): ArrayProvider {
 			if (this._src) {
@@ -152,6 +202,8 @@ module tui {
 		private _queryCallback: (queryInfo: IQueryInfo) => void;
 		private _updateCallback: (updateInfo: IUpdateInfo) => void;
 		private _queryTimer: number = null;
+		private _mapping = {};
+		private _realKeyMap = null;
 
 		constructor(cacheSize: number = 100) {
 			this._cacheSize = cacheSize;
@@ -183,15 +235,59 @@ module tui {
 			else
 				return null;
 		}
+		cell(index: number, key: any): any {
+			var row = this.at(index);
+			if (!row)
+				return null;
+			var map = this.columnKeyMap();
+			var realKey = map[key];
+			if (realKey != null) {
+				return row[realKey];
+			} else {
+				return row[key];
+			}
+		}
+		addKeyMap(key: any, mapTo: any) {
+			this._mapping[key] = mapTo;
+			this._realKeyMap = null;
+		}
+		removeKeyMap(key: any) {
+			delete this._mapping[key];
+			this._realKeyMap = null;
+		}
 		columnKeyMap(): {} {
+			if (this._realKeyMap !== null)
+				return this._realKeyMap;
 			if (this._head) {
 				var map = {};
 				for (var i = 0; i < this._head.length; i++) {
 					map[this._head[i]] = i;
 				}
+				for (var k in this._mapping) {
+					if (!this._mapping.hasOwnProperty(k))
+						continue;
+					var mapTo = this._mapping[k];
+					if (map.hasOwnProperty(mapTo)) {
+						map[k] = map[mapTo];
+					} else {
+						map[k] = mapTo;
+					}
+				}
+				this._realKeyMap = map;
 				return map;
-			} else
-				return {};
+			} else {
+				this._realKeyMap = this._mapping;
+				return this._mapping;
+			}
+		}
+		mapKey(key: any): any {
+			var map = this.columnKeyMap();
+			var realKey = map[key];
+			if (realKey != null) {
+				return realKey;
+			} else {
+				return key;
+			}
 		}
 		sort(key: any, desc: boolean, func: (a: any, b: any) => number = null): RemoteCursorProvider {
 			this._sortKey = key;

@@ -9,7 +9,8 @@ module tui.ctrl {
 				if ($(parent).hasClass("tui-form")) {
 					this.ajaxForm($(parent).attr("id"));
 					break;
-				}
+				} else
+					parent = parent.parentElement;
 			}
 			if (!this.hasAttr("data-target-property")) {
 				this.targetProperty("value");
@@ -153,6 +154,7 @@ module tui.ctrl {
 				var param = { value: val };
 				if (this.fire("setvalue", param) === false)
 					return this;
+				val = param.value;
 				if (!target) {
 					this.attr("data-value", JSON.stringify(val));
 					return this;
@@ -193,22 +195,19 @@ module tui.ctrl {
 				}
 				return this;
 			} else {
+				var val = null;
 				if (!target) {
 					var strval = this.attr("data-value");
 					if (strval === null) {
-						return null;
+						val = null;
 					} else {
 						try {
-							return eval("(" + strval + ")");
+							val = eval("(" + strval + ")");
 						} catch (err) {
-							return null;
+							val = null;
 						}
 					}
-				}
-				var param = { value: null };
-				if (this.fire("getvalue", param) === false)
-					return param.value;
-				if (isGroup) {
+				} else if (isGroup) {
 					var controls = $("." + Radiobox.CLASS + "[data-group='" + target + "']");
 					var values: string[] = [];
 					if (controls.length > 0) {
@@ -223,9 +222,9 @@ module tui.ctrl {
 							}
 						});
 						if (values.length > 0)
-							return values[0];
+							val = values[0];
 						else
-							return null;
+							val = null;
 					} else {
 						controls = $("." + Checkbox.CLASS + "[data-group='" + target + "']");
 						controls.each(function (index, elem) {
@@ -238,24 +237,26 @@ module tui.ctrl {
 								}
 							}
 						});
-						return values;
+						val = values;
 					}
 				} else {
 					var elem = document.getElementById(target);
 					if (elem && elem["_ctrl"]) {
 						var ctrl = elem["_ctrl"];
 						if (typeof ctrl[property] === "function") {
-							return ctrl[property]();
+							val = ctrl[property]();
 						}
 					} else if (elem) {
 						if (typeof elem[property] === "function") {
-							return elem[property]();
+							val = elem[property]();
 						} else {
-							return elem[property];
+							val = elem[property];
 						}
 					}
-					return null;
 				}
+				var param = { value: val };
+				this.fire("pregetvalue", param);
+				return param.value;
 			}
 		}
 	}

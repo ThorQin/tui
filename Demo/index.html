@@ -6,6 +6,32 @@
 	<title>TUI library</title>
 	<link rel="stylesheet" href="../tui/css/tui.min.css" type="text/css" />
 	<link href="../Scripts/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<style>
+		.tui-container {
+			margin-left: 300px;
+			padding-bottom: 400px;
+		}
+
+		.tui-sidebar {
+			position: fixed;
+			left: 40px;
+			top: 40px;
+			width: 200px;
+		}
+
+			.tui-sidebar div {
+				padding: 6px 40px;
+			}
+
+		hr {
+			margin: 50px 0;
+		}
+
+		#popbuttons a {
+			width: 140px;
+		}
+	</style>
+
 	<script src="../Scripts/json2.js"></script>
 	<!--[if lt IE 9]>
 		<script src="/tui/html5shiv.min.js"></script>
@@ -40,6 +66,9 @@
 	<script src="../tui/tui.ctrl.formagent.js"></script>
 	<script src="../tui/tui.ctrl.paginator.js"></script>
 	<script src="../tui/tui.ctrl.tips.js"></script>
+	<script src="../tui/tui.ctrl.accordiongroup.js"></script>
+	<script src="../tui/tui.ctrl.accordion.js"></script>
+	<script src="../tui/tui.ctrl.navbar.js"></script>
 	<!--#TUI END#-->
 	<script src="../tui/lang/zh-cn.js"></script>
 	<script src="../tui/lang/en-us.js"></script>
@@ -170,30 +199,6 @@
 			});
 		});
 	</script>
-	<style>
-		.tui-container {
-			margin-left: 300px;
-			padding-bottom: 400px;
-		}
-
-		.tui-sidebar {
-			position: fixed;
-			left: 40px;
-			top: 40px;
-			width: 200px;
-		}
-		.tui-sidebar div {
-			padding:6px 40px;
-		}
-
-		hr {
-			margin: 50px 0;
-		}
-
-		#popbuttons a {
-			width:140px;
-		}
-	</style>
 
 </head>
 <body class="tui-container">

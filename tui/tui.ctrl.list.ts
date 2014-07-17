@@ -15,7 +15,7 @@ module tui.ctrl {
 		private _expandColumnKey: string;
 		private _levelColumnKey: string;
 		private _valueColumnKey: string;
-		private _columnKeyMap: {} = null;
+		//private _columnKeyMap: {} = null;
 
 		constructor(el?: HTMLElement) {
 			super("div", List.CLASS, null);
@@ -98,6 +98,8 @@ module tui.ctrl {
 				this.fire("resizecolumn", data);
 			});
 			this._grid.on("keydown", (data) => {
+				if (this.fire("keydown", data) === false)
+					return;
 				var keyCode = data["event"].keyCode;
 				if (keyCode === 32) {
 					var activeRowIndex = self._grid.activerow();
@@ -135,7 +137,6 @@ module tui.ctrl {
 						data["event"].stopPropagation();
 					}
 				}
-				this.fire("keydown", data);
 			});
 			this._grid.on("keyup", (data) => {
 				if (data["event"].keyCode === 32) {
@@ -233,18 +234,20 @@ module tui.ctrl {
 			this.formatData();
 		}
 
-		private columnKey(key: string): any {
-			var val = this._columnKeyMap[key];
-			if (typeof val === "number" && val >= 0)
-				return val;
-			else
-				return key;
-		}
+		//private columnKey(key: string): any {
+		//	var val = this._columnKeyMap[key];
+		//	if (typeof val === "number" && val >= 0)
+		//		return val;
+		//	else if (typeof val === "string")
+		//		return val;
+		//	else
+		//		return key;
+		//}
 
 		private initData(useTriState: boolean = false) {
 			var self = this;
 			var data: any = this._grid.data();
-			if (typeof data.process === "function") {
+			if (data && typeof data.process === "function") {
 				function checkChildren(input: any[], parentRow): TriState {
 					var checkedCount: number = 0, uncheckedCount: number = 0;
 					for (var i = 0; i < input.length; i++) {
@@ -295,7 +298,7 @@ module tui.ctrl {
 		private formatData() {
 			var self = this;
 			var data: any = this._grid.data();
-			if (typeof data.process === "function") {
+			if (data && typeof data.process === "function") {
 				function addChildren(input: any[], output: any[], level: number) {
 					for (var i = 0; i < input.length; i++) {
 						var row = input[i];
@@ -511,8 +514,8 @@ module tui.ctrl {
 				var items = this.checkedItems();
 				var result = [];
 				for (var i = 0; i < items.length; i++) {
-					if (typeof items[i].key !== undef)
-						result.push(items[i].key);
+					if (typeof items[i][this._keyColumKey] !== undef)
+						result.push(items[i][this._keyColumKey]);
 				}
 				return result;
 			}
@@ -529,16 +532,12 @@ module tui.ctrl {
 				this._grid.noRefresh(true);
 				this._grid.data(data);
 				var data = this._grid.data();
-				if (data)
-					this._columnKeyMap = data.columnKeyMap();
-				else
-					this._columnKeyMap = {};
-				this._keyColumKey = this.columnKey("key");
-				this._childrenColumKey = this.columnKey("children");
-				this._checkedColumnKey = this.columnKey("checked");
-				this._levelColumnKey = this.columnKey("level");
-				this._valueColumnKey = this.columnKey("value");
-				this._expandColumnKey = this.columnKey("expand");
+				this._keyColumKey = data.mapKey("key");
+				this._childrenColumKey = data.mapKey("children");
+				this._checkedColumnKey = data.mapKey("checked");
+				this._levelColumnKey = data.mapKey("level");
+				this._valueColumnKey = data.mapKey("value");
+				this._expandColumnKey = data.mapKey("expand");
 				if (this.triState())
 					this.initTriState();
 				else

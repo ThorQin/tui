@@ -66,7 +66,7 @@ module tui.ctrl {
 		// Drawing related flags
 		private _selectrows: number[] = [];
 		private _activerow: number = null;
-		private _columnKeyMap: {} = null;
+		//private _columnKeyMap: {} = null;
 		private _noRefresh = false;
 		private _initialized = false;
 		private _initInterval = null;
@@ -342,7 +342,7 @@ module tui.ctrl {
 			line.appendChild(cell);
 			cell.innerHTML = "a";
 			this[0].appendChild(line);
-			this._lineHeight = line.offsetHeight;
+			this._lineHeight = $(line).outerHeight();//line.offsetHeight;
 			this._borderWidth = $(cell).outerWidth() - $(cell).width();
 			cell.className = "tui-grid-head-cell";
 			line.className = "tui-grid-head";
@@ -552,7 +552,7 @@ module tui.ctrl {
 				var col = columns[i];
 				var key = null;
 				if (typeof col.key !== tui.undef && col.key !== null) {
-					key = this._columnKeyMap[col.key]
+					key = this.myData().mapKey(col.key)
 					if (typeof key === tui.undef)
 						key = col.key;
 				}
@@ -586,7 +586,7 @@ module tui.ctrl {
 			var self = this;
 			var columns = this.myColumns();
 			var data = this.myData();
-			var rowData = data.at(index);
+			//var rowData = data.at(index);
 			if (line.childNodes.length !== columns.length) {
 				line.innerHTML = "";
 				for (var i = 0; i < columns.length; i++) {
@@ -600,16 +600,14 @@ module tui.ctrl {
 					line.appendChild(cell);
 				}
 			}
+			var rowData = data.at(index);
 			for (var i = 0; i < line.childNodes.length; i++) {
 				var cell = <HTMLSpanElement>line.childNodes[i];
 				var col = columns[i];
 				var key = null;
-				if (typeof col.key !== tui.undef && col.key !== null) {
-					key = this._columnKeyMap[col.key]
-					if (typeof key === tui.undef)
-						key = col.key;
-				}
-				var value = (key !== null && rowData ? rowData[key] : " ");
+				if (typeof col.key !== tui.undef)
+					key = data.mapKey(col.key);
+				var value = (key !== null && rowData ? rowData[key] : "");
 				this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, key, value, rowData, index, i);
 			}
 
@@ -796,13 +794,14 @@ module tui.ctrl {
 			cell.style.visibility = "hidden";
 			cell.style.width = "auto";
 			document.body.appendChild(cell);
+			var data = this.myData();
 			var key = null;
 			if (typeof col.key !== tui.undef && col.key !== null) {
-				key = this._columnKeyMap[col.key]
-					if (typeof key === tui.undef)
+				key = data.mapKey(col.key)
+				if (typeof key === tui.undef)
 					key = col.key;
 			}
-			var data = this.myData();
+			
 			var begin = displayedOnly ? this._bufferedBegin : 0;
 			var end = displayedOnly ? this._bufferedEnd : data.length();
 			for (var i = begin; i < end; i++) {
@@ -963,7 +962,7 @@ module tui.ctrl {
 				this.refresh();
 				return this;
 			} else {
-				return this._data;
+				return this.myData();
 			}
 		}
 
@@ -1000,7 +999,7 @@ module tui.ctrl {
 			this._initialized = true;
 			this.computeScroll();
 			this.clearBufferLines();
-			this._columnKeyMap = this.myData().columnKeyMap();
+//			this._columnKeyMap = this.myData().columnKeyMap();
 			this.drawHead();
 			this.drawLines();
 		}
