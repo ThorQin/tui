@@ -56,7 +56,7 @@ module tui {
 	}
 
 	export function whetherShowTooltip(target: HTMLElement) {
-		if (target === _tooltip)
+		if (tui.isAncestry(target, _tooltip))
 			return;
 		var obj = target;
 		while (obj) {
@@ -434,24 +434,24 @@ module tui.ctrl {
 			}
 		}
 
-		ajaxForm(): string;
-		ajaxForm(txt?: string): T;
-		ajaxForm(txt?: string): any {
+		form(): string;
+		form(txt?: string): T;
+		form(txt?: string): any {
 			if (typeof txt === "string") {
-				this.attr("data-ajax-form", txt);
+				this.attr("data-form", txt);
 				return this;
 			} else
-				return this.attr("data-ajax-form");
+				return this.attr("data-form");
 		}
 
-		ajaxField(): string;
-		ajaxField(txt?: string): T;
-		ajaxField(txt?: string): any {
+		field(): string;
+		field(txt?: string): T;
+		field(txt?: string): any {
 			if (typeof txt === "string") {
-				this.attr("data-ajax-field", txt);
+				this.attr("data-field", txt);
 				return this;
 			} else
-				return this.attr("data-ajax-field");
+				return this.attr("data-field");
 		}
 		
 		blur() {
@@ -488,6 +488,10 @@ module tui.ctrl {
 		isPosterity(posterity: Node): boolean {
 			return tui.isPosterity(this[0], posterity);
 		}
+
+		autoRefresh(): boolean {
+			return true;
+		}
 	}
 
 	export function control<T>(param: string, constructor: { new (el?: HTMLElement, param?: any): T; }, constructParam?: any): T;
@@ -499,7 +503,7 @@ module tui.ctrl {
 			if (!elem)
 				return null;
 			if (elem._ctrl) {
-				elem._ctrl.refresh();
+				elem._ctrl.autoRefresh() && elem._ctrl.refresh();
 				return elem._ctrl;
 			} else if (typeof constructParam !== tui.undef){
 				return new constructor(elem, constructParam);
@@ -508,7 +512,7 @@ module tui.ctrl {
 		} else if (param && param.nodeName) {
 			elem = param;
 			if (elem._ctrl) {
-				elem._ctrl.refresh();
+				elem._ctrl.autoRefresh() && elem._ctrl.refresh();
 				return elem._ctrl;
 			} else if (typeof constructParam !== tui.undef) {
 				return new constructor(elem, constructParam);

@@ -51,7 +51,8 @@ module tui.ctrl {
 		private _valueColumnKey: string;
 		private _childrenColumKey: string;
 		private _columnKeyMap: {} = null;
-
+		// Whether has been initialized.
+		private _initialized = false;
 
 		constructor(el?: HTMLElement, type?: string) {
 			super("span", Input.CLASS, el === null ? undefined: el);
@@ -890,15 +891,15 @@ module tui.ctrl {
 				return null;
 		}
 
-		getSelectExtraValue(key: any) {
+		getSelectRowColumn(columnKey: any) {
 			if (this._data == null)
 				return null;
 			var row = this.getSelectRow();
 			if (this.type() === "select") {
-				return row[this._data.mapKey(key)];
+				return row[this._data.mapKey(columnKey)];
 			} else if (this.type() === "multi-select") {
 				var result = [];
-				var k = this._data.mapKey(key);
+				var k = this._data.mapKey(columnKey);
 				for (var i = 0; i < row.length; i++) {
 					result.push(row[i][k]);
 				}
@@ -917,7 +918,15 @@ module tui.ctrl {
 				return this.attr("data-submit-form");
 		}
 
+		autoRefresh(): boolean {
+			return !this._initialized;
+		}
+
 		refresh() {
+			if (!this[0] || this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
+				return;
+			this._initialized = true;
+
 			var type = this.type().toLowerCase();
 			if (type === "file" && !this.readonly()) {
 				this.makeFileUpload();

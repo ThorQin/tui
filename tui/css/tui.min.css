@@ -184,7 +184,7 @@
 hr {
   height: 0;
   border: none;
-  border-bottom: 1px dashed #cccccc;
+  border-bottom: 1px dashed #d0d0d0;
   margin: 20px 0px;
 }
 body {
@@ -221,7 +221,7 @@ a:hover {
   background-image: -ms-linear-gradient(top, #ffffff, #f4f4f4);
   background-image: -o-linear-gradient(top, #ffffff, #f4f4f4);
   border-color: #e3e3e3;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   min-width: 40px;
 }
 .tui-button:hover {
@@ -730,7 +730,7 @@ a:hover {
   background-color: inherit;
 }
 .tui-tab {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #d0d0d0;
   padding: 10px;
   padding-bottom: 0px;
   white-space: nowrap;
@@ -752,7 +752,7 @@ a:hover {
   content: none;
 }
 .tui-tab .tui-radiobox[data-checked] {
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   border-bottom: none;
   background-color: white;
 }
@@ -768,7 +768,7 @@ a:hover {
 }
 .tui-calendar {
   padding: 2px;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   white-space: nowrap;
   display: inline-block;
   font-family: Calibri;
@@ -890,7 +890,7 @@ a:hover {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   background-color: #fff;
 }
 .tui-popup .tui-calendar,
@@ -1042,7 +1042,7 @@ a:hover {
   margin: 2px;
   display: inline-block;
   position: relative;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -1121,7 +1121,7 @@ a:hover {
   -moz-border-bottom-right-radius: 3px;
   border-bottom-right-radius: 3px;
   color: #000;
-  border-left: 1px solid #cccccc;
+  border-left: 1px solid #d0d0d0;
   text-align: center;
 }
 .tui-input > span:hover {
@@ -1190,14 +1190,14 @@ a:hover {
 .tui-input-select-bar {
   padding: 5px;
   font-size: 14px;
-  border-top: 1px dotted #cccccc;
+  border-top: 1px dotted #d0d0d0;
   text-align: center;
 }
 .tui-textarea {
   margin: 2px;
   display: block;
   position: relative;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -1445,8 +1445,8 @@ a:hover {
 .tui-raw-table tr th,
 .tui-table tr td,
 .tui-raw-table tr td {
-  border-right: 1px solid #cccccc;
-  border-bottom: 1px solid #cccccc;
+  border-right: 1px solid #d0d0d0;
+  border-bottom: 1px solid #d0d0d0;
   padding: 8px 8px;
   color: #555555;
 }
@@ -1461,13 +1461,13 @@ a:hover {
 .tui-raw-table tr th:first-child,
 .tui-table tr td:first-child,
 .tui-raw-table tr td:first-child {
-  border-left: 1px solid #cccccc;
+  border-left: 1px solid #d0d0d0;
 }
 .tui-table tr:first-child td,
 .tui-raw-table tr:first-child td,
 .tui-table tr:first-child th,
 .tui-raw-table tr:first-child th {
-  border-top: 1px solid #cccccc;
+  border-top: 1px solid #d0d0d0;
 }
 .tui-table tr:first-child td:first-child,
 .tui-raw-table tr:first-child td:first-child,
@@ -1563,7 +1563,7 @@ a:hover {
   text-align: left;
   vertical-align: middle;
   position: relative;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   background-color: #ffffff;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -1622,7 +1622,7 @@ a:hover {
   right: 0px;
   height: 38px;
   line-height: 38px;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #d0d0d0;
   white-space: nowrap;
   color: #555555;
 }
@@ -1644,7 +1644,7 @@ a:hover {
   height: 38px;
   line-height: 38px;
   padding: 0 8px;
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #d0d0d0;
   white-space: nowrap;
 }
 .tui-grid .tui-grid-cell .tui-grid-cell-content,
@@ -1789,7 +1789,7 @@ a:hover {
   text-align: left;
   vertical-align: middle;
   position: relative;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   background-color: #ffffff;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -1848,7 +1848,7 @@ a:hover {
   right: 0px;
   height: 30px;
   line-height: 30px;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #d0d0d0;
   white-space: nowrap;
   color: #555555;
 }
@@ -1870,7 +1870,7 @@ a:hover {
   height: 30px;
   line-height: 30px;
   padding: 0 8px;
-  border-right: 1px solid #cccccc;
+  border-right: 1px solid #d0d0d0;
   white-space: nowrap;
 }
 .tui-list .tui-grid-cell .tui-grid-cell-content,
@@ -2059,7 +2059,7 @@ a:hover {
 }
 .tui-tips {
   padding: 10px;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   position: relative;
   padding-right: 40px;
   min-height: 18px;
@@ -2109,26 +2109,32 @@ a:hover {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
+  border-color: #d5d5d5;
   overflow: hidden;
 }
 .tui-accordion .tui-accordion-caption {
-  background-color: #f4f4f4;
+  padding: 0 10px;
+  color: #017bce;
+  background-color: #f9f9f9;
   height: 34px;
   line-height: 34px;
-  text-align: center;
-  font-size: 16px;
+  font-size: 14px;
   -webkit-border-top-left-radius: 5px;
   -moz-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
   -webkit-border-top-right-radius: 5px;
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
-  border-bottom: 1px solid #cccccc;
   cursor: pointer;
-}
-.tui-accordion .tui-accordion-caption.tui-folded {
   border-bottom: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tui-accordion .tui-accordion-caption.tui-expanded {
+  border-bottom: none;
+  border-bottom: 1px solid #d0d0d0;
+  border-color: #d5d5d5;
 }
 .tui-accordion .tui-list {
   -webkit-border-radius: 0px;
@@ -2144,15 +2150,53 @@ a:hover {
 }
 .tui-accordion .tui-list .tui-grid-line {
   cursor: pointer;
+  border-bottom: 1px dotted #f0f0f0;
 }
 .tui-accordion .tui-list .tui-grid-line .tui-grid-cell .tui-grid-cell-content {
+  color: #aaa;
   cursor: pointer;
 }
 .tui-accordion .tui-list .tui-grid-line.tui-grid-line-selected {
-  background-color: #f4fdff;
+  background-color: white;
+  border-bottom: 1px dotted #f0f0f0;
 }
-.tui-accordion .tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell {
-  color: #555555;
+.tui-accordion .tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-cell-content {
+  color: #017bce;
+}
+.tui-accordion .tui-list .tui-grid-line:hover {
+  background-color: #fafafa;
+}
+.tui-accordion .tui-list .tui-grid-line.tui-accordion-row-checked {
+  background-color: #fafafa;
+}
+.tui-accordion .tui-list .tui-grid-line.tui-accordion-row-checked .tui-grid-cell .tui-grid-cell-content {
+  color: #017bce;
+  font-weight: bold;
+}
+.tui-accordion-group > * {
+  display: block;
+  margin: 0;
+  border-top-width: 0;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
+.tui-accordion-group > *:first-child {
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+  border-top-width: 1px;
+}
+.tui-accordion-group > *:last-child {
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -moz-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 .tui-blur {
   filter: url(blur.svg#blur);
@@ -2175,7 +2219,7 @@ a:hover {
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
   border-radius: 5px;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   padding: 0px;
   overflow: hidden;
 }
@@ -2189,9 +2233,33 @@ a:hover {
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   background-color: #f4f4f4;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid #d0d0d0;
   padding: 10px;
   content: attr(data-title);
+}
+.tui-panel .tui-panel-foot {
+  display: block;
+  background-color: #f4f4f4;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  -moz-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  padding: 10px;
+  border-top: 1px solid #d0d0d0;
+}
+.tui-panel .tui-panel-head {
+  display: block;
+  background-color: #f4f4f4;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+  padding: 10px;
+  border-bottom: 1px solid #d0d0d0;
 }
 .tui-tooltip {
   padding: 4px 8px;
@@ -2228,7 +2296,7 @@ a:hover {
   margin: 2px;
   color: #000;
   background-color: #f4f4f4;
-  border: 1px solid #cccccc;
+  border: 1px solid #d0d0d0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;

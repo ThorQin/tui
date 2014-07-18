@@ -776,7 +776,10 @@ module tui.ctrl {
 		/**
 		 * Adjust column width to adapt column content
 		 * @param {Number} columnIndex
-		 * @param {Boolean} expandOnly only expand column width
+		 * @param {Boolean} expandOnly Only expand column width
+		 * @param {Boolean} displayedOnly Only compute displayed lines, 
+		 *		if this parameter is false then grid will compute all lines 
+		 *		regardless of whether it is visible
 		 */
 		autofitColumn(columnIndex: number, expandOnly: boolean = false, displayedOnly: boolean = true) {
 			if (typeof (columnIndex) !== "number")
@@ -1003,6 +1006,11 @@ module tui.ctrl {
 			this.drawHead();
 			this.drawLines();
 		}
+
+		autoRefresh(): boolean {
+			return !this._initialized;
+		}
+
 
 		/// Following static methods are used for cell formatting.
 

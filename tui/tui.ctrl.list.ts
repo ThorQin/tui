@@ -2,8 +2,8 @@
 module tui.ctrl {
 	enum TriState {
 		Unchecked = 0,
-		HalfChecked = 1,
-		Checked = 2
+		Checked = 1,
+		HalfChecked = 2
 	}
 	export class List extends Control<List> {
 		static CLASS: string = "tui-list";
@@ -108,12 +108,12 @@ module tui.ctrl {
 						data["event"].stopPropagation();
 					}
 				} else if (keyCode === 37 /*Left*/) {
+					var activeRowIndex = self._grid.activerow();
 					var item = self._grid.activeItem();
 					if (item) {
 						var children = item[self._childrenColumKey];
 						if (children && children.length > 0 && item[self._expandColumnKey]) {
-							item[self._expandColumnKey] = false;
-							this.formatData();
+							this.onFoldRow(item, activeRowIndex, data["event"]);
 						} else {
 							if (item["__parent"]) {
 								self.activeItem(item["__parent"]);
@@ -130,8 +130,7 @@ module tui.ctrl {
 					if (item) {
 						var children = item[self._childrenColumKey];
 						if (children && children.length > 0 && !item[self._expandColumnKey]) {
-							item[self._expandColumnKey] = true;
-							this.formatData();
+							this.onExpandRow(item, activeRowIndex, data["event"]);
 						}
 						data["event"].preventDefault();
 						data["event"].stopPropagation();
@@ -166,7 +165,8 @@ module tui.ctrl {
 			for (var i = 0; i < children.length; i++) {
 				if (!children[i])
 					continue;
-				children[i][this._checkedColumnKey] = checkState;
+				if (typeof children[i][this._checkedColumnKey] !== undef)
+					children[i][this._checkedColumnKey] = checkState;
 				var myChildren = children[i][this._childrenColumKey];
 				myChildren && myChildren.length > 0 && this.checkChildren(myChildren, checkState);
 			}
@@ -179,7 +179,9 @@ module tui.ctrl {
 				var row = children[i];
 				if (!row)
 					continue;
-				if (row[this._checkedColumnKey] === TriState.HalfChecked) {
+				if (typeof row[this._checkedColumnKey] === undef)
+					continue;
+				else if (row[this._checkedColumnKey] === TriState.HalfChecked) {
 					uncheckedCount++;
 					checkedCount++;
 					break;
@@ -188,17 +190,20 @@ module tui.ctrl {
 				else
 					uncheckedCount++;
 			}
-			if (checkedCount === 0)
-				parent[this._checkedColumnKey] = TriState.Unchecked;
-			else if (uncheckedCount === 0)
-				parent[this._checkedColumnKey] = TriState.Checked;
-			else
-				parent[this._checkedColumnKey] = TriState.HalfChecked;
+			if (typeof parent[this._checkedColumnKey] !== undef) {
+				if (checkedCount === 0)
+					parent[this._checkedColumnKey] = TriState.Unchecked;
+				else if (uncheckedCount === 0)
+					parent[this._checkedColumnKey] = TriState.Checked;
+				else
+					parent[this._checkedColumnKey] = TriState.HalfChecked;
+			}
 			parent["__parent"] && this.checkParent(parent["__parent"]);
 		}
 
 		private checkRow(row, checkState: TriState) {
-			row[this._checkedColumnKey] = checkState;
+			if (typeof row[this._checkedColumnKey] !== undef)
+				row[this._checkedColumnKey] = checkState;
 			if (this.triState()) {
 				var children = row[this._childrenColumKey];
 				children && children.length > 0 && this.checkChildren(children, checkState);
@@ -224,25 +229,15 @@ module tui.ctrl {
 
 		private onExpandRow(row, rowIndex: number, event) {
 			row[this._expandColumnKey] = true;
-			this.fire("rowexpand", { event: event, row: row, index: rowIndex });
 			this.formatData();
+			this.fire("rowexpand", { event: event, row: row, index: rowIndex });
 		}
 
 		private onFoldRow(row, rowIndex: number, event) {
 			row[this._expandColumnKey] = false;
-			this.fire("rowfold", { event: event, row: row, index: rowIndex });
 			this.formatData();
+			this.fire("rowfold", { event: event, row: row, index: rowIndex });
 		}
-
-		//private columnKey(key: string): any {
-		//	var val = this._columnKeyMap[key];
-		//	if (typeof val === "number" && val >= 0)
-		//		return val;
-		//	else if (typeof val === "string")
-		//		return val;
-		//	else
-		//		return key;
-		//}
 
 		private initData(useTriState: boolean = false) {
 			var self = this;
@@ -444,7 +439,10 @@ module tui.ctrl {
 		/**
 		 * Adjust column width to adapt column content
 		 * @param {Number} columnIndex
-		 * @param {Boolean} expandOnly only expand column width
+		 * @param {Boolean} expandOnly Only expand column width
+		 * @param {Boolean} displayedOnly Only compute displayed lines, 
+		 *		if this parameter is false then grid will compute all lines 
+		 *		regardless of whether it is visible
 		 */
 		autofitColumn(columnIndex: number, expandOnly: boolean = false, displayedOnly: boolean = true) {
 			this._grid.autofitColumn(columnIndex, expandOnly, displayedOnly);

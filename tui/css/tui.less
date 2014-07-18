@@ -36,8 +36,8 @@ a {
 @import 'tui-list.less';
 @import 'tui-tab.less';
 @import 'tui-tips.less';
-@import 'tui-accordion-group.less';
 @import 'tui-accordion.less';
+@import 'tui-accordion-group.less';
 
 
 .tui-blur {
@@ -73,6 +73,20 @@ a {
 			padding:10px;
 			content:attr(data-title);
 		}
+	}
+	.tui-panel-foot {
+		display:block;
+		background-color:@captionColor;
+		.bottom-radius(@panelBorderRadius);
+		padding:10px;
+		border-top:1px solid @borderColor;
+	}
+	.tui-panel-head {
+		display:block;
+		background-color:@captionColor;
+		.top-radius(@panelBorderRadius);
+		padding:10px;
+		border-bottom:1px solid @borderColor;
 	}
 }
 

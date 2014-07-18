@@ -7,7 +7,7 @@ module tui.ctrl {
 			var parent = this[0].parentElement;
 			while (parent) {
 				if ($(parent).hasClass("tui-form")) {
-					this.ajaxForm($(parent).attr("id"));
+					this.form($(parent).attr("id"));
 					break;
 				} else
 					parent = parent.parentElement;

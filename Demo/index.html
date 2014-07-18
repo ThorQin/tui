@@ -592,12 +592,12 @@
 <div id="text1" class="tui-input"
 		data-type="text"
 		data-validator="{'*any': '请输入文字内容'}"
-		data-ajax-form="queryForm"
-		data-ajax-field="name"></div>
+		data-form="queryForm"
+		data-field="name"></div>
 <div id="text2" class="tui-input"
 		data-type="text"
-		data-ajax-form="queryForm"
-		data-ajax-field="age"></div>
+		data-form="queryForm"
+		data-field="age"></div>
 
 显示一个查询按钮，点击按钮会导致 'queryForm' 提交：
 
@@ -635,17 +635,17 @@
 
 			姓名：<div id="text1" class="tui-input"
 					data-type="text"
-					data-ajax-form="queryForm"
-					data-ajax-field="name" style="width:150px;"></div>
+					data-form="queryForm"
+					data-field="name" style="width:150px;"></div>
 			年龄：<div id="text2" class="tui-input"
 					data-type="text"
-					data-ajax-form="queryForm"
-					data-ajax-field="age" style="width:80px;"></div>
+					data-form="queryForm"
+					data-field="age" style="width:80px;"></div>
 			性别：
 			<div id="sex" class="tui-input"
 				 data-type="select"
-				 data-ajax-form="queryForm"
-				 data-ajax-field="sex"
+				 data-form="queryForm"
+				 data-field="sex"
 				 data-validator="{'*any': '请选择性别'}"
 				 data-data="[
 					 {key:'男', value:'男'},
@@ -674,11 +674,11 @@
 		<div style="margin:0 20px;">
 			使用上面演示的表单已经很方便了，但是在有些情况下，或者是还不够灵活，或者是无法实现某种需求，这时就要用到强大的表单代理控件了，这里列举了如下几种情况需要使用到表单代理：
 			<ul>
-				<li>当表单字段是一组单选或复选框时，此时由于表单字段对应的是单选组或复选组，所以简单的设置checkbox或radiobox的data-ajax-form和data-ajax-field属性是和需求不符的，这只会把改对象的值加入表单，而没有起到判定选择的作用。</li>
+				<li>当表单字段是一组单选或复选框时，此时由于表单字段对应的是单选组或复选组，所以简单的设置checkbox或radiobox的data-form和data-field属性是和需求不符的，这只会把改对象的值加入表单，而没有起到判定选择的作用。</li>
 				<li>当希望取值的属性不是默认的"value"属性时，这时候使用表单代理可以指定希望使用的属性。</li>
-				<li>当多个表单会复用某些控件的时候，这时由于一个控件只能设置一个ajax-form属性，所以只能隶属于一个表单，这时使用表单代理就可以映射该控件到不同的表单中。</li>
+				<li>当多个表单会复用某些控件的时候，这时由于一个控件只能设置一个form属性，所以只能隶属于一个表单，这时使用表单代理就可以映射该控件到不同的表单中。</li>
 				<li>当表单字段的值需要取自一些内置控件，或需要更为精细的脚本控制时，这时使用绑定事件的表单代理控件可以以最少的代码实现最大化的灵活性。</li>
-				<li>表单代理控件可以摆放到表单控件内部，这样代码看起来更加清晰，表单有哪些字段可以一目了然，并且放在里面的代理控件可以不用填写 data-ajax-form 属性，减少了一些代码。</li>
+				<li>表单代理控件可以摆放到表单控件内部，这样代码看起来更加清晰，表单有哪些字段可以一目了然，并且放在里面的代理控件可以不用填写 data-form 属性，减少了一些代码。</li>
 			</ul>
 		</div>
 	<div class="tui-panel" data-title="还以上面的查询做例子改写一下" style="margin:0 20px;">
@@ -691,9 +691,9 @@
 		data-action="query.ashx"
 		data-method="post"
 		data-target="result1">
-	<span class="tui-form-agent" data-ajax-field="name" data-target="text1"></span>
-	<span class="tui-form-agent" data-ajax-field="age" data-target="text2"></span>
-	<span class="tui-form-agent" data-ajax-field="sex" data-target="gender"
+	<span data-field="name" data-target="text1"></span>
+	<span data-field="age" data-target="text2"></span>
+	<span data-field="sex" data-target="gender"
 			data-is-group="true"
 			data-group-validator="{'*min:1': '请选择性别'}"></span>
 </span>
@@ -708,9 +708,9 @@
 			  data-action="query.ashx"
 			  data-method="post"
 			  data-target="result1">
-			<span class="tui-form-agent" data-ajax-field="name" data-target="text1"></span>
-			<span class="tui-form-agent" data-ajax-field="age" data-target="text2"></span>
-			<span class="tui-form-agent" data-ajax-field="sex" data-target="gender"
+			<span data-field="name" data-target="text1"></span>
+			<span data-field="age" data-target="text2"></span>
+			<span data-field="sex" data-target="gender"
 				  data-is-group="true"
 				  data-group-validator="{'*min:1': '请选择性别'}"></span>
 		</span>

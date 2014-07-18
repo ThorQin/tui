@@ -9,35 +9,70 @@ module tui.ctrl {
 
 		private _caption: HTMLDivElement = null;
 		private _list: List = null;
-		private _folded: boolean = false;
+		private _animation: boolean = true;
+		private _initialized = false;
+
+		static ANIMATION_DURATION: number = 200;
 
 		constructor(el?: HTMLElement) {
 			super("div", Accordion.CLASS, el);
 			this[0].innerHTML = "";
 			this._caption = document.createElement("div");
 			this._caption.className = "tui-accordion-caption";
+			this._caption.setAttribute("unselectable", "on");
 			this[0].appendChild(this._caption);
 			this._list = tui.ctrl.list();
 			this[0].appendChild(this._list[0]);
 			var predefined: any = this.attr("data-data");
 			if (predefined)
 				predefined = eval("(" + predefined + ")");
-			this._folded = this.folded();
 			$(this._caption).click(() => {
-				this.folded(!this.folded());
+				this.expanded(!this.expanded());
+			});
+			$(this._caption).keydown((e) => {
+				if (e.keyCode === 13) {
+					this.expanded(!this.expanded());
+				}
 			});
 			var self = this;
 			this._list.on("rowclick keydown", function (data) {
-				if (data["name"] === "rowclick")
+				if (data["name"] === "rowclick") {
 					self.value(self._list.data().at(data["index"])["key"]);
-				else if (data["event"].keyCode === 13) {
+				} else if (data["event"].keyCode === 13) {
 					self.value(self._list.activeItem().key);
 				}
 			});
-			if (predefined)
+			this._list.on("rowexpand rowfold", function (data) {
+				self._list.activerow(null);
+				data["event"].stopPropagation();
+				self.refresh();
+			});
+			var originFormator = this._list.columns()[0].format;
+			this._list.columns()[0].format = function (data) {
+				originFormator(data);
+				if (typeof data.row.checked === undef)
+					return;
+				var contentSpan = (<HTMLElement>data.cell.firstChild);
+				var checkSpan = contentSpan.childNodes[2];
+				contentSpan.removeChild(checkSpan);
+				if (data.row.checked) {
+					$(data.cell.parentElement).addClass("tui-accordion-row-checked");
+				} else
+					$(data.cell.parentElement).removeClass("tui-accordion-row-checked");
+			}
+			this._animation = false;
+			if (predefined) {
 				this.data(predefined);
-			else
-				this.refresh();
+				var checkedItems = this._list.checkedItems();
+				if (checkedItems && checkedItems.length > 0) {
+					var k = this._list.data().mapKey("key");
+					this.value(checkedItems[0][k]);
+				} else {
+					this.expanded(this.expanded());
+				}
+			} else
+				this.expanded(this.expanded());
+			this._animation = true;
 		}
 
 
@@ -65,19 +100,23 @@ module tui.ctrl {
 				return this.attr("data-caption");
 		}
 
-		folded(): boolean;
-		folded(val: boolean): Accordion;
-		folded(val?: boolean): any {
+		captionHeight(): number {
+			return $(this._caption).outerHeight();
+		}
+
+		expanded(): boolean;
+		expanded(val: boolean): Accordion;
+		expanded(val?: boolean): any {
 			if (typeof val === "boolean") {
-				this.is("data-folded", val);
-				if (!this.folded()) {
+				this.is("data-expanded", val);
+				if (this.expanded()) {
 					var groupName = this.group();
 					if (groupName) {
 						var self = this;
 						$("." + Accordion.CLASS + "[data-group='" + groupName + "']").each(function (index, elem) {
 							var ctrl = elem["_ctrl"];
-							if (ctrl && ctrl !== self && typeof ctrl.folded === "function") {
-								ctrl.folded(true);
+							if (ctrl && ctrl !== self && typeof ctrl.expanded === "function") {
+								ctrl.expanded(false);
 							}
 						});
 					}
@@ -85,7 +124,7 @@ module tui.ctrl {
 				this.refresh();
 				return this;
 			} else
-				return this.is("data-folded");
+				return this.is("data-expanded");
 		}
 
 		maxHeight(): number;
@@ -113,7 +152,10 @@ module tui.ctrl {
 		value(key?: string): any {
 			if (typeof key !== undef) {
 				this._list.value([key]);
+				this._list.activerow(null);
 				if (this._list.value().length > 0) {
+					this._list.activeRowByKey(key);
+					this.expanded(true);
 					var groupName = this.group();
 					if (groupName) {
 						var self = this;
@@ -124,26 +166,50 @@ module tui.ctrl {
 							}
 						});
 					}
-					this.folded(false);
 				}
+				return this;
 			} else {
-				this._list.value();
+				var val = this._list.value();
+				if (val === null)
+					return val;
+				else if (val.length > 0)
+					return val[0];
+				else
+					return null;
 			}
 		}
 
+		autoRefresh(): boolean {
+			return !this._initialized;
+		}
+
 		refresh() {
-			if (this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
+			if (!this[0] || this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
 				return;
+			this._initialized = true;
 			this._caption.innerHTML = this.caption() || "";
-			var captionHeight = this._caption.offsetHeight;
-			if (this.folded()) {
-				$(this._caption).addClass("tui-folded");
+			var captionHeight;
+			if (!this.expanded()) { // Show in fold
+				this._caption.setAttribute("tabIndex", "0");
+				$(this._caption).removeClass("tui-expanded");
 				captionHeight = this._caption.offsetHeight;
-				$(this._caption).removeClass("tui-folded");
-				$(this[0]).animate({ "height": captionHeight + "px" }, 50, "linear", () => {
-					$(this._caption).addClass("tui-folded");
-				});
-			} else {
+				$(this._caption).addClass("tui-expanded");
+				if (this._animation) {
+					$(this[0]).animate({ "height": captionHeight + "px" },
+						Accordion.ANIMATION_DURATION, "linear", () => {
+							$(this._caption).removeClass("tui-expanded");
+							this._list[0].style.display = "none";
+						});
+				} else {
+					this[0].style.height = captionHeight + "px";
+					$(this._caption).removeClass("tui-expanded");
+					this._list[0].style.display = "none";
+				}
+			} else { // Show in expanded
+				this._caption.removeAttribute("tabIndex");
+				$(this._caption).addClass("tui-expanded");
+				this._list[0].style.display = "";
+				captionHeight = this._caption.offsetHeight;
 				var maxHeight = this.maxHeight();
 				var lines = 1;
 				if (this._list.data())
@@ -157,8 +223,17 @@ module tui.ctrl {
 				this._list[0].style.height = height + "px";
 				this._list[0].style.width = $(this[0]).width() + "px";
 				this._list.refresh();
-				$(this._caption).removeClass("tui-folded");
-				$(this[0]).animate({ "height": height + captionHeight + "px" }, 50, "linear");
+				if (this._animation) {
+					$(this[0]).animate({ "height": height + captionHeight + "px" },
+						Accordion.ANIMATION_DURATION, "linear", () => {
+							$(this._caption).addClass("tui-expanded");
+							this._list.focus();
+						});
+				} else {
+					this[0].style.height = height + captionHeight + "px";
+					$(this._caption).addClass("tui-expanded");
+					this._list.focus();
+				}
 			}
 		}
 	}

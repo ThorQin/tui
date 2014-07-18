@@ -32,7 +32,7 @@ module tui.ctrl {
 			for (var i = 0; i < this[0].childNodes.length; i++) {
 				if ((<string>this[0].childNodes[i].nodeName).toLowerCase() === "span") {
 					var agent = tui.ctrl.formAgent(this[0].childNodes[i]);
-					agent.ajaxForm(this.id());
+					agent.form(this.id());
 				}
 			}
 
@@ -150,7 +150,7 @@ module tui.ctrl {
 				return true;
 			}
 			var valid = true;
-			$("[data-ajax-form='" + id + "']").each(function (index, elem) {
+			$("[data-form='" + id + "']").each(function (index, elem) {
 				if (typeof this._ctrl.validate === "function")
 					if (!this._ctrl.validate())
 						valid = false;
@@ -176,10 +176,10 @@ module tui.ctrl {
 			if (typeof val !== tui.undef) {
 				// Dispatch data to other controls
 				var id = this.id();
-				id && $("[data-ajax-form='" + id + "']").each(function (index, elem) {
+				id && $("[data-form='" + id + "']").each(function (index, elem) {
 					var field;
 					if (this._ctrl) {
-						field = this._ctrl.ajaxField();
+						field = this._ctrl.field();
 						if (!field) {
 							return;
 						} else if (field === "*") {
@@ -192,7 +192,7 @@ module tui.ctrl {
 							}
 						}
 					} else {
-						field = $(elem).attr("data-ajax-field");
+						field = $(elem).attr("data-field");
 						if (!field) {
 							return;
 						} else if (field === "*") {
@@ -209,11 +209,11 @@ module tui.ctrl {
 				var result: any = {};
 				// Collect all fields from other controls
 				var id = this.id();
-				id && $("[data-ajax-form='" + id + "']").each(function (index, elem) {
+				id && $("[data-form='" + id + "']").each(function (index, elem) {
 					var field ;
 					var val;
 					if (this._ctrl) {
-						field = this._ctrl.ajaxField();
+						field = this._ctrl.field();
 						if (!field)
 							return;
 						if (this._ctrl.value)
@@ -221,7 +221,7 @@ module tui.ctrl {
 						else
 							return;
 					} else {
-						field = $(elem).attr("data-ajax-field");
+						field = $(elem).attr("data-field");
 						if (typeof field !== "string")
 							return;
 						val = $(elem).attr("data-value");
@@ -244,7 +244,7 @@ module tui.ctrl {
 		clear() {
 			this._immediateValue = tui.undefVal;
 			var id = this.id();
-			id && $("[data-ajax-form='" + id + "']").each(function (index, elem: any) {
+			id && $("[data-form='" + id + "']").each(function (index, elem: any) {
 				if (elem._ctrl) {
 					if (typeof elem._ctrl.value === "function")
 						elem._ctrl.value(null);
