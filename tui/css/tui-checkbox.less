@@ -12,11 +12,7 @@
 	.border-radius(@buttonBorderRadius);
 	color: #000;
 	vertical-align:middle;
-	.fa {
-		margin-left:2px;
-		margin-right:3px;
-		width:12px;
-	}
+
 	&:active,&.tui-actived {
 		background-color:#f5f5f5;
 	}
@@ -70,8 +66,13 @@
 	}
 }
 
+
 // Checkbox and Radriobox optional themes
 .tui-checkbox,.tui-radiobox {
+	&:before {
+		margin-left:2px;
+		margin-right:2px;
+	}
 	&.tui-underline {
 		.border-radius(0px);
 		border-bottom:6px solid transparent;

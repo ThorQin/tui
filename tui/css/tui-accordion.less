@@ -1,6 +1,7 @@
 ﻿@import 'tui-common.less';
 
 .tui-accordion {
+	@accordionCaptionHeight:36px;
 	display:block;
 	position:relative;
 	.border-radius(@panelBorderRadius);
@@ -9,10 +10,10 @@
 	overflow:hidden;
 	.tui-accordion-caption {
 		padding:0 10px;
-		color:@linkForeColor;
+		color:@tableTextColor;
 		background-color:@captionColor + #050505;
-		height:34px;
-		line-height:34px;
+		height:@accordionCaptionHeight;
+		line-height:@accordionCaptionHeight;
 		font-size:@fontSize;
 		.top-radius(@panelBorderRadius);
 		cursor:pointer;

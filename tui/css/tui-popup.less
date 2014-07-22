@@ -9,9 +9,9 @@
 	top:0;
 	outline:none;
 	z-index:@popupLayer;
-	.shadow(1px, 2px, 7px, rgba(0,0,0,0.2));
-	.border-radius(4px);
-	border: 1px solid @borderColor;
+	.shadow(0px, 3px, 7px, rgba(0,0,0,0.2));
+	.border-radius(@buttonBorderRadius);
+	border: 1px solid (@borderColor - #111);
 	background-color: #fff;
 	.tui-calendar,.tui-list {
 		border:none;

@@ -1,0 +1,49 @@
+﻿@import 'tui-common.less';
+
+.tui-menu {
+	padding:2px 0px;
+	.border-radius(@buttonBorderRadius);
+	overflow:hidden;
+	outline:none;
+	> div {
+		padding:0px 4px;
+		&.tui-actived {
+			background-color:@lineSelectfocusedBackgroundColor;
+			color:@lineSelectfocusedForeColor;
+		}
+		> div { // Content div
+			position:relative;
+			cursor:default;
+			height:30px;
+			line-height:30px;
+			padding-right:20px;
+			.tui-menu-icon {
+				.icon;
+				width:24px;
+				text-align:center;
+				&.tui-menu-icon-checked:before {
+					.fa-check;
+				}
+			}
+		}
+		&.tui-menu-has-children {
+			> div {
+				padding-right:30px;
+				&:after { 
+					position:absolute;
+					.icon-base;
+					.fa-caret-right;
+					right:5px;
+					top:0px;
+					height:30px;
+					line-height:30px;
+				}
+			}
+		}
+	}
+	.tui-menu-line {
+		height:0px;
+		margin:6px 0;
+		border-bottom:1px solid @borderColor;
+	}
+}

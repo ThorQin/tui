@@ -36,6 +36,7 @@
     <TypeScriptCompile Include="tui\tui.ctrl.form.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.formagent.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.list.ts" />
+    <TypeScriptCompile Include="tui\tui.ctrl.menu.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.paginator.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.tab.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.textarea.ts" />
@@ -75,6 +76,7 @@
     <Content Include="tui\css\tui-accordion.less" />
     <Content Include="tui\css\tui-accordion-group.less" />
     <Content Include="tui\css\tui-navbar.less" />
+    <Content Include="tui\css\tui-menu.less" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

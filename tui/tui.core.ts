@@ -11,6 +11,15 @@ if (typeof Array.prototype.indexOf !== "function") {
 }
 
 module tui {
+	export var KEY_TAB = 9;
+	export var KEY_RETURN = 13;
+	export var KEY_ESC = 27;
+	export var KEY_SPACE = 32;
+	export var KEY_LEFT = 37;
+	export var KEY_UP = 38;
+	export var KEY_RIGHT = 39;
+	export var KEY_DOWN = 40;
+
 	export var undef = ((undefined?): string => {
 		return typeof undefined;
 	})();
@@ -251,6 +260,24 @@ module tui {
 			return null;
 	}
 
+	export function relativePosition(srcObj: HTMLElement, offsetParent: HTMLElement) {
+		if (!offsetParent.nodeName && !offsetParent.tagName)
+			throw new Error("Offset parent must be an html element.");
+		var result = { x: srcObj.offsetLeft, y: srcObj.offsetTop};
+		var obj: HTMLElement = <HTMLElement>srcObj.offsetParent;
+		while (obj) {
+			if (obj === offsetParent)
+				return result;
+			result.x += ((obj.offsetLeft || 0) + (obj.clientLeft || 0) - (obj.scrollLeft || 0));
+			result.y += ((obj.offsetTop || 0) + (obj.clientTop || 0) - (obj.scrollTop || 0));
+			if (obj.nodeName.toLowerCase() === "body" && obj.offsetParent === null)
+				obj = obj.parentElement;
+			else
+				obj = <HTMLElement>obj.offsetParent;
+		}
+		return null;
+	};
+
 	export function fixedPosition(target: HTMLElement): { x: number; y: number; } {
 		var $target = $(target);
 		var offset = $target.offset();
@@ -316,7 +343,7 @@ module tui {
 	 * Get element's owner window
 	 */
 	export function getWindow(elem: HTMLElement): MSScriptHost {
-		return elem.ownerDocument.defaultView || elem.ownerDocument.parentWindow || elem.ownerDocument.Script; 
+		return elem.ownerDocument.defaultView || elem.ownerDocument.parentWindow; 
 	}
 
 	/**

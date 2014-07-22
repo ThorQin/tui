@@ -39,10 +39,10 @@ module tui.ctrl {
 			return pop;
 		}
 
-		show(content: any, pos: { x: number; y: number });
-		show(content: any, elemId: string, bindType: string);
-		show(content: any, elem: HTMLElement, bindType: string);
-		show(content: any, param: any, bindType?: string) {
+		show(content: any, pos: { x: number; y: number }): void;
+		show(content: any, elemId: string, bindType: string): void;
+		show(content: any, elem: HTMLElement, bindType: string): void;
+		show(content: any, param: any, bindType?: string): void {
 			if (typeof param === "string")
 				param = document.getElementById(param);
 			var elem: HTMLElement = null;
@@ -228,6 +228,6 @@ module tui.ctrl {
 	 * @param el {HTMLElement or element id or construct info}
 	 */
 	export function popup(): Popup {
-		return tui.ctrl.control(null, Popup);
+		return new Popup();
 	}
 }

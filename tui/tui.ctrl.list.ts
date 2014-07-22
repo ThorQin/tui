@@ -436,6 +436,25 @@ module tui.ctrl {
 			return checkedItems;
 		}
 
+		enumerate(func: (item: any) => any): void {
+			var self = this;
+			var checkedItems = [];
+			function enumChildren(children: any[]) {
+				for (var i = 0; i < children.length; i++) {
+					func(children[i]);
+					if (!children[i])
+						continue;
+					var myChilren = children[i][self._childrenColumKey];
+					if (myChilren && myChilren.length > 0)
+						enumChildren(myChilren);
+				}
+			}
+			var data: ArrayProvider = <ArrayProvider>this._grid.data();
+			if (data && typeof data.src === "function") {
+				enumChildren(data.src());
+			}
+		}
+
 		/**
 		 * Adjust column width to adapt column content
 		 * @param {Number} columnIndex
@@ -520,22 +539,27 @@ module tui.ctrl {
 		}
 
 		/**
-		 * Return binded data provider
+		 * Get or set binded data provider.
+		 * NOTE: List control only accept ArrayProvider or native array object, 
+		 *		 should not pass RemoteProvider on to this control 
+		 *		 otherwise it may raise error or some unknown situations.
 		 */
 		data(): tui.IDataProvider;
 		data(data: tui.IDataProvider): List;
-		data(data?: tui.IDataProvider): any {
+		data(data: any[]): List;
+		data(data: { data: any[]; head?: string[]; length?: number; }): List;
+		data(data?: any): any {
 			if (typeof data !== undef) {
 				var noRef = this._grid.noRefresh();
 				this._grid.noRefresh(true);
 				this._grid.data(data);
-				var data = this._grid.data();
-				this._keyColumKey = data.mapKey("key");
-				this._childrenColumKey = data.mapKey("children");
-				this._checkedColumnKey = data.mapKey("checked");
-				this._levelColumnKey = data.mapKey("level");
-				this._valueColumnKey = data.mapKey("value");
-				this._expandColumnKey = data.mapKey("expand");
+				var finalData = this._grid.data();
+				this._keyColumKey = finalData.mapKey("key");
+				this._childrenColumKey = finalData.mapKey("children");
+				this._checkedColumnKey = finalData.mapKey("checked");
+				this._levelColumnKey = finalData.mapKey("level");
+				this._valueColumnKey = finalData.mapKey("value");
+				this._expandColumnKey = finalData.mapKey("expand");
 				if (this.triState())
 					this.initTriState();
 				else

@@ -38,8 +38,14 @@ module tui.ctrl {
 			this._list.on("rowclick keydown", function (data) {
 				if (data["name"] === "rowclick") {
 					self.value(self._list.data().at(data["index"])["key"]);
+					var k = self.value();
+					if (k)
+						self.fire("select", { "ctrl": self[0], "key": k, "caption": self.caption() });
 				} else if (data["event"].keyCode === 13) {
 					self.value(self._list.activeItem().key);
+					var k = self.value();
+					if (k)
+						self.fire("select", { "ctrl": self[0], "key": k, "caption": self.caption()  });
 				}
 			});
 			this._list.on("rowexpand rowfold", function (data) {
@@ -67,6 +73,9 @@ module tui.ctrl {
 				if (checkedItems && checkedItems.length > 0) {
 					var k = this._list.data().mapKey("key");
 					this.value(checkedItems[0][k]);
+					k = self.value();
+					if (k)
+						self.fire("select", { "ctrl": self[0], "key": k, "caption": self.caption() });
 				} else {
 					this.expanded(this.expanded());
 				}
@@ -156,6 +165,7 @@ module tui.ctrl {
 				if (this._list.value().length > 0) {
 					this._list.activeRowByKey(key);
 					this.expanded(true);
+					this._list.scrollTo(this._list.activerow());
 					var groupName = this.group();
 					if (groupName) {
 						var self = this;
@@ -183,6 +193,11 @@ module tui.ctrl {
 			return !this._initialized;
 		}
 
+		enumerate(func: (item: any) => any): void {
+			if (this._list)
+				this._list.enumerate(func);
+		}
+
 		refresh() {
 			if (!this[0] || this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
 				return;
@@ -195,7 +210,7 @@ module tui.ctrl {
 				captionHeight = this._caption.offsetHeight;
 				$(this._caption).addClass("tui-expanded");
 				if (this._animation) {
-					$(this[0]).animate({ "height": captionHeight + "px" },
+					$(this[0]).stop().animate({ "height": captionHeight + "px" },
 						Accordion.ANIMATION_DURATION, "linear", () => {
 							$(this._caption).removeClass("tui-expanded");
 							this._list[0].style.display = "none";
@@ -224,14 +239,16 @@ module tui.ctrl {
 				this._list[0].style.width = $(this[0]).width() + "px";
 				this._list.refresh();
 				if (this._animation) {
-					$(this[0]).animate({ "height": height + captionHeight + "px" },
+					$(this[0]).stop().animate({ "height": height + captionHeight + "px" },
 						Accordion.ANIMATION_DURATION, "linear", () => {
 							$(this._caption).addClass("tui-expanded");
+							this._list[0].style.display = "";
 							this._list.focus();
 						});
 				} else {
 					this[0].style.height = height + captionHeight + "px";
 					$(this._caption).addClass("tui-expanded");
+					this._list[0].style.display = "";
 					this._list.focus();
 				}
 			}
