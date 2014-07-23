@@ -24,6 +24,7 @@ module tui.ctrl {
 		private _parentPopup: Popup = null;
 		private _childPopup: Popup = null;
 		private _checkInterval = null;
+		private _showing = false;
 		constructor() {
 			super("div", Popup.CLASS, null);
 		}
@@ -39,10 +40,17 @@ module tui.ctrl {
 			return pop;
 		}
 
+		isShowing(): boolean {
+			return this._showing;
+		}
+
 		show(content: any, pos: { x: number; y: number }): void;
 		show(content: any, elemId: string, bindType: string): void;
 		show(content: any, elem: HTMLElement, bindType: string): void;
 		show(content: any, param: any, bindType?: string): void {
+			if (this._showing)
+				return;
+			this._showing = true;
 			if (typeof param === "string")
 				param = document.getElementById(param);
 			var elem: HTMLElement = null;
@@ -94,6 +102,8 @@ module tui.ctrl {
 		}
 
 		close(): void {
+			if (!this._showing)
+				return;
 			if (this._checkInterval) {
 				clearInterval(this._checkInterval);
 				this._checkInterval = null;
@@ -103,10 +113,14 @@ module tui.ctrl {
 			} catch (e) {
 			}
 			_currentPopup = this.parent();
+			if (_currentPopup === null) {
+				console.debug("current is null!!!!!!!");
+			}
 			this.parent(null);
 			if (_currentPopup)
 				_currentPopup.child(null);
 			this.fire("close", {});
+			this._showing = false;
 		}
 
 		closeChild(): void {
@@ -121,6 +135,9 @@ module tui.ctrl {
 		parent(pop?: Popup): Popup {
 			if (typeof pop !== tui.undef) {
 				this._parentPopup = pop;
+				if (pop === null) {
+					console.debug("parent set to null!!!!");
+				}
 			}
 			return this._parentPopup;
 		}
@@ -201,8 +218,8 @@ module tui.ctrl {
 			if (pos.y < 2)
 				pos.y = 2;
 
-			elem.style.left = pos.x + 2 + "px";
-			elem.style.top = pos.y + 2 + "px";
+			elem.style.left = pos.x + "px";
+			elem.style.top = pos.y + "px";
 		}
 	}
 

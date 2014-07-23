@@ -113,7 +113,7 @@ module tui.ctrl {
 					todayLine.appendChild(todayLink);
 					todayLine.className = "tui-input-select-bar";
 					calbox.appendChild(todayLine);
-					pop.show(calbox, this._button, "Rb");
+					pop.show(calbox, self[0], "Rb");
 					calendar.focus();
 				} else if (this.type() === "select") {
 					var pop = tui.ctrl.popup();
@@ -150,7 +150,7 @@ module tui.ctrl {
 					});
 					list[0].style.width = self[0].offsetWidth + "px";
 					list.data(self._data);
-					pop.show(list[0], self._button, "Rb");
+					pop.show(list[0], self[0], "Rb");
 
 					var items = self._data ? self._data.length() : 0;
 					if (items < 1)
@@ -217,7 +217,7 @@ module tui.ctrl {
 					});
 					bar.appendChild(okLink);
 
-					pop.show(calbox, self._button, "Rb");
+					pop.show(calbox, self[0], "Rb");
 
 					var items = self._data ? self._data.length() : 0;
 					if (items < 1)

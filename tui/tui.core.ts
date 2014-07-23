@@ -12,7 +12,7 @@ if (typeof Array.prototype.indexOf !== "function") {
 
 module tui {
 	export var KEY_TAB = 9;
-	export var KEY_RETURN = 13;
+	export var KEY_ENTER = 13;
 	export var KEY_ESC = 27;
 	export var KEY_SPACE = 32;
 	export var KEY_LEFT = 37;
