@@ -2,6 +2,7 @@
 
 .tui-accordion {
 	@accordionCaptionHeight:36px;
+	@accordinCaptionColor:#000;
 	display:block;
 	position:relative;
 	.border-radius(@panelBorderRadius);
@@ -10,8 +11,9 @@
 	overflow:hidden;
 	.tui-accordion-caption {
 		padding:0 10px;
-		color:@captionTextColor;
-		background-color:@captionColor + #050505;
+		color:@accordinCaptionColor;
+		//background-color:@accordinBackgroundColor;
+		.liner-color(@captionColor + #111, @captionColor);
 		height:@accordionCaptionHeight;
 		line-height:@accordionCaptionHeight;
 		font-size:@fontSize;
@@ -35,7 +37,7 @@
 			cursor:pointer;
 			border-bottom:1px dotted #f0f0f0;
 			.tui-grid-cell .tui-grid-cell-content {
-				color:#aaa;
+				color:#808080;
 				cursor:pointer;
 			}
 			&.tui-grid-line-selected {

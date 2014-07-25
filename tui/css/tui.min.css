@@ -2115,7 +2115,13 @@ a:hover {
 .tui-accordion .tui-accordion-caption {
   padding: 0 10px;
   color: #000000;
-  background-color: #f9f9f9;
+  background-color: #fdfdfd;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f4f4f4');
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#f4f4f4));
+  background-image: -webkit-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -moz-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -ms-linear-gradient(top, #ffffff, #f4f4f4);
+  background-image: -o-linear-gradient(top, #ffffff, #f4f4f4);
   height: 36px;
   line-height: 36px;
   font-size: 14px;
@@ -2152,7 +2158,7 @@ a:hover {
   border-bottom: 1px dotted #f0f0f0;
 }
 .tui-accordion .tui-list .tui-grid-line .tui-grid-cell .tui-grid-cell-content {
-  color: #aaa;
+  color: #808080;
   cursor: pointer;
 }
 .tui-accordion .tui-list .tui-grid-line.tui-grid-line-selected {
@@ -2180,6 +2186,11 @@ a:hover {
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
+.tui-accordion-group > * .tui-accordion-caption {
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+}
 .tui-accordion-group > *:first-child {
   -webkit-border-top-left-radius: 5px;
   -moz-border-top-left-radius: 5px;
@@ -2188,6 +2199,14 @@ a:hover {
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   border-top-width: 1px;
+}
+.tui-accordion-group > *:first-child .tui-accordion-caption {
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
 }
 .tui-accordion-group > *:last-child {
   -webkit-border-bottom-left-radius: 5px;

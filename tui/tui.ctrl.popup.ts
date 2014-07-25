@@ -104,6 +104,7 @@ module tui.ctrl {
 		close(): void {
 			if (!this._showing)
 				return;
+			this.closeChild();
 			if (this._checkInterval) {
 				clearInterval(this._checkInterval);
 				this._checkInterval = null;
