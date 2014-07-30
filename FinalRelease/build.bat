@@ -23,6 +23,7 @@ tsc -m amd --out tui/tui.all.js ^
 	../tui/tui.ctrl.tips.ts ^
 	../tui/tui.ctrl.accordiongroup.ts ^
 	../tui/tui.ctrl.accordion.ts ^
+	../tui/tui.ctrl.menu.ts ^
 	../tui/tui.ctrl.navbar.ts
 
 xcopy /Y /S ..\tui\css tui\css\

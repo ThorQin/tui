@@ -19,6 +19,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Demo\index.html" />
+    <Content Include="Demo\index1.html" />
     <Content Include="Demo\list.html" />
     <Content Include="web.config" />
   </ItemGroup>

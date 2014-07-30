@@ -1727,6 +1727,7 @@ a:hover {
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
+  filter: none;
   background: none;
   border-left: none;
   color: #555555;
@@ -1953,6 +1954,7 @@ a:hover {
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
+  filter: none;
   background: none;
   border-left: none;
   color: #555555;
@@ -2169,10 +2171,10 @@ a:hover {
   color: #017bce;
 }
 .tui-accordion .tui-list .tui-grid-line:hover {
-  background-color: #fafafa;
+  background-color: #f0f0f0;
 }
 .tui-accordion .tui-list .tui-grid-line.tui-accordion-row-checked {
-  background-color: #fafafa;
+  background-color: #f0f0f0;
 }
 .tui-accordion .tui-list .tui-grid-line.tui-accordion-row-checked .tui-grid-cell .tui-grid-cell-content {
   color: #017bce;
@@ -2276,6 +2278,11 @@ a:hover {
   height: 0px;
   margin: 6px 0;
   border-bottom: 1px solid #d0d0d0;
+}
+.tui-navbar {
+  display: block;
+  position: relative;
+  z-index: 1000000;
 }
 .tui-blur {
   filter: url(blur.svg#blur);
@@ -2500,9 +2507,9 @@ a:hover {
   box-shadow: 0 0 16px #cccccc;
 }
 .tui-shadow-dark-big {
-  -webkit-box-shadow: 0 0 16px #555555;
-  -moz-box-shadow: 0 0 16px #555555;
-  box-shadow: 0 0 16px #555555;
+  -webkit-box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
 }
 [unselectable=on] {
   -moz-user-select: none;

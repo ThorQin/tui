@@ -660,4 +660,12 @@ module tui {
 		} catch (e) {
 		}
 	}
+
+	export function windowScrollElement(): HTMLElement {
+		if (tui.ieVer > 0 || tui.ffVer > 0) {
+			return window.document.documentElement;
+		} else {
+			return window.document.body;
+		}
+	}
 }

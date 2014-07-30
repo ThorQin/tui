@@ -13,6 +13,7 @@ module tui.ctrl {
 			$(this[0]).on("mousedown", (e) => {
 				if (this.disabled())
 					return;
+				this[0].focus();
 				this.actived(true);
 				var self = this;
 				function releaseMouse(e) {
