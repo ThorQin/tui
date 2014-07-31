@@ -103,6 +103,7 @@ module tui.ctrl {
 		caption(val?: string): any {
 			if (typeof val === "string") {
 				this.attr("data-caption", val);
+				this._caption.innerHTML = val || "";
 				this.refresh();
 				return this;
 			} else
@@ -202,7 +203,6 @@ module tui.ctrl {
 			if (!this[0] || this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
 				return;
 			this._initialized = true;
-			this._caption.innerHTML = this.caption() || "";
 			var captionHeight;
 			if (!this.expanded()) { // Show in fold
 				this._caption.setAttribute("tabIndex", "0");

@@ -1,0 +1,118 @@
+body {
+  margin: 0;
+}
+#forkme {
+  position: absolute;
+  right: 80px;
+  bottom: 0;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  background-color: #127af1;
+  font-weight: bold;
+  padding: 6px 20px;
+}
+#forkme a {
+  color: white;
+}
+#forkme a:hover {
+  color: white;
+  text-decoration: underline;
+}
+.tui-navbar {
+  padding: 0;
+  background-color: black;
+  height: 44px;
+  color: white;
+  min-width: 960px;
+}
+.tui-navbar .tui-button,
+.tui-navbar .tui-radiobox {
+  margin-top: 0;
+  margin-bottom: 0;
+  height: 44px;
+  line-height: 44px;
+  padding-top: 0;
+  padding-bottom: 0;
+  border: none;
+  background: black;
+  color: white;
+  outline: none;
+  filter: none;
+  border-radius: 0px;
+}
+.tui-navbar .tui-button:hover,
+.tui-navbar .tui-radiobox:hover,
+.tui-navbar .tui-button.tui-focus,
+.tui-navbar .tui-radiobox.tui-focus {
+  background: #666;
+  color: white;
+}
+.tui-navbar .tui-button:active,
+.tui-navbar .tui-radiobox:active {
+  background: #888;
+  color: white;
+}
+.tui-navbar .tui-radiobox {
+  padding: 0 8px;
+}
+.tui-navbar .tui-radiobox:before {
+  content: none;
+}
+.tui-navbar .tui-radiobox[data-checked] {
+  background: #666;
+  color: white;
+}
+#dispBoard {
+  background-image: url(../image/dispBack.png);
+  background-repeat: repeat-x;
+  position: relative;
+  padding-top: 200px;
+  padding-bottom: 80px;
+  min-width: 960px;
+}
+#dispTitle {
+  position: absolute;
+  top: 70px;
+  left: 80px;
+  font-family: Arial;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+}
+#dispHtml5 {
+  position: absolute;
+  background-image: url(../image/html5.png);
+  width: 155px;
+  height: 83px;
+  top: 40px;
+  right: 80px;
+}
+#dispBrowser {
+  display: block;
+  margin: 0 auto;
+  background-image: url(../image/browser.png);
+  width: 800px;
+  height: 158px;
+}
+#footer {
+  background-color: #ddd;
+  height: 100px;
+  line-height: 100px;
+  min-width: 960px;
+  color: #888;
+  border-top: 1px solid #d5d5d5;
+  overflow: hidden;
+  position: relative;
+}
+#footer > div {
+  position: absolute;
+  height: 140px;
+  z-index: 0;
+  top: 0px;
+  left: -20px;
+  right: -20px;
+  display: block;
+  -webkit-box-shadow: inset 0px 0px 10px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0px 0px 10px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0px 0px 10px 2px rgba(0, 0, 0, 0.1);
+}

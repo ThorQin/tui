@@ -64,6 +64,20 @@ module tui.ctrl {
 				return this.is("data-show-error");
 		}
 
+		isShowWait(): boolean;
+		isShowWait(val: boolean): Form;
+		isShowWait(val?: boolean): any {
+			if (typeof val !== tui.undef) {
+				this.is("data-show-wait", !!val);
+				return this;
+			} else {
+				if (this.hasAttr("data-show-wait"))
+					return this.is("data-show-wait");
+				else
+					return false;
+			}
+		}
+
 		action(): string;
 		action(url?: string): Form;
 		action(url?: string): any {
@@ -270,6 +284,10 @@ module tui.ctrl {
 			if (this.fire("submit", { id: this.id(), data: data }) === false)
 				return;
 			var self = this;
+			var waitDlg: Dialog = null;
+			if (this.isShowWait()) {
+				waitDlg = tui.waitbox(str("Loading..."));
+			}
 			$.ajax({
 				"type": this.method(),
 				"timeout": this.timeout(),
@@ -277,6 +295,7 @@ module tui.ctrl {
 				"contentType": "application/json",
 				"data": (this.method() === "GET" ? data : JSON.stringify(data)),
 				"complete": function (jqXHR: JQueryXHR, status) {
+					waitDlg && waitDlg.close();
 					if (status === "success") {
 						if (self.fire("success", { jqXHR: jqXHR, status: status }) === false) {
 							return;

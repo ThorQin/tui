@@ -114,9 +114,6 @@ module tui.ctrl {
 			} catch (e) {
 			}
 			_currentPopup = this.parent();
-			if (_currentPopup === null) {
-				console.debug("current is null!!!!!!!");
-			}
 			this.parent(null);
 			if (_currentPopup)
 				_currentPopup.child(null);
@@ -136,9 +133,6 @@ module tui.ctrl {
 		parent(pop?: Popup): Popup {
 			if (typeof pop !== tui.undef) {
 				this._parentPopup = pop;
-				if (pop === null) {
-					console.debug("parent set to null!!!!");
-				}
 			}
 			return this._parentPopup;
 		}

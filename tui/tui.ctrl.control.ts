@@ -455,15 +455,19 @@ module tui.ctrl {
 		}
 		
 		blur() {
-			var el = this.elem();
-			if (el) {
-				el.blur();
+			if (this[0]) {
+				this[0].blur();
 			}
 		}
 		focus() {
-			var el = this.elem();
-			if (el) {
-				setTimeout(() => { el.focus(); }, 0);
+			if (this[0]) {
+				setTimeout(() => { this[0].focus(); }, 0);
+			}
+		}
+
+		focusWithoutScroll() {
+			if (this[0]) {
+				setTimeout(() => { tui.focusWithoutScroll(this[0]); }, 0);
 			}
 		}
 

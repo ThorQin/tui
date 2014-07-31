@@ -18,15 +18,22 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="Demo\index.html" />
-    <Content Include="Demo\index1.html" />
-    <Content Include="Demo\list.html" />
+    <Content Include="doc\content\quickstart.html" />
+    <Content Include="doc\content\quickstart.js" />
+    <Content Include="doc\content\reference.js" />
+    <Content Include="doc\image\design.svg" />
+    <Content Include="doc\image\browser.png" />
+    <Content Include="doc\image\dispBack.png" />
+    <Content Include="doc\image\html5.png" />
+    <Content Include="doc\image\logo.png" />
+    <Content Include="doc\index.html" />
+    <Content Include="tui\lang\en-us.js" />
+    <Content Include="tui\lang\zh-cn.js" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="doc\js\docmaker.ts" />
     <TypeScriptCompile Include="tui\jquery.d.ts" />
-    <TypeScriptCompile Include="tui\lang\en-us.ts" />
-    <TypeScriptCompile Include="tui\lang\zh-cn.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.accordion.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.accordiongroup.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.button.ts" />
@@ -57,9 +64,6 @@
   <ItemGroup>
     <Content Include="tui\css\tui.less" />
     <Content Include="tui\css\awesome4.less" />
-    <Content Include="Demo\upload.ashx" />
-    <Content Include="FinalRelease\build.bat" />
-    <Content Include="Demo\query.ashx" />
     <Content Include="tui\css\tui-dialog.less" />
     <Content Include="tui\css\tui-common.less" />
     <Content Include="tui\css\tui-animation.less" />
@@ -78,6 +82,7 @@
     <Content Include="tui\css\tui-accordion-group.less" />
     <Content Include="tui\css\tui-navbar.less" />
     <Content Include="tui\css\tui-menu.less" />
+    <Content Include="doc\css\main.less" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>

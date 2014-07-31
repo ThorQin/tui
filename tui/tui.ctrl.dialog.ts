@@ -486,4 +486,22 @@ module tui {
 		dlg.useesc(false);
 		return dlg;
 	}
+
+	export function loadHTML(url: string, elem: HTMLElement, completeCallback?: (status: string, jqXHR: JQueryXHR) => any, method?: string, data?: any) {
+		loadURL(url, function (status: string, jqXHR: JQueryXHR) {
+			if (typeof completeCallback === "function" && completeCallback(status, jqXHR) === false) {
+				return;
+			}
+			if (status === "success") {
+				var matched = /<body[^>]*>((?:.|[\r\n])*)<\/body>/gim.exec(jqXHR.responseText);
+				if (matched != null)
+					elem.innerHTML = matched[1];
+				else
+					elem.innerHTML = jqXHR.responseText;
+				tui.ctrl.initCtrls(elem);
+			} else {
+				tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
+			}
+		}, method, data);
+	}
 }
