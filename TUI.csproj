@@ -18,6 +18,16 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="build\depends\font-awesome-4.0.3\css\font-awesome.css" />
+    <Content Include="build\depends\font-awesome-4.0.3\css\font-awesome.min.css" />
+    <Content Include="build\depends\font-awesome-4.0.3\fonts\fontawesome-webfont.svg" />
+    <Content Include="build\depends\jquery-1.11.0.js" />
+    <Content Include="build\tui\css\blur.svg" />
+    <Content Include="build\tui\css\tui.min.css" />
+    <Content Include="build\tui\lang\en-us.js" />
+    <Content Include="build\tui\lang\zh-cn.js" />
+    <Content Include="build\tui\tui.all.js" />
+    <Content Include="build\tui\tui.all.min.js" />
     <Content Include="doc\content\quickstart.html" />
     <Content Include="doc\content\quickstart.js" />
     <Content Include="doc\content\reference.js" />
@@ -83,6 +93,33 @@
     <Content Include="tui\css\tui-navbar.less" />
     <Content Include="tui\css\tui-menu.less" />
     <Content Include="doc\css\main.less" />
+    <Content Include="build\depends\font-awesome-4.0.3\fonts\fontawesome-webfont.eot" />
+    <Content Include="build\depends\font-awesome-4.0.3\fonts\fontawesome-webfont.ttf" />
+    <Content Include="build\depends\font-awesome-4.0.3\fonts\fontawesome-webfont.woff" />
+    <Content Include="build\depends\font-awesome-4.0.3\fonts\FontAwesome.otf" />
+    <Content Include="build\doc.bat" />
+    <Content Include="build\release.bat" />
+    <Content Include="build\tui\css\awesome4.less" />
+    <Content Include="build\tui\css\tui-accordion-group.less" />
+    <Content Include="build\tui\css\tui-accordion.less" />
+    <Content Include="build\tui\css\tui-animation.less" />
+    <Content Include="build\tui\css\tui-button.less" />
+    <Content Include="build\tui\css\tui-calendar.less" />
+    <Content Include="build\tui\css\tui-checkbox.less" />
+    <Content Include="build\tui\css\tui-common.less" />
+    <Content Include="build\tui\css\tui-dialog.less" />
+    <Content Include="build\tui\css\tui-input.less" />
+    <Content Include="build\tui\css\tui-list.less" />
+    <Content Include="build\tui\css\tui-menu.less" />
+    <Content Include="build\tui\css\tui-navbar.less" />
+    <Content Include="build\tui\css\tui-popup.less" />
+    <Content Include="build\tui\css\tui-scrollbar.less" />
+    <Content Include="build\tui\css\tui-tab.less" />
+    <Content Include="build\tui\css\tui-table-grid.less" />
+    <Content Include="build\tui\css\tui-textarea.less" />
+    <Content Include="build\tui\css\tui-tips.less" />
+    <Content Include="build\tui\css\tui.less" />
+    <Content Include="build\tui\tui.all.js.map" />
     <None Include="web.Debug.config">
       <DependentUpon>web.config</DependentUpon>
     </None>
