@@ -22,6 +22,7 @@
 	<div id="quickStartContent"></div>
 	<script>
 		docmaker = new doc.DocMaker("quickStartIndex", "quickStartContent");
+		tui.ctrl.accordionGroup("quickStartIndex").installMonitor(window);
 	</script>
 	<script src="quickstart.js"></script>
 </body>

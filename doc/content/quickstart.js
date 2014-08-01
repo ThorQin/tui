@@ -1,8 +1,8 @@
 ﻿docmaker.make({
-	"section1": [{
-		name: "测试标题1",
+	"section1#sec1": [{
+		name: "Caption 1#caption1",
 		desc: "这里应该是一段描述",
-		pic: "url.png",
+		pic: "browser.png",
 		param: [
 			['param1', '{type}', '参数描述'],
 			['param2', '{type}', '参数描述']
@@ -26,12 +26,12 @@
 		ret: [
 			['param1', '{type}', '参数描述']
 		],
-		code: '',
+		code: 'function abc() {\n\t<b>print</b>("abc");\n}',
 		index: [
 			{
-				name: "测试标题2",
+				name: "Caption 2#caption2",
 				desc: "这里应该是一段描述",
-				pic: "url.png",
+				pic: "browser.png",
 				params: [
 					['param1', '{type}', '参数描述'],
 					['param2', '{type}', '参数描述']
@@ -41,9 +41,9 @@
 				],
 				code: ''
 			}, {
-				name: "测试标题3",
+				name: "标题3#caption3",
 				desc: "这里应该是一段描述",
-				pic: "url.png",
+				pic: "browser.png",
 				params: [
 					['param1', '{type}', '参数描述'],
 					['param2', '{type}', '参数描述']
@@ -56,9 +56,9 @@
 		]
 	}],
 	"section2": [{
-		name: "测试标题4",
+		name: "Caption 4#caption4",
 		desc: "这里应该是一段描述",
-		pic: "url.png",
+		pic: "browser.png",
 		params: [
 			['param1', '{type}', '参数描述'],
 			['param2', '{type}', '参数描述']
@@ -68,9 +68,9 @@
 		],
 		code: ''
 	}, {
-		name: "测试标题5",
+		name: "Caption 5#caption5",
 		desc: "这里应该是一段描述",
-		pic: "url.png",
+		pic: "browser.png",
 		params: [
 			['param1', '{type}', '参数描述'],
 			['param2', '{type}', '参数描述']

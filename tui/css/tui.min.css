@@ -764,6 +764,7 @@ a:hover {
   bottom: -1px;
   background-color: white;
   content: " ";
+  margin: 0;
 }
 .tui-calendar {
   padding: 2px;

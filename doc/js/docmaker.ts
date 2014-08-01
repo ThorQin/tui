@@ -4,7 +4,7 @@
 		'method': ['方法', '类型', '描述'], 
 		'event': ['事件', '类型', '描述'], 
 		'prop': ['属性', '类型', '描述'], 
-		'value': ['值', '类型', '描述'], 
+		'value': ['常量', '类型', '描述'], 
 		'ret': ['返回值', '类型', '描述']
 	};
 	var contentType = ['index', 'content'];
@@ -29,11 +29,16 @@
 
 		private makeTable(name: string, items: any[], container: HTMLElement) {
 			var tb = document.createElement("table");
+			tb.className = "doc-table";
+			tb.cellPadding = "0";
+			tb.cellSpacing = "0";
+			tb.border = "0";
 			var head: HTMLTableRowElement = <HTMLTableRowElement>tb.insertRow(-1);
 			var cols = tableType[name];
 			for (var i = 0; i < cols.length; i++) {
 				var th = document.createElement("th");
 				th.innerHTML = cols[i];
+				th.className = "doc-col-" + i;
 				head.appendChild(th);
 			}
 			for (var i = 0; i < items.length; i++) {
@@ -46,13 +51,22 @@
 			container.appendChild(tb);
 		}
 
-		private makeItems(items: any[], parentKey: string, level: number, container: HTMLElement) {
+		private makeItems(items: any[], parentKey: string, parentNumber: string, level: number, container: HTMLElement) {
 			for (var i = 0; i < items.length; i++) {
 				var item = items[i];
-				item.key = parentKey + "_" + i;
+				var itemKey: string = item.name;
+				var itemName: string = item.name;
+				if (itemKey.indexOf("#") >= 0) {
+					itemKey = itemKey.substr(itemKey.indexOf("#"));
+					itemName = itemName.substr(0, itemName.indexOf("#"));
+				}
+				var itemNumber = parentNumber + "." + (i+1);
+				item.key = parentKey + "." + item;
+				item.name = itemName;
 
 				var caption = document.createElement("div");
-				caption.innerHTML = item.name;
+				caption.setAttribute("data-number", itemNumber);
+				caption.innerHTML = itemName;
 				caption.id = item.key.substr(1);
 				caption.className = "doc-caption doc-level-" + level;
 				container.appendChild(caption);
@@ -73,27 +87,27 @@
 				}
 
 				if (item.code) {
-					var code = document.createElement("div");
-					code.innerHTML = item.desc;
-					code.className = "doc-code";
+					var code = document.createElement("pre");
+					code.innerHTML = item.code;
+					code.className = "tui-panel doc-code";
 					container.appendChild(code);
 				}
 
-				if (item.code) {
+				if (item.pic) {
 					var img = document.createElement("img");
-					img.src = item.pic;
-					img.className = "doc-img";
+					img.src = "../image/" + item.pic;
+					img.className = "doc-pic";
 					container.appendChild(img);
 				}
 
 				for (var n in contentType) {
 					if (!contentType.hasOwnProperty(n))
 						continue;
-					if (item[n]) {
+					if (item[contentType[n]]) {
 						var childDiv = document.createElement("div");
 						childDiv.className = "doc-container doc-level-" + level;
 						container.appendChild(childDiv);
-						this.makeItems(item[n], item.key, level + 1, childDiv);
+						this.makeItems(item[contentType[n]], item.key, itemNumber, level + 1, childDiv);
 					}
 				}
 			}
@@ -107,15 +121,30 @@
 			for (var k in doc) {
 				if (!doc.hasOwnProperty(k))
 					continue;
+				var numberId = (section++) + "";
+				var sectionId = k + "";
+				var sectionName = sectionId;
+				if (sectionId.indexOf("#") >= 0) {
+					sectionId = sectionId.substr(sectionId.indexOf("#") + 1);
+					sectionName = sectionName.substr(0, sectionName.indexOf("#"));
+				}
+				sectionId = "#" + sectionId;
 				var acc = tui.ctrl.accordion();
-				acc.caption(k);
+				acc.caption(sectionName);
 				acc.group(this._group.id());
 				var dp = new tui.ArrayProvider(doc[k]);
 				dp.addKeyMap("value", "name");
 				dp.addKeyMap("children", "index");
 				this._group[0].appendChild(acc[0]);
+				
+				var caption = document.createElement("div");
+				caption.innerHTML = sectionName;
+				caption.id = sectionId.substr(1);
+				caption.className = "doc-section";
+				this._div.appendChild(caption);
+				this.makeItems(doc[k], sectionId, numberId, 0, this._div);
+
 				acc.data(dp);
-				this.makeItems(doc[k], "#section" + section++, 0, this._div);
 			}
 		}
 	}

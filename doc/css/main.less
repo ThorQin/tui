@@ -126,5 +126,85 @@ body {
 	left:20px;
 	top:50px;
 	bottom:50px;
-	width:200px;
+	width:260px;
+}
+
+#quickStartContent {
+	margin:40px;
+	margin-left:320px;
+}
+
+.doc-section {
+	padding:10px 5px;
+	font-size:48px;
+	color:#9716bc;
+	border-bottom:1px solid #9716bc;
+	margin-top:30px;
+}
+.doc-caption {
+	margin-top:20px;
+	padding:10px 5px;
+	font-size:18px;
+	font-weight:bold;
+	border-bottom:1px dotted #ccc;
+	&.doc-level-0 {
+		font-weight:normal;
+		font-size:32px;
+		color:#127af1;
+	}
+	&.doc-level-1 {
+		font-size:26px;
+	}
+}
+
+.doc-desc {
+	padding:20px 5px;
+}
+
+.doc-table {
+	width:100%;
+	table-layout:fixed;
+	tr {
+		th,td {
+			border-top:1px solid #ccc;
+			padding:8px 5px;
+			text-align:left;
+		}
+		th {
+			background-color:#f5f5f5;
+			&.doc-col-0 {
+				width:180px;
+			} 
+			&.doc-col-1 {
+				width:120px;
+			}
+		}
+	}
+}
+
+.doc-code {
+	&:before {
+		content:"CODE:";
+		position:absolute;
+		display:block;
+		left:5px;
+		top:-24px;
+		font-size:18px;
+		font-weight:bold;
+		color:black;
+	}
+	position:relative;
+	border:1px solid #ccc;
+	background-color:#f5f5f5;
+	padding:20px;
+	margin-top:40px;
+	font-size:16px;
+	font-family:'Courier New';
+	tab-size:4;
+	overflow:visible;
+}
+
+.doc-pic {
+	margin:20px 0px;
+	border:none;
 }
