@@ -28,9 +28,11 @@
     <Content Include="build\tui\lang\zh-cn.js" />
     <Content Include="build\tui\tui.all.js" />
     <Content Include="build\tui\tui.all.min.js" />
-    <Content Include="doc\content\quickstart.html" />
-    <Content Include="doc\content\quickstart.js" />
+    <Content Include="doc\content\index.html" />
+    <Content Include="doc\reference.html" />
+    <Content Include="doc\quickstart.html" />
     <Content Include="doc\content\reference.js" />
+    <Content Include="doc\content\quickstart.js" />
     <Content Include="doc\image\design.svg" />
     <Content Include="doc\image\browser.png" />
     <Content Include="doc\image\dispBack.png" />
@@ -43,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="doc\js\docmaker.ts" />
+    <Content Include="doc\js\main.js" />
     <TypeScriptCompile Include="tui\jquery.d.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.accordion.ts" />
     <TypeScriptCompile Include="tui\tui.ctrl.accordiongroup.ts" />

@@ -243,7 +243,8 @@ a:hover {
   background-image: -ms-linear-gradient(top, #e3e3e3, #e3e3e3);
   background-image: -o-linear-gradient(top, #e3e3e3, #e3e3e3);
 }
-.tui-button[data-data]:after {
+.tui-button[data-data]:after,
+.tui-button[data-menu]:after {
   display: inline-block;
   font-family: FontAwesome;
   font-style: normal;
@@ -2373,7 +2374,15 @@ a:hover {
   border: 8px solid transparent;
   border-bottom-color: #555555;
 }
-.tui-lable {
+.tui-title {
+  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
+  padding: 6px 14px;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  display: inline-block;
+}
+.tui-label {
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
   padding: 6px 14px;
   text-align: center;
@@ -2464,7 +2473,7 @@ a:hover {
   line-height: 32px;
 }
 .tui-input-group > .tui-button,
-.tui-input-group > .tui-lable {
+.tui-input-group > .tui-label {
   padding-top: 0px;
   padding-bottom: 0px;
 }
@@ -2524,6 +2533,11 @@ a:hover {
 .tui-form-agent {
   display: none;
 }
-.tui-invisible {
+.tui-invisible,
+.tui-size-test {
   visibility: hidden;
+}
+.tui-size-test {
+  position: fixed;
+  z-index: -1;
 }

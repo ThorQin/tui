@@ -170,3 +170,4 @@ tui/lang/*.js
 /doc/js/tui
 /doc/js/font-awesome-4.0.3
 /doc/js/jquery-1.11.0.js
+*.map

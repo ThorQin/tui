@@ -80,6 +80,7 @@ module tui.ctrl {
 				}
 				this._parent.appendChild(elem);
 				elem.focus();
+				
 				_currentPopup = this;
 				elem.setAttribute("tabIndex", "-1");
 				if (typeof content === "string") {
@@ -218,7 +219,7 @@ module tui.ctrl {
 		}
 	}
 
-	export function checkPopup() {
+	export function checkPopup(e) {
 		setTimeout(() => {
 			var obj = document.activeElement;
 			while (_currentPopup) {

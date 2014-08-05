@@ -31,6 +31,26 @@ module tui.ctrl {
 			});
 		}
 
+		private fireClick(item, row) {
+			if (item._showChildTimer)
+				clearTimeout(item._showChildTimer);
+			if (item._childMenu && (typeof row.key === undef || row.key === null)) {
+				item._childMenu.show(item.firstChild, "rT");
+			} else {
+				this.closeAll();
+				if (this.fire("select", { "ctrl": self[0], "item": row }) === false) {
+					return;
+				}
+				if (typeof row.key !== undef && row.key !== null) {
+					if (tui.fire(row.key, row) === false)
+						return;
+				}
+				if (row.link) {
+					window.location.href = row.link;
+				}
+			}
+		}
+
 		private bindMouseEvent(item, row) {
 			var self = this;
 			$(item).mousemove(function(e) {
@@ -54,20 +74,7 @@ module tui.ctrl {
 				delete self._activedItem;
 			});
 			$(item).click(function (e) {
-				if (item._showChildTimer)
-					clearTimeout(item._showChildTimer);
-				if (item._childMenu && (typeof row.key === undef || row.key === null)) {
-					item._childMenu.show(item.firstChild, "rT");
-				} else {
-					////// has problem
-					self.closeAll();
-					if (self.fire("select", { "ctrl": self[0], "item": row }) === false) {
-						return;
-					}
-					if (row.isLink && row.key) {
-						window.location.href = row.key;
-					}
-				}
+				self.fireClick(item, row);
 			});
 		}
 
@@ -206,7 +213,14 @@ module tui.ctrl {
 						}
 					}
 				} else if (c === tui.KEY_ENTER) {
-
+					if (typeof self._activedItem === "number" &&
+						self._activedItem >= 0 &&
+						self._activedItem < self._items.length) {
+						var item = self._items[self._activedItem];
+						var row = data.at(self._activedItem);
+						self.fireClick(item, row);
+					}
+					
 				}
 			});
 			super.show(div, param, bindType);

@@ -4,12 +4,11 @@ module tui.ctrl {
 	 * Accordion class used to display a navigation sidebar to 
 	 * let user easy jump to a particular page section to read.
 	 */
-	export class Accordion extends Control<Tab> {
+	export class Accordion extends Control<Accordion> {
 		static CLASS: string = "tui-accordion";
 
 		private _caption: HTMLDivElement = null;
 		private _list: List = null;
-		private _animation: boolean = true;
 		private _initialized = false;
 
 		static ANIMATION_DURATION: number = 200;
@@ -66,7 +65,8 @@ module tui.ctrl {
 				} else
 					$(data.cell.parentElement).removeClass("tui-accordion-row-checked");
 			}
-			this._animation = false;
+			var animation = this.useAnimation();
+			this.useAnimation(false);
 			if (predefined) {
 				this.data(predefined);
 				var checkedItems = this._list.checkedItems();
@@ -81,7 +81,7 @@ module tui.ctrl {
 				}
 			} else
 				this.expanded(this.expanded());
-			this._animation = true;
+			this.useAnimation(animation);
 		}
 
 
@@ -199,6 +199,16 @@ module tui.ctrl {
 				this._list.enumerate(func);
 		}
 
+		useAnimation(): boolean;
+		useAnimation(val: boolean): Accordion;
+		useAnimation(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-anmimation", val);
+				return this;
+			} else
+				return this.is("data-anmimation");
+		}
+
 		refresh() {
 			if (!this[0] || this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
 				return;
@@ -209,13 +219,14 @@ module tui.ctrl {
 				$(this._caption).removeClass("tui-expanded");
 				captionHeight = this._caption.offsetHeight;
 				$(this._caption).addClass("tui-expanded");
-				if (this._animation) {
+				if (this.useAnimation()) {
 					$(this[0]).stop().animate({ "height": captionHeight + "px" },
 						Accordion.ANIMATION_DURATION, "linear", () => {
 							$(this._caption).removeClass("tui-expanded");
 							this._list[0].style.display = "none";
 						});
 				} else {
+					$(this[0]).stop();
 					this[0].style.height = captionHeight + "px";
 					$(this._caption).removeClass("tui-expanded");
 					this._list[0].style.display = "none";
@@ -238,7 +249,7 @@ module tui.ctrl {
 				this._list[0].style.height = height + "px";
 				this._list[0].style.width = $(this[0]).width() + "px";
 				this._list.refresh();
-				if (this._animation) {
+				if (this.useAnimation()) {
 					$(this[0]).stop().animate({ "height": height + captionHeight + "px" },
 						Accordion.ANIMATION_DURATION, "linear", () => {
 							$(this._caption).addClass("tui-expanded");
@@ -246,6 +257,7 @@ module tui.ctrl {
 							this._list.focus();
 						});
 				} else {
+					$(this[0]).stop();
 					this[0].style.height = height + captionHeight + "px";
 					$(this._caption).addClass("tui-expanded");
 					this._list[0].style.display = "";

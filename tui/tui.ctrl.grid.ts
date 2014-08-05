@@ -692,7 +692,19 @@ module tui.ctrl {
 		}
 
 		lineHeight() {
-			return this._lineHeight;
+			if (typeof this._lineHeight !== undef)
+				return this._lineHeight;
+			else {
+				var grid = document.createElement("div");
+				grid.className = this[0].className;
+				var line = document.createElement("div");
+				line.className = "tui-grid-line";
+				grid.appendChild(line);
+				document.body.appendChild(grid);
+				var lineHeight = line.offsetHeight;
+				document.body.removeChild(grid);
+				return lineHeight;
+			}
 		}
 
 		select(rows?: number[]): number[]{

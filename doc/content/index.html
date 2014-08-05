@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>TUI.JS Editor</title>
+	<!--#DEPENDS STYLE#-->
+	<link href="../js/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<!--#TUI STYLE#-->
+	<link rel="stylesheet" href="../js/tui/css/tui.min.css" type="text/css" />
+	<!-- Page related css -->
+	<link rel="stylesheet" href="../css/main.min.css" type="text/css" />
+	<!--#DEPENDS LIBRARY#-->
+	<script src="../js/jquery-1.11.0.js"></script>
+	<!--#TUI BEGIN#-->
+	<script src="../js/tui/tui.all.js"></script>
+	<script src="../js/tui/lang/zh-cn.js"></script>
+	<script src="../js/tui/lang/en-us.js"></script>
+	<script src="../js/docmaker.js"></script>
+	<!--#TUI END#-->
+	<script>
+		var docList = [
+			{ key: "editQuickStart", value: "快速上手" },
+			{ key: "editReference", value: "开发手册" },
+		];
+		
+		$(function () {
+			var modified = false;
+			var docmaker = new doc.DocMaker("docIndex", "docContent", "../image");
+			tui.ctrl.accordionGroup("docIndex").installMonitor(window);
+			docmaker.on("changed", function () {
+				modified = true;
+			});
+
+			function closeDoc() {
+				tui.ctrl.accordionGroup("docIndex").clear();
+				$("#docContent").html("");
+				$("#mainContent").addClass("tui-hidden");
+			}
+			function doLoadDoc(url, successCallback) {
+				closeDoc();
+				tui.loadURL(url, function (status, jqXHR) {
+					if (status === "success") {
+						$("#mainContent").removeClass("tui-hidden");
+						docmaker.make(eval("(" + jqXHR.responseText + ")"));
+						$("#btnSave").removeClass("tui-hidden");
+						successCallback();
+					} else
+						tui.errbox("文档加载失败:" + tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
+				});
+			}
+			function loadDoc(url, successCallback) {
+				if (modified) {
+					tui.askbox("文档没有保存，继续，将放弃修改？", "文档已修改", function (result) {
+						if (result) {
+							doLoadDoc(url, successCallback);
+						}
+					});
+				} else
+					doLoadDoc(url, successCallback);
+			}
+			tui.on("editQuickStart", function () {
+				loadDoc("quickstart.js", function () {
+					$("#fileInfo").html("正在编辑：快速上手");
+					modified = false;
+				});
+			});
+			tui.on("editReference", function () {
+				loadDoc("reference.js", function () {
+					$("#fileInfo").html("正在编辑：开发手册");
+					modified = false;
+				});
+			});
+			window.onbeforeunload = function () {
+				if (modified) {
+					return "文档修改还没有保存，您确定要离开吗？";
+				}
+			};
+		});
+	</script>
+</head>
+<body>
+	<div class="tui-navbar tui-shadow-dark-big">
+		<a href="../">
+			<img style="vertical-align:middle;margin-left:40px;margin-right:80px;"
+				 src="../image/logo.png" />
+		</a>
+		<a class="tui-button" data-menu="docList"><i class="fa fa-edit"></i> 编辑</a>
+		<a id="btnSave" class="tui-button tui-hidden" data-tooltip="保存当前文档 (Ctrl+S)"><i class="fa fa-save"></i> 保存</a>
+		<span id="fileInfo" class="tui-title"></span>
+	</div>
+	<div id="mainContent" class="tui-hidden">
+		<div id="docIndex" class="tui-accordion-group index"
+			 data-key-is-link="true" data-distance="50">
+		</div>
+		<div id="docContent"></div>
+	</div>
+	<!--表单-->
+	<span class="tui-form" data-action="save.aspx">
+
+	</span>
+</body>
+</html>

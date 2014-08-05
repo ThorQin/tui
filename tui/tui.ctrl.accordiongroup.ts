@@ -34,11 +34,11 @@ module tui.ctrl {
 	 * AccordionGroup class used to display a foldable panel 
 	 * to show a group items in this panel.
 	 */
-	export class AccordionGroup extends Control<Tab> {
+	export class AccordionGroup extends Control<AccordionGroup> {
 		static CLASS: string = "tui-accordion-group";
 
 		private _accordions: Accordion[] = [];
-		private _anchors: HTMLElement[] = [];
+		private _anchors: string[] = [];
 		private _monitoredParent = null;
 		private _inScrolling = false;
 
@@ -52,15 +52,15 @@ module tui.ctrl {
 			
 		}
 
-		tolerance(): number
-		tolerance(tolerance: number): AccordionGroup;
-		tolerance(tolerance?: number): any {
+		distance(): number
+		distance(tolerance: number): AccordionGroup;
+		distance(tolerance?: number): any {
 			if (typeof tolerance === "number") {
-				this.attr("data-tolerance", tolerance);
+				this.attr("data-distance", tolerance);
 				return this;
 			} else {
-				var v:any = this.attr("data-tolerance");
-				v = parseInt(this.attr("data-tolerance"));
+				var v: any = this.attr("data-distance");
+				v = parseInt(this.attr("data-distance"));
 				if (isNaN(v))
 					return 50;
 				else
@@ -128,9 +128,12 @@ module tui.ctrl {
 					return;
 				var parent = getRealTagetScrollElement(self._monitoredParent);
 				for (var i = 0; i < self._anchors.length; i++) {
-					var elem = self._anchors[i];
+					var elemId = self._anchors[i];
+					var elem = document.getElementById(elemId);
+					if (!elem)
+						continue;
 					var pos = tui.relativePosition(elem, parent);
-					if (Math.abs(pos.y - parent.scrollTop) < self.tolerance()) {
+					if (Math.abs(pos.y - parent.scrollTop - self.distance()) <= 20) {
 						self.value("#" + elem.id);
 						break;
 					}
@@ -177,8 +180,9 @@ module tui.ctrl {
 								var parent = getRealTagetScrollElement(self._monitoredParent);
 								var pos = tui.relativePosition(elem, parent);
 								self._inScrolling = true;
-								$(parent).stop().animate({ "scrollTop": pos.y }, 200, function () {
+								$(parent).stop().animate({ "scrollTop": pos.y - self.distance() }, 200, function () {
 									window.location.href = data.key;
+									parent.scrollTop = pos.y - self.distance();
 									self._inScrolling = false;
 								});
 							} else {
@@ -191,6 +195,16 @@ module tui.ctrl {
 				}
 			};
 		})();
+
+		addAccordion(acc: Accordion) {
+			this[0].appendChild(acc[0]);
+			this.bindChildEvents();
+		}
+
+		clear() {
+			this[0].innerHTML = "";
+			this.bindChildEvents();
+		}
 
 		bindChildEvents() {
 			for (var acc in this._accordions) {
@@ -209,13 +223,19 @@ module tui.ctrl {
 					if (self.keyIsLink()) {
 						elem._ctrl.enumerate(function (item) {
 							if (item.key && item.key.slice(0,1) === "#") {
-								var elem = document.getElementById(item.key.substr(1));
-								elem && self._anchors.push(elem);
+								self._anchors.push(item.key.substr(1));
 							}
 						});
 					}
 				}
 			});
+		}
+
+		refresh() {
+			for (var acc in this._accordions) {
+				if (this._accordions.hasOwnProperty(acc))
+					this._accordions[acc].refresh();
+			}
 		}
 	}
 

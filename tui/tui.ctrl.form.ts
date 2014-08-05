@@ -6,6 +6,7 @@ module tui.ctrl {
 		static STATUS: string[] = [
 			"success", "notmodified", "error", "timeout", "abort", "parsererror"
 		];
+		private static ignoreErrors: number[] = null;
 
 		private _immediateValue: any;
 
@@ -337,12 +338,17 @@ module tui.ctrl {
 							form && form.submit();
 						}
 					} else {
-						if (self.isShowError())
+					if (self.isShowError() && !(Form.ignoreErrors && Form.ignoreErrors.indexOf(jqXHR.status) >= 0)) {
 							tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
+						}
 					}
 				},
 				"processData": (this.method() === "GET" ? true : false)
 			});
+		}
+
+		static ignoreError(errorCodeList: number[]) {
+			Form.ignoreErrors = errorCodeList;
 		}
 	}
 

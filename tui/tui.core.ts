@@ -233,6 +233,8 @@ module tui {
 	export var KEY_RIGHT = 39;
 	export var KEY_DOWN = 40;
 
+
+
 	export var undef = ((undefined?): string => {
 		return typeof undefined;
 	})();
@@ -683,6 +685,17 @@ module tui {
 		return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
 	}
 
+	/**
+	 * Get the anchor of the URL query string.
+	 * @param {String} url
+	 */
+	export function getAnchor(url: string): string {
+		var anchor: any = location.href.match("(#.+)(?:\\?.*)?");
+		if (anchor)
+			anchor = anchor[1];
+		return anchor;
+	}
+
 	export class BackupedScrollPosition {
 		private backupInfo: {obj:HTMLElement; left: number; top:number; }[] = [];
 		constructor(target: HTMLElement) {
@@ -882,11 +895,16 @@ module tui {
 		}
 	}
 
-	export function loadURL(url: string, completeCallback: (status: string, jqXHR: JQueryXHR) => any, method?: string, data?: any) {
+	/**
+	 * Load URL via AJAX request, It's a simplified version of jQuery.ajax method.
+	 * 
+	 */
+	export function loadURL(url: string, completeCallback: (status: string, jqXHR: JQueryXHR) => any, async: boolean = true, method?: string, data?: any) {
 		method = method ? method : "GET";
 		$.ajax({
 			"type": method,
 			"url": url,
+			"async": async,
 			"contentType": "application/json",
 			"data": (method === "GET" ? data : JSON.stringify(data)),
 			"complete": function (jqXHR: JQueryXHR, status) {
@@ -894,7 +912,145 @@ module tui {
 					return;
 				}
 			},
-			"processData": (this.method() === "GET" ? true : false)
+			"processData": (method === "GET" ? true : false)
 		});
 	}
+
+	var _accMap = {};
+	var _keyMap = {
+		8: "Back",
+		9: "Tab",
+		13: "Enter",
+		19: "Pause",
+		20: "Caps",
+		27: "Escape",
+		32: "Space",
+		33: "Prior",
+		34: "Next",
+		35: "End",
+		36: "Home",
+		37: "Left",
+		38: "Up",
+		39: "Right",
+		40: "Down",
+		45: "Insert",
+		46: "Delete",
+		48: "0",
+		49: "1",
+		50: "2",
+		51: "3",
+		52: "4",
+		53: "5",
+		54: "6",
+		55: "7",
+		56: "8",
+		57: "9",
+		65: "A",
+		66: "B",
+		67: "C",
+		68: "D",
+		69: "E",
+		70: "F",
+		71: "G",
+		72: "H",
+		73: "I",
+		74: "J",
+		75: "K",
+		76: "L",
+		77: "M",
+		78: "N",
+		79: "O",
+		80: "P",
+		81: "Q",
+		82: "R",
+		83: "S",
+		84: "T",
+		85: "U",
+		86: "V",
+		87: "W",
+		88: "X",
+		89: "Y",
+		90: "Z",
+		112: "F1",
+		113: "F2",
+		114: "F3",
+		115: "F4",
+		116: "F5",
+		117: "F6",
+		118: "F7",
+		119: "F8",
+		120: "F9",
+		121: "F10",
+		122: "F11",
+		123: "F12",
+		186: ";",
+		187: "=",
+		188: ",",
+		189: "-",
+		190: ".",
+		191: "/",
+		192: "~",
+		219: "[",
+		220: "\\",
+		221: "]",
+		222: "'"
+	};
+	function accelerate(e: JQueryKeyEventObject) {
+		var k = _keyMap[e.keyCode];
+		if (!k) {
+			return;
+		}
+		k = k.toUpperCase();
+		var key: string = (e.ctrlKey ? "CTRL" : "");
+		if (e.altKey) {
+			if (key.length > 0)
+				key += "+";
+			key += "ALT";
+		}
+		if (e.shiftKey) {
+			if (key.length > 0)
+				key += "+";
+			key += "SHIFT";
+		}
+		if (e.metaKey) {
+			if (key.length > 0)
+				key += "+";
+			key += "META";
+		}
+		if (key.length > 0)
+			key += "+";
+		key += k;
+		var l = _accMap[key];
+		if (l) {
+			for (var i = 0; i < l.length; i++) {
+				if (tui.fire(l[i], { name: l[i] }) === false)
+					return;
+			}
+		}
+	}
+	export function addAccelerate(key: string, actionId: string) {
+		key = key.toUpperCase();
+		var l: string[] = null;
+		if (_accMap.hasOwnProperty(key))
+			l = _accMap[key];
+		else {
+			l = [];
+			_accMap[key] = {};
+		}
+		if (l.indexOf(actionId) < 0)
+			l.push(actionId);
+	}
+	export function deleteAccelerate(key: string, actionId: string) {
+		key = key.toUpperCase();
+		if (!_accMap.hasOwnProperty(key))
+			return;
+		var l: string[] = _accMap[key];
+		var pos = l.indexOf(actionId);
+		if (pos >= 0) {
+			l.splice(pos, 1);
+			if (l.length <= 0)
+				delete _accMap[key];
+		}
+	}
+	$(document).keydown(accelerate);
 }

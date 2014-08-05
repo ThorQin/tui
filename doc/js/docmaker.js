@@ -1,4 +1,10 @@
-﻿var doc;
+﻿var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
+var doc;
 (function (_doc) {
     var tableType = {
         'param': ['参数', '类型', '描述'],
@@ -9,8 +15,13 @@
         'ret': ['返回值', '类型', '描述']
     };
     var contentType = ['index', 'content'];
-    var DocMaker = (function () {
-        function DocMaker(accordionGroup, contentDiv, groupName) {
+    var DocMaker = (function (_super) {
+        __extends(DocMaker, _super);
+        function DocMaker(accordionGroup, contentDiv, imagePath, edit) {
+            if (typeof imagePath === "undefined") { imagePath = "image"; }
+            if (typeof edit === "undefined") { edit = false; }
+            _super.call(this);
+            this._imagePath = imagePath;
             if (typeof accordionGroup === "string")
                 this._group = tui.ctrl.accordionGroup(accordionGroup);
             else if (typeof accordionGroup === "object" && accordionGroup)
@@ -54,11 +65,11 @@
                 var itemKey = item.name;
                 var itemName = item.name;
                 if (itemKey.indexOf("#") >= 0) {
-                    itemKey = itemKey.substr(itemKey.indexOf("#"));
+                    itemKey = itemKey.substr(itemKey.indexOf("#") + 1);
                     itemName = itemName.substr(0, itemName.indexOf("#"));
                 }
                 var itemNumber = parentNumber + "." + (i + 1);
-                item.key = parentKey + "." + item;
+                item.key = parentKey + "." + itemKey;
                 item.name = itemName;
 
                 var caption = document.createElement("div");
@@ -92,7 +103,7 @@
 
                 if (item.pic) {
                     var img = document.createElement("img");
-                    img.src = "../image/" + item.pic;
+                    img.src = this._imagePath + "/" + item.pic;
                     img.className = "doc-pic";
                     container.appendChild(img);
                 }
@@ -113,8 +124,9 @@
         DocMaker.prototype.make = function (doc) {
             if (!doc)
                 return;
-            this._div.innerHTML = "";
             var section = 1;
+            var i = 0;
+            var accordions = [];
             for (var k in doc) {
                 if (!doc.hasOwnProperty(k))
                     continue;
@@ -128,11 +140,12 @@
                 sectionId = "#" + sectionId;
                 var acc = tui.ctrl.accordion();
                 acc.caption(sectionName);
+                if (i++ == 0)
+                    acc.expanded(true);
                 acc.group(this._group.id());
                 var dp = new tui.ArrayProvider(doc[k]);
                 dp.addKeyMap("value", "name");
                 dp.addKeyMap("children", "index");
-                this._group[0].appendChild(acc[0]);
 
                 var caption = document.createElement("div");
                 caption.innerHTML = sectionName;
@@ -142,10 +155,19 @@
                 this.makeItems(doc[k], sectionId, numberId, 0, this._div);
 
                 acc.data(dp);
+                this._group.addAccordion(acc);
+                accordions.push(acc);
+                //acc.useAnimation(true);
             }
+            setTimeout(function () {
+                for (var i = 0; i < accordions.length; i++) {
+                    accordions[i].useAnimation(true);
+                }
+            }, 0);
+            this._group.refresh();
         };
         return DocMaker;
-    })();
+    })(tui.EventObject);
     _doc.DocMaker = DocMaker;
 })(doc || (doc = {}));
 //# sourceMappingURL=docmaker.js.map

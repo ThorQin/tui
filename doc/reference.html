@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<title>TUI.JS</title>
+
+	<link href="js/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link rel="stylesheet" href="js/tui/css/tui.min.css" type="text/css" />
+
+	<!-- Page related css -->
+	<link rel="stylesheet" href="css/main.min.css" type="text/css" />
+
+	<script src="js/jquery-1.11.0.js"></script>
+	<!--#TUI BEGIN#-->
+	<script src="js/tui/tui.all.js"></script>
+	<script src="js/tui/lang/zh-cn.js"></script>
+	<script src="js/tui/lang/en-us.js"></script>
+	<!--#TUI END#-->
+	<script src="js/docmaker.js"></script>
+	<script src="js/main.js"></script>
+</head>
+<body>
+	<div class="tui-navbar tui-shadow-dark-big">
+		<a href="./">
+			<img style="vertical-align:middle;margin-left:40px;margin-right:80px;"
+				 src="image/logo.png" />
+		</a>
+		<a id="btnHome" class="tui-radiobox" href="./" data-group="navGroup"><i class="fa fa-home"></i> 首页</a>
+		<a id="btnQuickStart" class="tui-radiobox" href="quickstart.html" data-group="navGroup">快速上手</a>
+		<a id="btnReference" class="tui-radiobox" data-checked="true" href="#" data-group="navGroup">开发手册</a>
+		<a class="tui-button" data-menu="downloadMenu"><i class="fa fa-download"></i> 下载</a>
+		<div id="forkme"><a href="https://github.com/">View On GitHub</a> <i class="fa fa-github" style="font-size:20px"></i></div>
+	</div>
+	<div id="mainContent">
+		<div id="docIndex" class="tui-accordion-group index"
+			 data-key-is-link="true" data-distance="50">
+		</div>
+		<div id="docContent"></div>
+		<script>
+			docmaker = new doc.DocMaker("docIndex", "docContent");
+			tui.ctrl.accordionGroup("docIndex").installMonitor(window);
+			tui.loadURL("content/reference.js", function (status, xhr) {
+				if (status === "success") {
+					docmaker.make(eval("(" + xhr.responseText + ")"));
+				}
+			}, false);
+		</script>
+	</div>
+	<div id="footer">
+		<div>
+			<div style="float:left;padding-left:80px;">
+				&copy;2014 <a href="mailto:thor.qin@outlook.com">Thor Qin</a>
+				| <a href="./">Project Home</a>
+				| <a href="#">Lisence</a>
+			</div>
+			<div style="float:right;padding-right:80px;"><a href="#">Back to top</a></div>
+		</div>
+	</div>
+</body>
+</html>

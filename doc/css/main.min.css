@@ -23,7 +23,7 @@ body {
   background-color: black;
   height: 44px;
   color: white;
-  min-width: 960px;
+  min-width: 990px;
 }
 .tui-navbar .tui-button,
 .tui-navbar .tui-radiobox {
@@ -43,13 +43,12 @@ body {
 .tui-navbar .tui-button:hover,
 .tui-navbar .tui-radiobox:hover,
 .tui-navbar .tui-button.tui-focus,
-.tui-navbar .tui-radiobox.tui-focus {
-  background: #666;
-  color: white;
-}
+.tui-navbar .tui-radiobox.tui-focus,
 .tui-navbar .tui-button:active,
-.tui-navbar .tui-radiobox:active {
-  background: #888;
+.tui-navbar .tui-radiobox:active,
+.tui-navbar .tui-button.tui-actived,
+.tui-navbar .tui-radiobox.tui-actived {
+  background: #666;
   color: white;
 }
 .tui-navbar .tui-radiobox {
@@ -62,43 +61,11 @@ body {
   background: #666;
   color: white;
 }
-#dispBoard {
-  background-image: url(../image/dispBack.png);
-  background-repeat: repeat-x;
-  position: relative;
-  padding-top: 200px;
-  padding-bottom: 80px;
-  min-width: 960px;
-}
-#dispTitle {
-  position: absolute;
-  top: 70px;
-  left: 80px;
-  font-family: Arial;
-  font-size: 40px;
-  font-weight: bold;
-  color: white;
-}
-#dispHtml5 {
-  position: absolute;
-  background-image: url(../image/html5.png);
-  width: 155px;
-  height: 83px;
-  top: 40px;
-  right: 80px;
-}
-#dispBrowser {
-  display: block;
-  margin: 0 auto;
-  background-image: url(../image/browser.png);
-  width: 800px;
-  height: 158px;
-}
 #footer {
   background-color: #ddd;
   height: 100px;
   line-height: 100px;
-  min-width: 960px;
+  min-width: 990px;
   color: #888;
   border-top: 1px solid #d5d5d5;
   overflow: hidden;
@@ -119,11 +86,11 @@ body {
 .index {
   position: fixed;
   left: 20px;
-  top: 50px;
+  top: 100px;
   bottom: 50px;
   width: 260px;
 }
-#quickStartContent {
+#docContent {
   margin: 40px;
   margin-left: 320px;
 }
@@ -195,4 +162,10 @@ body {
 .doc-pic {
   margin: 20px 0px;
   border: none;
+}
+.tui-accordion .tui-list .tui-grid-line.tui-accordion-row-checked {
+  background-color: #9716bc;
+}
+.tui-accordion .tui-list .tui-grid-line.tui-accordion-row-checked .tui-grid-cell .tui-grid-cell-content {
+  color: white;
 }

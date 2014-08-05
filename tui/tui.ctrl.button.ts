@@ -13,6 +13,8 @@ module tui.ctrl {
 		private _valueColumnKey: string;
 		private _childrenColumnKey: string;
 		private _columnKeyMap: {} = null;
+		private _linkColumnKey: string;
+		private _isMenu = false;
 
 		constructor(el?: HTMLElement) {
 			super("a", Button.CLASS, el);
@@ -22,7 +24,19 @@ module tui.ctrl {
 			this.exposeEvents("mousedown mouseup mousemove mouseenter mouseleave keydown keyup");
 
 			var self = this;
+
 			function openMenu() {
+				if (self.isMenu()) {
+					var menu = tui.ctrl.menu(self._data);
+					menu.show(self[0], "Lb");
+					menu.on("select", function (data) {
+						self.fire("select", data);
+					}); 
+					menu.on("close", function () {
+						self.actived(false);
+					});
+					return;
+				}
 				var pop = tui.ctrl.popup();
 				var list = tui.ctrl.list();
 				list.consumeMouseWheelEvent(true);
@@ -32,7 +46,7 @@ module tui.ctrl {
 				});
 				function doSelectItem(data) {
 					var item = list.activeItem();
-					var link = item["link"];
+					var link = item[self._linkColumnKey];
 					if (link) {
 						pop.close();
 						window.location.href = link;
@@ -117,7 +131,7 @@ module tui.ctrl {
 				this.actived(true);
 				var self = this;
 				if (this.data()) {
-					openMenu();
+					setTimeout(openMenu, 50);
 				} else {
 					function releaseMouse(e) {
 						self.actived(false);
@@ -170,9 +184,13 @@ module tui.ctrl {
 			var predefined: any = this.attr("data-data");
 			if (predefined) {
 				predefined = eval("(" + predefined + ")");
-			}
-			if (predefined)
 				this.data(predefined);
+			}
+			predefined = this.attr("data-menu");
+			if (predefined) {
+				predefined = eval("(" + predefined + ")");
+				this.menu(predefined);
+			}
 		}
 
 		fireClick(e) {
@@ -233,6 +251,32 @@ module tui.ctrl {
 				return key;
 		}
 
+		isMenu(): boolean;
+		isMenu(val: boolean): Button;
+		isMenu(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-is-menu", val);
+				return this;
+			} else
+				return this.is("data-is-menu");
+		}
+
+		menu(): tui.IDataProvider;
+		menu(data: tui.IDataProvider): Button;
+		menu(data: any[]): Button;
+		menu(data: { data: any[]; head?: string[]; length?: number; }): Button;
+		menu(data?: any): any {
+			if (data) {
+				this.isMenu(true);
+				this.data(data);
+			} else {
+				if (this.isMenu())
+					return this._data;
+				else
+					return null;
+			}
+		}
+
 		data(): tui.IDataProvider;
 		data(data: tui.IDataProvider): Button;
 		data(data: any[]): Button;
@@ -257,6 +301,7 @@ module tui.ctrl {
 				this._keyColumnKey = this.columnKey("key");
 				this._valueColumnKey = this.columnKey("value");
 				this._childrenColumnKey = this.columnKey("children");
+				this._linkColumnKey = this.columnKey("link");
 				return this;
 			} else
 				return this._data;
