@@ -775,6 +775,16 @@ module tui.ctrl {
 				return this.is("data-readonly");
 		}
 
+		dateFormat(): string;
+		dateFormat(format: string): Input;
+		dateFormat(format?: string): any {
+			if (typeof format === "string") {
+				this.attr("data-date-format", format);
+				return this;
+			} else
+				return this.attr("data-date-format");
+		}
+
 		value(): any;
 		value(val?: any): Input;
 		value(val?: any): any {
@@ -794,7 +804,7 @@ module tui.ctrl {
 						}
 					}
 					if (val instanceof Date) {
-						this.attr("data-value", formatDate(val, "yyyy-MM-dd"));
+						this.attr("data-value", formatDate(val, "yyyy-MM-ddTHH:mm:ss.SSSZ"));
 						this.attr("data-text", formatDate(val, tui.str("yyyy-MM-dd")));
 						this._invalid = false;
 					}
@@ -825,7 +835,11 @@ module tui.ctrl {
 				if (type === "calendar") {
 					if (val === null)
 						return null;
-					return val;
+					var dateVal = parseDate(val);
+					if (this.dateFormat() !== null) {
+						return tui.formatDate(dateVal, this.dateFormat());
+					} else
+						return dateVal;
 				} else if (type === "file") {
 					if (val === null)
 						return null;

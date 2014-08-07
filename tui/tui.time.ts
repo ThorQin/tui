@@ -134,6 +134,204 @@ module tui {
 		return dateDiff(d1, d2, "d");
 	}
 
+	
+
+	function parseDateStrict(dtStr: string, format: string): Date {
+		if (!dtStr || !format)
+			return null;
+		var mapping = {};
+		var gcount = 0;
+		var isUTC = false;
+
+		var values = {};
+		function matchEnum(v: string, key: string, enumArray: string[]) {
+			var m = dtStr.match(new RegExp("^" + enumArray.join("|"), "i"));
+			if (m === null)
+				return false;
+			v = m[0].toLowerCase();
+			v = v.substr(0, 1).toUpperCase() + v.substr(1);
+			values[key] = enumArray.indexOf(v);
+			dtStr = dtStr.substr(v.length);
+		}
+		function matchNumber(v: string, key?: string, min?: number, max?: number) {
+			var len = v.length;
+			var m = dtStr.match("^[0-9]{1:" + len + "}");
+			if (m === null)
+				return false;
+			v = m[0];
+			var num = parseInt(v);
+			if (num < min || num > max)
+				return false;
+			key && (values[key] = num);
+			dtStr = dtStr.substr(v.length);
+		}
+		var rule = {
+			"y+": function (v: string): any {
+				if (!matchNumber(v, "year"))
+					return false;
+				if (values["year"] < 100)
+					values["year"] += 1900;
+			},
+			"M+": function (v: string): any {
+				var len = v.length;
+				if (len < 3) {
+					if (!matchNumber(v, "month"), 1, 12)
+						return false;
+					values["month"] -= 1;
+				} else if (len === 3) {
+					return matchEnum(v, "month", shortMonths);
+				} else {
+					return matchEnum(v, "month", months);
+				}
+			},
+			"d+": function (v: string): any {
+				return matchNumber(v, "date", 1, 31);
+			},
+			"D+": matchNumber,
+			"h+": function (v: string): any {
+				return matchNumber(v, "12hour", 1, 12);
+			},
+			"H+": function (v: string): any {
+				return matchNumber(v, "hour", 0, 24);
+			},
+			"m+": function (v: string): any {
+				return matchNumber(v, "minute", 0, 59);
+			},
+			"s+": function (v: string): any {
+				return matchNumber(v, "second", 0, 59);
+			},
+			"q+": function (v: string): any {
+				return matchNumber(v, null, 1, 4);
+			}, //quarter
+			"S+": function (v: string): any {
+				return matchNumber(v, "millisecond", 0, 999);
+			},
+			"E+": function (v: string): any {
+				var len = v.length;
+				if (len < 3) {
+					if (!matchNumber(v, null), 0, 6)
+						return false;
+				} else if (len === 3) {
+					return matchEnum(v, null, shortWeeks);
+				} else {
+					return matchEnum(v, null, weeks);
+				}
+			},
+			"a|A": function matchNumber(v: string) {
+				var len = v.length;
+				var m = dtStr.match(/^(am|pm)/i);
+				if (m === null)
+					return false;
+				v = m[0];
+				values["ampm"] = v.toLowerCase();
+				dtStr = dtStr.substr(v.length);
+			},
+			"z+": function (v: string): any {
+				var len = v.length;
+				var m: string[];
+				if (len <= 2)
+					m = dtStr.match(/^([\\-+][0-9]{2})/i);
+				else if (len === 3)
+					m = dtStr.match(/^([\\-+][0-9]{2})([0-9]{2})/i);
+				else
+					m = dtStr.match(/^([\\-+][0-9]{2}):([0-9]{2})/i);
+				if (m === null)
+					return false;
+				v = m[0];
+				var tz = parseInt(m[1]);
+				if (Math.abs(tz) < -11 || Math.abs(tz) > 11)
+					return false;
+				tz *= 60;
+				if (typeof m[2] !== undef) {
+					if (tz > 0)
+						tz += parseInt(m[2]);
+					else
+						tz -= parseInt(m[2]);
+				}
+				values["tz"] = tz;
+				dtStr = dtStr.substr(v.length);
+			},
+			"Z": function (v: string): any {
+				if (dtStr.substr(0, 1) !== "Z")
+					return false;
+				isUTC = true;
+				dtStr = dtStr.substr(1);
+			},
+			"\"[^\"]*\"|'[^']*'": function (v: string) {
+				v = v.substr(1, v.length - 2);
+				if (dtStr.substr(0, v.length).toLowerCase() !== v.toLowerCase())
+					return false;
+				dtStr = dtStr.substr(v.length);
+			},
+			".+": function (v: string) {
+				var m: string[] = dtStr.match(new RegExp("^" + v));
+				if (m === null)
+					return false;
+				v = m[0];
+				dtStr = dtStr.substr(v.length);
+			}
+		};
+		var regex = "";
+		for (var k in rule) {
+			if (!rule.hasOwnProperty(k))
+				continue;
+			if (regex.length > 0)
+				regex += "|";
+			regex += "(^" + k + ")";
+			mapping[k] = ++gcount;
+		}
+
+		var result: string[];
+		while ((result = format.match(regex)) !== null) {
+			for (var k in mapping) {
+				var v = result[mapping[k]];
+				if (typeof v !== undef) {
+					if (rule[k](v) === false)
+						return null;
+					break;
+				}
+			}
+			format = format.substr(result[0].length);
+		}
+
+		var parseCount = 0;
+		for (var k in values) {
+			if (!rule.hasOwnProperty(k))
+				continue;
+			parseCount++;
+		}
+		if (parseCount <= 0)
+			return null;
+		var now = new Date();
+		var year = values.hasOwnProperty("year") ? values["year"] : (isUTC ? now.getUTCFullYear() : now.getFullYear());
+		var month = values.hasOwnProperty("month") ? values["month"] : (isUTC ? now.getUTCMonth() : now.getMonth());
+		var date = values.hasOwnProperty("date") ? values["date"] : (isUTC ? now.getUTCDate() : now.getDate());
+		var hour = values.hasOwnProperty("hour") ? values["hour"] : 0;
+		var minute = values.hasOwnProperty("minute") ? values["minute"] : 0;
+		var second = values.hasOwnProperty("second") ? values["second"] : 0;
+		var millisecond = values.hasOwnProperty("millisecond") ? values["millisecond"] : 0;
+		var tz = values.hasOwnProperty("tz") ? values["tz"] : 0;
+		
+		if (isUTC) {
+			now.setUTCFullYear(year);
+			now.setUTCMonth(month);
+			now.setUTCDate(date);
+			now.setUTCHours(hour);
+			now.setUTCMinutes(minute);
+			now.setUTCSeconds(second);
+			now.setUTCMilliseconds(millisecond);
+		} else {
+			now.setFullYear(year);
+			now.setMonth(month);
+			now.setDate(date);
+			now.setHours(hour);
+			now.setMinutes(minute);
+			now.setSeconds(second);
+			now.setMilliseconds(millisecond);
+			
+		}
+	}
+
 	/**
 	 * Parse string get date instance (format: yyyy-MM-dd hh:mm:ss or ISO8601 format)
 	 * @param {String} dtStr Data string
@@ -210,47 +408,59 @@ module tui {
 	 * @param dateFmt {String} which format should be apply, default use ISO8601 standard format
 	 */
 	export function formatDate(dt: Date, dateFmt: string = "yyyy-MM-ddTHH:mm:sszzz"): string {
+		var isUTC: boolean = (dateFmt.indexOf("Z") >= 0 ? true : false);
+		var fullYear = isUTC ? dt.getUTCFullYear() : dt.getFullYear();
+		var month = isUTC ? dt.getUTCMonth() : dt.getMonth();
+		var date = isUTC ? dt.getUTCDate() : dt.getDate();
+		var hours = isUTC ? dt.getUTCHours() : dt.getHours();
+		var minutes = isUTC ? dt.getUTCMinutes() : dt.getMinutes();
+		var seconds = isUTC ? dt.getUTCSeconds() : dt.getSeconds();
+		var milliseconds = isUTC ? dt.getUTCMilliseconds() : dt.getMilliseconds();
+		var day = isUTC ? dt.getUTCDay() : dt.getDay();
+
 		var rule = {
-			"y+": dt.getFullYear(),
-			"M+": dt.getMonth() + 1,
-			"d+": dt.getDate(),
-			"D+": dayOfYear(dt),
-			"h+": ((h: number): number => {
+			"y+": fullYear,
+			"M+": month + 1,
+			"d+": date,
+			"D+": dayOfYear(dt) + 1,
+			"h+": (function (h: number): number {
 				if (h === 0)
 					return h + 12;
 				else if (h >= 1 && h <= 12)
 					return h;
 				else if (h >= 13 && h <= 23)
 					return h - 12;
-			})(dt.getHours()),
-			"H+": dt.getHours(),
-			"m+": dt.getMinutes(),
-			"s+": dt.getSeconds(),
-			"q+": Math.floor((dt.getMonth() + 3) / 3), //quarter
-			"S+": dt.getMilliseconds(),
-			"E+": dt.getDay(),
-			"a": ((h: number): string => {
+			})(hours),
+			"H+": hours,
+			"m+": minutes,
+			"s+": seconds,
+			"q+": Math.floor((month + 3) / 3), //quarter
+			"S+": milliseconds,
+			"E+": day,
+			"a": (function (h: number): string {
 				if (h >= 0 && h <= 11)
 					return "am";
 				else
 					return "pm";
-			})(dt.getHours()),
-			"A": ((h: number): string => {
+			})(isUTC ? dt.getUTCHours() : dt.getHours()),
+			"A": (function (h: number): string {
 				if (h >= 0 && h <= 11)
 					return "AM";
 				else
 					return "PM";
-			})(dt.getHours()),
+			})(hours),
 			"z+": dt.getTimezoneOffset()
 		};
 		var regex = "";
 		for (var k in rule) {
+			if (!rule.hasOwnProperty(k))
+				continue;
 			if (regex.length > 0)
 				regex += "|";
 			regex += k;
 		}
 		var regexp = new RegExp(regex, "g");
-		return dateFmt.replace(regexp, (str: string, pos: number, source: string): string => {
+		return dateFmt.replace(regexp, function (str: string, pos: number, source: string): string {
 			for (var k in rule) {
 				if (str.match(k) !== null) {
 					if (k === "y+") {
