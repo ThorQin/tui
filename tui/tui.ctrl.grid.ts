@@ -69,7 +69,7 @@ module tui.ctrl {
 		//private _columnKeyMap: {} = null;
 		private _noRefresh = false;
 		private _initialized = false;
-		private _initInterval = null;
+		//private _initInterval = null;
 
 		constructor(el?: HTMLElement) {
 			super("div", Grid.CLASS, el);
@@ -242,10 +242,10 @@ module tui.ctrl {
 			//}
 		}
 
-		release() {
-			if (this._initInterval)
-				clearInterval(this._initInterval);
-		}
+		//release() {
+		//	if (this._initInterval)
+		//		clearInterval(this._initInterval);
+		//}
 
 		// Make sure not access null object
 		private myData(): tui.IDataProvider {
@@ -781,6 +781,7 @@ module tui.ctrl {
 			this._sortDesc = !!desc;
 			this._scrollTop = 0;
 			this.activerow(null);
+			this._initialized = false;
 			this.refresh();
 			return { colIndex: this._sortColumn, desc: this._sortDesc };
 		}
@@ -846,6 +847,7 @@ module tui.ctrl {
 			document.body.removeChild(cell);
 			col.width = maxWidth;
 			col["_important"] = true;
+			this._initialized = false;
 			this.refresh();
 		}
 
@@ -854,6 +856,7 @@ module tui.ctrl {
 		hasHScroll(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-has-hscroll", val);
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -865,6 +868,7 @@ module tui.ctrl {
 		noHead(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-no-head", val);
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -876,6 +880,7 @@ module tui.ctrl {
 		columns(val?: GridColumn[]): any {
 			if (val) {
 				this._columns = val;
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else {
@@ -892,6 +897,7 @@ module tui.ctrl {
 		rowselectable(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-rowselectable", val);
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -922,6 +928,7 @@ module tui.ctrl {
 		resizable(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-resizable", val);
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -964,6 +971,7 @@ module tui.ctrl {
 					typeof data.sort !== "function" ||
 					typeof data.at !== "function" ||
 					typeof data.columnKeyMap !== "function") {
+					this._initialized = false;
 					this.refresh();
 					throw new Error("TUI Grid: need a data provider.");
 				}
@@ -972,8 +980,10 @@ module tui.ctrl {
 				typeof this._data.onupdate === "function" && this._data.onupdate((updateInfo) => {
 					var b = updateInfo.begin;
 					var e = b + updateInfo.data.length;
+					this._initialized = false;
 					self.refresh();
 				});
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else {
@@ -986,7 +996,6 @@ module tui.ctrl {
 		consumeMouseWheelEvent(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-consume-mwe", val);
-				this.refresh();
 				return this;
 			} else
 				return this.is("data-consume-mwe");

@@ -30,6 +30,7 @@ module tui.ctrl {
 			"*digital": "^\\d+$",
 			"*integer": "^[+\\-]?\\d+$",
 			"*float": "^[+\\-]?\\d*\\.\\d+$",
+			"*number": "^[+\\-]?\\d+|(\\d*\\.\\d+)$",
 			"*currency": "^-?\\d{1,3}(,\\d{3})*\\.\\d{2,3}$",
 			"*date": "^[0-9]{4}-1[0-2]|0?[1-9]-0?[1-9]|[12][0-9]|3[01]$",
 			"*any": "\\S+"
@@ -481,6 +482,7 @@ module tui.ctrl {
 					this.attr("tabIndex", "0");
 				}
 				this.createTextbox();
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else {
@@ -502,11 +504,13 @@ module tui.ctrl {
 			if (typeof val === "object" && val) {
 				this.attr("data-validator", JSON.stringify(val));
 				this._invalid = false;
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else if (val === null) {
 				this.removeAttr("data-validator");
 				this._invalid = false;
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else {
@@ -611,6 +615,7 @@ module tui.ctrl {
 			if (this._invalid && !this._message) {
 				this._message = tui.str("Invalid input.");
 			}
+			this._initialized = false;
 			this.refresh();
 			return !this._invalid;
 		}
@@ -621,6 +626,7 @@ module tui.ctrl {
 			if (typeof url === "string") {
 				this.attr("data-upload-url", url);
 				this.unmakeFileUpload();
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -636,6 +642,7 @@ module tui.ctrl {
 					this.attr("data-text", txt);
 					this.attr("data-value", txt);
 					this._invalid = false;
+					this._initialized = false;
 					this.refresh();
 				}
 				return this;
@@ -650,6 +657,7 @@ module tui.ctrl {
 			if (typeof txt === "string") {
 				this.attr("data-accept", txt);
 				this.unmakeFileUpload();
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -749,6 +757,7 @@ module tui.ctrl {
 						this.attr("data-text", "");
 						this._invalid = false;
 					}
+					this._initialized = false;
 					this.refresh();
 				}
 				return this;
@@ -769,6 +778,7 @@ module tui.ctrl {
 		readonly(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-readonly", val);
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -794,6 +804,7 @@ module tui.ctrl {
 					this.removeAttr("data-value");
 					this.attr("data-text", "");
 					this._invalid = false;
+					this._initialized = false;
 					this.refresh();
 				} else if (type === "calendar") {
 					if (typeof val === "string") {
@@ -808,23 +819,24 @@ module tui.ctrl {
 						this.attr("data-text", formatDate(val, tui.str("yyyy-MM-dd")));
 						this._invalid = false;
 					}
+					this._initialized = false;
 					this.refresh();
 				} else if (type === "file") {
 					if (val === null) {
 						this.attr("data-value", JSON.stringify(val));
 						this.attr("data-text", "");
-						this._invalid = false;
-						this.refresh();
 					} else if (val.file && val.fileId) {
 						this.attr("data-value", JSON.stringify(val));
 						this.attr("data-text", val.file);
-						this._invalid = false;
-						this.refresh();
 					}
+					this._invalid = false;
+					this._initialized = false;
+					this.refresh();
 				} else if (type === "text" || type === "password" || type === "custom-text") {
 					this.attr("data-text", val);
 					this.attr("data-value", val);
 					this._invalid = false;
+					this._initialized = false;
 					this.refresh();
 				} else if (type === "select" || type === "multi-select") {
 					this.selectValue(this.valueToSelect(val));
@@ -857,6 +869,7 @@ module tui.ctrl {
 			if (typeof align === "string") {
 				if (align === "left" || align === "center" || align === "right") {
 					this.attr("data-text-algin", align);
+					this._initialized = false;
 					this.refresh();
 				}
 				return this;
@@ -873,6 +886,7 @@ module tui.ctrl {
 		icon(txt?: string): any {
 			if (typeof txt === "string") {
 				this.attr("data-icon", txt);
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else
@@ -884,6 +898,7 @@ module tui.ctrl {
 		placeholder(txt?: string): any {
 			if (typeof txt === "string") {
 				this.attr("data-placeholder", txt);
+				this._initialized = false;
 				this.refresh();
 				return this;
 			} else

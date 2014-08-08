@@ -136,7 +136,7 @@ module tui {
 
 	
 
-	function parseDateStrict(dtStr: string, format: string): Date {
+	function parseDateInternal(dtStr: string, format: string): Date {
 		if (!dtStr || !format)
 			return null;
 		var mapping = {};
@@ -144,7 +144,7 @@ module tui {
 		var isUTC = false;
 
 		var values = {};
-		function matchEnum(v: string, key: string, enumArray: string[]) {
+		function matchEnum(v: string, key: string, enumArray: string[]): boolean {
 			var m = dtStr.match(new RegExp("^" + enumArray.join("|"), "i"));
 			if (m === null)
 				return false;
@@ -152,10 +152,11 @@ module tui {
 			v = v.substr(0, 1).toUpperCase() + v.substr(1);
 			values[key] = enumArray.indexOf(v);
 			dtStr = dtStr.substr(v.length);
+			return true;
 		}
-		function matchNumber(v: string, key?: string, min?: number, max?: number) {
+		function matchNumber(v: string, key?: string, min?: number, max?: number): boolean {
 			var len = v.length;
-			var m = dtStr.match("^[0-9]{1:" + len + "}");
+			var m = dtStr.match("^[0-9]{1," + len + "}");
 			if (m === null)
 				return false;
 			v = m[0];
@@ -164,60 +165,64 @@ module tui {
 				return false;
 			key && (values[key] = num);
 			dtStr = dtStr.substr(v.length);
+			return true;
 		}
 		var rule = {
-			"y+": function (v: string): any {
+			"y+": function (v: string): boolean {
 				if (!matchNumber(v, "year"))
 					return false;
 				if (values["year"] < 100)
 					values["year"] += 1900;
+				return true;
 			},
-			"M+": function (v: string): any {
+			"M+": function (v: string): boolean {
 				var len = v.length;
 				if (len < 3) {
-					if (!matchNumber(v, "month"), 1, 12)
+					if (!matchNumber(v, "month", 1, 12))
 						return false;
 					values["month"] -= 1;
+					return true;
 				} else if (len === 3) {
 					return matchEnum(v, "month", shortMonths);
 				} else {
 					return matchEnum(v, "month", months);
 				}
 			},
-			"d+": function (v: string): any {
+			"d+": function (v: string): boolean {
 				return matchNumber(v, "date", 1, 31);
 			},
 			"D+": matchNumber,
-			"h+": function (v: string): any {
+			"h+": function (v: string): boolean {
 				return matchNumber(v, "12hour", 1, 12);
 			},
-			"H+": function (v: string): any {
+			"H+": function (v: string): boolean {
 				return matchNumber(v, "hour", 0, 24);
 			},
-			"m+": function (v: string): any {
+			"m+": function (v: string): boolean {
 				return matchNumber(v, "minute", 0, 59);
 			},
-			"s+": function (v: string): any {
+			"s+": function (v: string): boolean {
 				return matchNumber(v, "second", 0, 59);
 			},
-			"q+": function (v: string): any {
+			"[qQ]+": function (v: string): boolean {
 				return matchNumber(v, null, 1, 4);
 			}, //quarter
-			"S+": function (v: string): any {
+			"S+": function (v: string): boolean {
 				return matchNumber(v, "millisecond", 0, 999);
 			},
-			"E+": function (v: string): any {
+			"E+": function (v: string): boolean {
 				var len = v.length;
 				if (len < 3) {
-					if (!matchNumber(v, null), 0, 6)
+					if (!matchNumber(v, null, 0, 6))
 						return false;
+					return true;
 				} else if (len === 3) {
 					return matchEnum(v, null, shortWeeks);
 				} else {
 					return matchEnum(v, null, weeks);
 				}
 			},
-			"a|A": function matchNumber(v: string) {
+			"a|A": function matchNumber(v: string): boolean {
 				var len = v.length;
 				var m = dtStr.match(/^(am|pm)/i);
 				if (m === null)
@@ -225,16 +230,17 @@ module tui {
 				v = m[0];
 				values["ampm"] = v.toLowerCase();
 				dtStr = dtStr.substr(v.length);
+				return true;
 			},
-			"z+": function (v: string): any {
+			"z+": function (v: string): boolean {
 				var len = v.length;
 				var m: string[];
 				if (len <= 2)
-					m = dtStr.match(/^([\\-+][0-9]{2})/i);
+					m = dtStr.match(/^([\-+][0-9]{2})/i);
 				else if (len === 3)
-					m = dtStr.match(/^([\\-+][0-9]{2})([0-9]{2})/i);
+					m = dtStr.match(/^([\-+][0-9]{2})([0-9]{2})/i);
 				else
-					m = dtStr.match(/^([\\-+][0-9]{2}):([0-9]{2})/i);
+					m = dtStr.match(/^([\-+][0-9]{2}):([0-9]{2})/i);
 				if (m === null)
 					return false;
 				v = m[0];
@@ -248,27 +254,32 @@ module tui {
 					else
 						tz -= parseInt(m[2]);
 				}
-				values["tz"] = tz;
+				values["tz"] = -tz;
 				dtStr = dtStr.substr(v.length);
+				return true;
 			},
-			"Z": function (v: string): any {
+			"Z": function (v: string): boolean {
 				if (dtStr.substr(0, 1) !== "Z")
 					return false;
 				isUTC = true;
 				dtStr = dtStr.substr(1);
+				return true;
 			},
-			"\"[^\"]*\"|'[^']*'": function (v: string) {
+			"\"[^\"]*\"|'[^']*'": function (v: string): boolean {
 				v = v.substr(1, v.length - 2);
 				if (dtStr.substr(0, v.length).toLowerCase() !== v.toLowerCase())
 					return false;
 				dtStr = dtStr.substr(v.length);
+				return true;
 			},
-			".+": function (v: string) {
+			"[^yMmdDhHsSqEaAzZ'\"]+": function (v: string): boolean {
+				v = v.replace(/(.)/g, '\\$1');
 				var m: string[] = dtStr.match(new RegExp("^" + v));
 				if (m === null)
 					return false;
 				v = m[0];
 				dtStr = dtStr.substr(v.length);
+				return true;
 			}
 		};
 		var regex = "";
@@ -293,10 +304,11 @@ module tui {
 			}
 			format = format.substr(result[0].length);
 		}
-
+		if (format.length > 0 || dtStr.length > 0)
+			return null;
 		var parseCount = 0;
 		for (var k in values) {
-			if (!rule.hasOwnProperty(k))
+			if (!values.hasOwnProperty(k))
 				continue;
 			parseCount++;
 		}
@@ -306,100 +318,83 @@ module tui {
 		var year = values.hasOwnProperty("year") ? values["year"] : (isUTC ? now.getUTCFullYear() : now.getFullYear());
 		var month = values.hasOwnProperty("month") ? values["month"] : (isUTC ? now.getUTCMonth() : now.getMonth());
 		var date = values.hasOwnProperty("date") ? values["date"] : (isUTC ? now.getUTCDate() : now.getDate());
-		var hour = values.hasOwnProperty("hour") ? values["hour"] : 0;
+		var ampm = values.hasOwnProperty("ampm") ? values["ampm"] : "am";
+		var hour;
+		if (values.hasOwnProperty("hour"))
+			hour = values["hour"];
+		else if (values.hasOwnProperty("12hour")) {
+			var h12 = values["12hour"];
+			if (ampm === "am") {
+				if (h12 >= 1 && h12 <= 11) {
+					hour = h12;
+				} else if (h12 === 12) {
+					hour = h12 - 12;
+				} else
+					return null;
+			} else {
+				if (h12 === 12)
+					hour = h12;
+				else if (h12 >= 1 && h12 <= 11)
+					hour = h12 + 12;
+				else
+					return null;
+			}
+		} else
+			hour = 0;
 		var minute = values.hasOwnProperty("minute") ? values["minute"] : 0;
 		var second = values.hasOwnProperty("second") ? values["second"] : 0;
 		var millisecond = values.hasOwnProperty("millisecond") ? values["millisecond"] : 0;
-		var tz = values.hasOwnProperty("tz") ? values["tz"] : 0;
-		
-		if (isUTC) {
-			now.setUTCFullYear(year);
-			now.setUTCMonth(month);
-			now.setUTCDate(date);
-			now.setUTCHours(hour);
-			now.setUTCMinutes(minute);
-			now.setUTCSeconds(second);
-			now.setUTCMilliseconds(millisecond);
-		} else {
-			now.setFullYear(year);
-			now.setMonth(month);
-			now.setDate(date);
-			now.setHours(hour);
-			now.setMinutes(minute);
-			now.setSeconds(second);
-			now.setMilliseconds(millisecond);
-			
+		var tz = values.hasOwnProperty("tz") ? values["tz"] : now.getTimezoneOffset();
+		now.setUTCFullYear(year);
+		now.setUTCMonth(month);
+		now.setUTCDate(date);
+		now.setUTCHours(hour);
+		now.setUTCMinutes(minute);
+		now.setUTCSeconds(second);
+		now.setUTCMilliseconds(millisecond);
+		if (!isUTC) {
+			now.setTime(now.getTime() + tz * 60 * 1000);
 		}
+		return now;
 	}
 
 	/**
-	 * Parse string get date instance (format: yyyy-MM-dd hh:mm:ss or ISO8601 format)
+	 * Parse string get date instance (
+	 * try to parse format: 
+	 *		yyyy-MM-dd HH:mm:ss，
+	 *		yyyy-MM-dd, 
+	 *		dd MMM yyyy, 
+	 *		MMM dd, yyyy,
+	 *		ISO8601 format)
 	 * @param {String} dtStr Data string
 	 */
-	export function parseDate(dtStr: string): Date {
-		var now = new Date(dtStr);
-		if (!isNaN(now.getTime()))
-			return now;
-		now = new Date();
-		var year: number = now.getFullYear();
-		var month: number = now.getMonth();
-		var day: number = now.getDate();
-		var hour: number = 0;
-		var minute: number = 0;
-		var second: number = 0;
-		var millisecond: number = 0;
-		var tz: number = new Date().getTimezoneOffset();
-		var pyear = "(\\d{4})";
-		var pmonth = "(1[0-2]|0?[1-9])";
-		var pday = "(0?[1-9]|[12][0-9]|3[01])";
-		var phour = "(0?[0-9]|1[0-9]|2[0-3])";
-		var pminute = "([0-5]?[0-9])";
-		var psecond = "([0-5]?[0-9])";
-		var pmillisecond = "([0-9]+)";
-		var ptz = "((?:\\+|-)(?:1[0-2]|0[0-9])(?:[0-5][0-9])?)";
-		var isUTC = false;
-
-		var regex = "^" + pyear + "-" + pmonth + "-" + pday + "(?:\\s+" + phour + "(?::" + pminute + "(?::" + psecond + ")?)?)?$";
-		var matches = new RegExp(regex, "g").exec(dtStr);
-		if (matches === null) {
-			regex = "^" + pyear + "-" + pmonth + "-" + pday + "(?:T" + phour + ":" + pminute + ":" + psecond + "(?:\\." + pmillisecond + ")?Z)?$";
-			matches = new RegExp(regex, "g").exec(dtStr);
-			if (matches)
-				isUTC = true;
-		}
-		if (matches === null) {
-			regex = "^" + pyear + "-" + pmonth + "-" + pday + "(?:T" + phour + ":" + pminute + ":" + psecond + "(?:\\." + pmillisecond + ")?(?:" + ptz + ")?)?$";
-			matches = new RegExp(regex, "g").exec(dtStr);
-		}
-		if (matches instanceof Array) {
-			if (typeof matches[1] === "string" && matches[1].length > 0)
-				year = parseInt(matches[1], 10);
-			if (typeof matches[2] === "string" && matches[2].length > 0)
-				month = parseInt(matches[2], 10) - 1;
-			if (typeof matches[3] === "string" && matches[3].length > 0)
-				day = parseInt(matches[3], 10);
-			if (typeof matches[4] === "string" && matches[4].length > 0)
-				hour = parseInt(matches[4], 10);
-			if (typeof matches[5] === "string" && matches[5].length > 0)
-				minute = parseInt(matches[5], 10);
-			if (typeof matches[6] === "string" && matches[6].length > 0)
-				second = parseInt(matches[6], 10);
-			if (typeof matches[7] === "string" && matches[7].length > 0)
-				millisecond = parseInt(matches[7], 10);
-			if (typeof matches[8] === "string" && matches[8].length > 0) {
-				tz = parseInt(matches[8].substr(1, 2), 10) * 60;
-				if (matches[8].length >= 5)
-					tz += parseInt(matches[8].substr(3, 2), 10);
-				if (matches[8].substr(0, 1) === "+")
-					tz = -tz;
-			}
-			if (isUTC)
-				return new Date(Date.UTC(year, month, day, hour, minute, second, millisecond));
-			else {
-				return new Date(Date.UTC(year, month, day, hour, minute, second, millisecond) + tz * 60 * 1000);
-			}
-		} else
-			return null;
+	export function parseDate(dtStr: string, format?: string): Date {
+		if (typeof format === "string")
+			return parseDateInternal(dtStr, format);
+		else if (typeof format === undef) {
+			var dt = new Date(dtStr);
+			if (!isNaN(dt.getTime()))
+				return dt;
+			dt = parseDateInternal(dtStr, "yyyy-MM-dd");
+			if (dt !== null)
+				return dt;
+			dt = parseDateInternal(dtStr, "yyyy-MM-dd HH:mm:ss");
+			if (dt !== null)
+				return dt;
+			dt = parseDateInternal(dtStr, "MMM dd, yyyy HH:mm:ss");
+			if (dt !== null)
+				return dt;
+			dt = parseDateInternal(dtStr, "MMM dd, yyyy");
+			if (dt !== null)
+				return dt;
+			dt = parseDateInternal(dtStr, "dd MMM yyyy HH:mm:ss");
+			if (dt !== null)
+				return dt;
+			dt = parseDateInternal(dtStr, "dd MMM yyyy");
+			if (dt !== null)
+				return dt;
+		} 
+		return null;
 	}
 
 	/**
