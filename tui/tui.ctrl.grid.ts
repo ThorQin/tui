@@ -1086,7 +1086,7 @@ module tui.ctrl {
 			};
 		} // end of textEditor
 
-		static chechBox(withHeader: boolean = true): (data: IColumnFormatInfo)=>void {
+		static checkbox(withHeader: boolean = true): (data: IColumnFormatInfo)=>void {
 			return function (data: IColumnFormatInfo) {
 				if (data.rowIndex < 0) {
 					if (withHeader) {

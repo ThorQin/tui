@@ -161,12 +161,9 @@ tui/css/tui.min.css
 tui/lang/*.map
 tui/lang/*.js
 
-/FinalRelease/Demo
-/FinalRelease/Scripts
-/FinalRelease/tui
-/Demo/query.ashx.request.txt
-/FinalRelease/TUI-2.0-release.7z
-/Demo/list.html
+tui/build/depends
+tui/build/tui
+tui/build/test.html
 /doc/js/tui
 /doc/js/font-awesome-4.0.3
 /doc/js/jquery-1.11.0.js
