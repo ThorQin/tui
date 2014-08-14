@@ -76,7 +76,7 @@
 	&.tui-underline {
 		.border-radius(0px);
 		border-bottom:6px solid transparent;
-
+		outline:none;
 		&:before {
 			content:none;
 		}
@@ -87,15 +87,16 @@
 				content:none;
 			}
 		}
-		&:hover {
+		&:hover,&.tui-focus {
 			color:#017bce;
 		}
 	}
 	&.tui-solid {
+		outline:none;
 		&:before {
 			content:none;
 		}
-		&:hover {
+		&:hover,&.tui-focus {
 			background-color:@captionColor;
 		}
 		&[data-checked] {

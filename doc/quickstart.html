@@ -37,13 +37,14 @@
 		</div>
 		<div id="docContent"></div>
 		<script>
-			docmaker = new doc.DocMaker("docIndex", "docContent");
+			docmaker = new doc.DocMaker(tui.ctrl.accordionGroup("docIndex"), "docContent");
 			tui.ctrl.accordionGroup("docIndex").installMonitor(window);
 			tui.loadURL("content/quickstart.js", function (status, xhr) {
 				if (status === "success") {
 					docmaker.make(eval("(" + xhr.responseText + ")"));
 				}
 			}, false);
+			setupCatalogSize();
 		</script>
 	</div>
 	<div id="footer">

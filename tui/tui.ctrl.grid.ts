@@ -380,43 +380,73 @@ module tui.ctrl {
 				}
 			} else {
 				var totalNoBorderWidth = this._contentWidth - this._borderWidth * cols;
-				var totalNoImportantWidth = totalNoBorderWidth;
+				var totalNoFixedWidth = totalNoBorderWidth;
 				var totalNeedComputed = 0;
+				var totalNeedComputedCount = 0;
 				var totalImportantWidth = 0;
 				var important: number[] = [];
+				// Exclude all fixed columns
 				for (var i = 0; i < columns.length; i++) {
-					if (typeof columns[i].width !== "number" ||
-						isNaN(columns[i].width))
+					if (columns[i]["fixed"]) {
+						if (typeof columns[i].width !== "number" || isNaN(columns[i].width))
+							columns[i].width = defaultWidth;
+						totalNoFixedWidth -= columns[i].width;
+					}
+				}
+				if (totalNoFixedWidth < 0)
+					totalNoFixedWidth = 0;
+				var totalNoImportantWidth = totalNoFixedWidth;
+
+				for (var i = 0; i < columns.length; i++) {
+					if (typeof columns[i].width !== "number" || isNaN(columns[i].width))
 						columns[i].width = defaultWidth;
 					else if (columns[i].width < 0)
 						columns[i].width = 0;
-					if (columns[i]["_important"] ||
-						(columns[i]["fixed"] && typeof columns[i].width === "number")) {
+					if (columns[i]["fixed"]) {
+						// Ignore
+					} else if (columns[i]["_important"]) {
 						important.push(i);
 						delete columns[i]["_important"];
 						columns[i].width = Math.round(columns[i].width);
-						if (columns[i].width > totalNoBorderWidth - totalImportantWidth) {
-							columns[i].width = totalNoBorderWidth - totalImportantWidth;
+						if (columns[i].width > totalNoFixedWidth) {
+							columns[i].width = totalNoFixedWidth;
 						}
 						totalImportantWidth += columns[i].width;
 						totalNoImportantWidth -= columns[i].width;
-					} else
+					} else {
 						totalNeedComputed += Math.round(columns[i].width);
+						totalNeedComputedCount++;
+					}
 				}
-				for (var i = 0; i < columns.length; i++) {
-					if (important.indexOf(i) < 0) {
-						if (totalNeedComputed === 0)
-							columns[i].width = 0;
-						else
-							columns[i].width = Math.floor(Math.round(columns[i].width) / totalNeedComputed * totalNoImportantWidth);
+				if (totalNeedComputedCount > 0 && totalNeedComputed === 0) {
+					for (var i = 0; i < columns.length; i++) {
+						if (important.indexOf(i) < 0 && !columns[i]["fixed"]) {
+							columns[i].width = Math.floor(totalNoImportantWidth / totalNeedComputedCount);
+						}
+					}
+				} else {
+					for (var i = 0; i < columns.length; i++) {
+						if (important.indexOf(i) < 0 && !columns[i]["fixed"]) {
+							if (totalNeedComputed === 0)
+								columns[i].width = 0; // To avoid divide by zero
+							else
+								columns[i].width = Math.floor(Math.round(columns[i].width) / totalNeedComputed * totalNoImportantWidth);
+						}
 					}
 				}
 				var total = 0;
 				for (var i = 0; i < columns.length; i++) {
 					total += columns[i].width;
 				}
-				if (total < totalNoBorderWidth && columns.length > 0)
-					columns[columns.length - 1].width += totalNoBorderWidth - total;
+				totalNoBorderWidth += (vScrollbarWidth === 0 ? 1 : 0);
+				if (total < totalNoBorderWidth && columns.length > 0) {
+					for (var i = 0; i < columns.length; i++) {
+						if (!columns[i].fixed) {
+							columns[i].width += totalNoBorderWidth - total;
+							break;
+						}
+					}
+				}
 			}
 			var cssText = "";
 			for (var i = 0; i < columns.length; i++) {

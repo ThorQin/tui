@@ -33,6 +33,7 @@ module tui.ctrl {
 			"*number": "^[+\\-]?\\d+|(\\d*\\.\\d+)$",
 			"*currency": "^-?\\d{1,3}(,\\d{3})*\\.\\d{2,3}$",
 			"*date": "^[0-9]{4}-1[0-2]|0?[1-9]-0?[1-9]|[12][0-9]|3[01]$",
+			"*key": "^[_a-zA-Z][a-zA-Z0-9_]*$",
 			"*any": "\\S+"
 		};
 
@@ -375,7 +376,7 @@ module tui.ctrl {
 					if (this.fire("select", { ctrl: this[0], type: this.type(), file: response }) === false)
 						return;
 				} else {
-					tui.errbox(str("Upload failed!"), str("Error"));
+					tui.errbox(str("Upload failed, please check file type!"), str("Error"));
 				}
 			});
 		}

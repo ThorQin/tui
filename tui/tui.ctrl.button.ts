@@ -26,9 +26,10 @@ module tui.ctrl {
 			var self = this;
 
 			function openMenu() {
+				var pos = self.menuPos();
 				if (self.isMenu()) {
 					var menu = tui.ctrl.menu(self._data);
-					menu.show(self[0], "Lb");
+					menu.show(self[0], pos || "Lb");
 					menu.on("select", function (data) {
 						self.fire("select", data);
 					}); 
@@ -106,7 +107,7 @@ module tui.ctrl {
 
 				list[0].style.width = listWidth + "px";
 				list.data(self._data);
-				pop.show(list[0], self[0], "Rb");
+				pop.show(list[0], self[0], pos || "Rb");
 
 				var items = self._data ? self._data.length() : 0;
 				if (items < 1)
@@ -241,6 +242,14 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.attr("data-menu-bind");
+		}
+
+		menuPos(val?: string): any {
+			if (typeof val !== undef) {
+				this.attr("data-menu-pos", val);
+				return this;
+			} else
+				return this.attr("data-menu-pos");
 		}
 
 		private columnKey(key: string): any {

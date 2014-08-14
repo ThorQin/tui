@@ -16,23 +16,59 @@
 	<script src="../js/tui/lang/zh-cn.js"></script>
 	<script src="../js/tui/lang/en-us.js"></script>
 	<script src="../js/docmaker.js"></script>
+	<script src="../js/main.js"></script>
+	<script id="captionDlg" type="text/html">
+		<div>
+			<div class="tui-tab">
+				<a data-tab="sectionNormal">章节</a>
+				<a data-tab="sectionGrid">清单</a>
+				<a data-tab="sectionAttach">附加信息</a>
+			</div>
+			<div id="sectionNormal" class="doc-section-dlg-tab">
+				<div id="lineItemId" style="white-space:nowrap;"><span class="doc-dlg-label">关键字</span><span data-field="id" data-validator="{&quot;*key&quot;:&quot;请输入以字母、数字或下划组成且只能以字母或下划线开头的字符串。&quot;}" data-form="itemForm" class="tui-input doc-dlg-input"></span></div>
+				<div style="white-space:nowrap;"><span class="doc-dlg-label">标题</span><span data-field="name" data-form="itemForm" data-validator="{&quot;*any&quot;:&quot;请输入段落名称&quot;}" class="tui-input doc-dlg-input"></span></div>
+				<div style="white-space:nowrap;"><span class="doc-dlg-label">描述</span><span data-field="desc" data-form="itemForm" class="tui-textarea doc-dlg-textarea"></span></div>
+				<div style="white-space:nowrap;"><span class="doc-dlg-label"></span><a id="indexChildren" class="tui-checkbox">启用阅读模式时在目录列表中显示子段落标题</a></div>
+			</div>
+			<div id="sectionGrid" class="doc-section-dlg-tab">
+				<div style="margin-top:-10px;margin-bottom:10px;">
+					<a id="param" class="tui-radiobox tui-underline" data-checked="true" data-group="detailType">参数</a>
+					<a id="ret" class="tui-radiobox tui-underline" data-group="detailType">返回值</a>
+					<a id="const" class="tui-radiobox tui-underline" data-group="detailType">常量</a>
+					<a id="method" class="tui-radiobox tui-underline" data-group="detailType">方法</a>
+					<a id="event" class="tui-radiobox tui-underline" data-group="detailType">事件</a>
+					<a id="prop" class="tui-radiobox tui-underline" data-group="detailType">属性</a>
+					<a id="detailAdd" class="tui-button" style="float:right;"><i class="fa fa-plus"></i> 添加条目</a>
+				</div>
+				<div id="detailGrid" data-resizable="true" class="tui-grid" data-columns="docTableCol"></div>
+			</div>
+			<div id="sectionAttach" class="doc-section-dlg-tab">
+				<div style="white-space:nowrap;"><span class="doc-dlg-label">图片</span><span data-field="pic" data-form="itemForm" class="tui-input doc-dlg-input"></span></div>
+				<div style="white-space:nowrap;"><span class="doc-dlg-label">代码</span><span data-field="code" data-form="itemForm" class="tui-textarea doc-dlg-textarea"></span></div>
+			</div>
+			<span id="selectedDetail" class="tui-form-agent" data-target="detailType" data-is-group="true" data-target-property="id"></span>
+			<span id="itemForm" class="tui-form">
+				<span data-field="index" data-target="indexChildren" data-target-property="checked"></span>
+			</span>
+		</div>
+	</script>
 	<!--#TUI END#-->
 	<script>
 		var docList = [
-			{ key: "editQuickStart", value: "快速上手" },
-			{ key: "editReference", value: "开发手册" },
+			{ key: "editDoc", value: "快速上手", target: "quickstart.js" },
+			{ key: "editDoc", value: "开发手册", target: "reference.js" },
 		];
 		
 		$(function () {
+			var content;
 			var modified = false;
-			var docmaker = new doc.DocMaker("docIndex", "docContent", "../image");
-			tui.ctrl.accordionGroup("docIndex").installMonitor(window);
+			var docmaker = new doc.DocMaker("docIndex", "docContent", "../image", true);
 			docmaker.on("changed", function () {
 				modified = true;
 			});
 
 			function closeDoc() {
-				tui.ctrl.accordionGroup("docIndex").clear();
+				tui.ctrl.list("docIndex").data(null);
 				$("#docContent").html("");
 				$("#mainContent").addClass("tui-hidden");
 			}
@@ -41,8 +77,16 @@
 				tui.loadURL(url, function (status, jqXHR) {
 					if (status === "success") {
 						$("#mainContent").removeClass("tui-hidden");
-						docmaker.make(eval("(" + jqXHR.responseText + ")"));
+						try {
+							content = jqXHR.responseText ? eval("(" + jqXHR.responseText + ")") : null;
+							if (!content)
+								content = [];
+						} catch (e) {
+							content = [];
+						}
+						docmaker.make(content);
 						$("#btnSave").removeClass("tui-hidden");
+						setupCatalogSize();
 						successCallback();
 					} else
 						tui.errbox("文档加载失败:" + tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
@@ -58,15 +102,9 @@
 				} else
 					doLoadDoc(url, successCallback);
 			}
-			tui.on("editQuickStart", function () {
-				loadDoc("quickstart.js", function () {
-					$("#fileInfo").html("正在编辑：快速上手");
-					modified = false;
-				});
-			});
-			tui.on("editReference", function () {
-				loadDoc("reference.js", function () {
-					$("#fileInfo").html("正在编辑：开发手册");
+			tui.on("editDoc", function (e) {
+				loadDoc(e.target, function () {
+					$("#fileInfo").html("正在编辑：" + e.value);
 					modified = false;
 				});
 			});
@@ -82,16 +120,14 @@
 	<div class="tui-navbar tui-shadow-dark-big">
 		<a href="../">
 			<img style="vertical-align:middle;margin-left:40px;margin-right:80px;"
-				 src="../image/logo.png" />
+					src="../image/logo.png" />
 		</a>
 		<a class="tui-button" data-menu="docList"><i class="fa fa-edit"></i> 编辑</a>
 		<a id="btnSave" class="tui-button tui-hidden" data-tooltip="保存当前文档 (Ctrl+S)"><i class="fa fa-save"></i> 保存</a>
 		<span id="fileInfo" class="tui-title"></span>
 	</div>
 	<div id="mainContent" class="tui-hidden">
-		<div id="docIndex" class="tui-accordion-group index"
-			 data-key-is-link="true" data-distance="50">
-		</div>
+		<div id="docIndex" class="tui-list index"></div>
 		<div id="docContent"></div>
 	</div>
 	<!--表单-->

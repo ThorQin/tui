@@ -6,7 +6,7 @@ module tui {
 		_mask.className = "tui-dialog-mask";
 		_mask.setAttribute("unselectable", "on");
 		var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
-		$(_mask).on(mousewheelevt, function (ev) {
+		$(_mask).on(mousewheelevt + " selectstart", function (ev) {
 			ev.stopPropagation();
 			ev.preventDefault();
 		});
@@ -63,6 +63,9 @@ module tui {
 			private _titleText: string = null;
 			private _noRefresh: boolean = false;
 			private _useEsc: boolean = true;
+			private _sizeTimer: number = null;
+			private _originScrollHeight: number = null;
+			private _originScrollWidth: number = null;
 
 			constructor() {
 				super("div", Dialog.CLASS, null);
@@ -202,6 +205,14 @@ module tui {
 				this.refresh();
 				this[0].focus();
 				this.fire("open");
+				this._sizeTimer = setInterval(function () {
+					if (self._contentDiv.scrollHeight !== self._originScrollHeight ||
+						self._contentDiv.scrollWidth !== self._originScrollWidth) {
+						self.refresh();
+						self._originScrollHeight = self._contentDiv.scrollHeight;
+						self._originScrollWidth = self._contentDiv.scrollWidth;
+					}
+				}, 100);
 				return this;
 			}
 
@@ -210,7 +221,8 @@ module tui {
 					this._contentDiv.style.maxHeight = "";
 					this[0].style.maxWidth = _mask.offsetWidth + "px";
 					this[0].style.maxHeight = _mask.offsetHeight + "px";
-					this._contentDiv.style.maxHeight = this[0].clientHeight - this._titleDiv.offsetHeight - this._buttonDiv.offsetHeight - $(this._contentDiv).outerHeight() + $(this._contentDiv).height() + "px";
+					this._contentDiv.style.maxHeight = _mask.offsetHeight - this._titleDiv.offsetHeight - this._buttonDiv.offsetHeight - $(this._contentDiv).outerHeight() + $(this._contentDiv).height() + "px";
+					this._contentDiv.style.maxWidth = _mask.offsetWidth - $(this._contentDiv).outerWidth() + $(this._contentDiv).width() + "px";
 					this.refresh();
 				}, 0);
 			}
@@ -301,6 +313,7 @@ module tui {
 			close(): void {
 				if (!this[0])
 					return;
+				clearInterval(this._sizeTimer);
 				remove(this);
 				this.elem(null);
 				this._titleDiv = null;
@@ -477,12 +490,21 @@ module tui {
 		return dlg;
 	}
 
-	export function waitbox(message: string): ctrl.Dialog {
+	export function waitbox(message: string, cancelProc: () => {} = null): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
 		var wrap = document.createElement("div");
 		wrap.className = "tui-dlg-warp tui-dlg-wait";
 		wrap.innerHTML = message;
-		dlg.showElement(wrap, null, []);
+		if (typeof cancelProc === "function")
+			dlg.showElement(wrap, null, [{
+				name: str("Cancel"), func: function () {
+					dlg.close();
+					cancelProc();
+				}
+			}]);
+		else {
+			dlg.showElement(wrap, null, []);
+		}
 		dlg.useesc(false);
 		return dlg;
 	}

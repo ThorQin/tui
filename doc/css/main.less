@@ -1,3 +1,4 @@
+@import "../../tui/css/awesome4.less";
 body {
 	margin: 0;
 }
@@ -87,33 +88,85 @@ body {
 	top:100px;
 	bottom:50px;
 	width:260px;
+	z-index:10;
 }
 
 #docContent {
 	margin:40px;
 	margin-left:320px;
+	min-height:700px;
 }
 
-.doc-section {
-	padding:10px 5px;
-	font-size:48px;
-	color:#9716bc;
-	border-bottom:1px solid #9716bc;
-	margin-top:30px;
+.doc-container {
+	margin:0;
 }
+
 .doc-caption {
+	position:relative;
 	margin-top:20px;
 	padding:10px 5px;
 	font-size:18px;
 	font-weight:bold;
 	border-bottom:1px dotted #ccc;
+	color:black;
+	.tui-button {
+		position:absolute;
+		bottom:0;
+		right:0;
+		margin-top: 0;
+		margin-bottom: 0;
+		height: 36px;
+		line-height: 36px;
+		padding:10px;
+		padding-top: 0;
+		padding-bottom: 0;
+		border: none;
+		background: none;
+		color: black;
+		outline: none;
+		filter: none;
+		border-radius: 0px;
+		&:hover,&.tui-focus,&:active,&.tui-actived {
+			background: #f0f0f0;
+			color: black;
+		}
+	}
+	&:before {
+		content:attr(data-number) ".";
+		margin-right:8px;
+	}
 	&.doc-level-0 {
+		font-size:52px;
+		font-weight:normal;
+		border-bottom:4px double #ccc;
+		color:#555;
+		&:before {
+			display: inline-block;
+			font-family: FontAwesome;
+			font-style: normal;
+			font-weight: normal;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			.fa-book;
+		}
+	}
+	&.doc-level-1 {
+		padding:10px 5px;
+		font-size:48px;
+		color:#9716bc;
+		border-bottom:1px solid #9716bc;
+		margin-top:30px;
+		font-weight:normal;
+	}
+	&.doc-level-2 {
 		font-weight:normal;
 		font-size:32px;
 		color:#127af1;
 	}
-	&.doc-level-1 {
+	&.doc-level-3 {
 		font-size:26px;
+		color:black;
 	}
 }
 
@@ -176,5 +229,57 @@ body {
 	}
 }
 
+.doc-dlg-label {
+	display:inline-block;
+	padding:10px;
+	width:40px;
+	text-align:right;
+	vertical-align:middle;
+}
+.doc-dlg-input {
+	width: 400px;
+}
+.doc-dlg-textarea {
+	display:inline-block;
+	width: 400px;
+	margin-top:3px;
+	vertical-align:top;
+	min-height:120px;
+}
 
+.doc-section-dlg-tab {
+	padding:20px;
+	min-height:250px;
+	min-width:505px;
+	.tui-radiobox.tui-underline {
+		border-bottom:2px solid transparent;
+		&[data-checked] {
+			border-bottom:2px solid #017bce;
+			&:before {
+				content:none;
+			}
+		}
+	}
+}
 
+#detailGrid {
+	.tui-button {
+		margin-top: -4px;
+		margin-bottom: 0;
+		height: 28px;
+		line-height: 28px;
+		padding:5px;
+		padding-top: 0;
+		padding-bottom: 0;
+		border: none;
+		background: none;
+		color: black;
+		outline: none;
+		filter: none;
+		min-width:20px;
+		&:hover,&.tui-focus,&:active,&.tui-actived {
+			background: #f0f0f0;
+			color: black;
+		}
+	}
+}

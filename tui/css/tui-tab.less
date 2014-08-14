@@ -10,11 +10,15 @@
 		.bottom-radius(0px);
 		border:1px solid transparent;
 		border-bottom:none;
+		outline:none;
 		&:before {
 			content:none;
 		}
 		margin:0px 4px;
 		padding:5px 10px;
+		&:hover,&.tui-focus {
+			color:#017bce;
+		}
 	}
 	.tui-radiobox[data-checked] {
 		border:1px solid @borderColor;

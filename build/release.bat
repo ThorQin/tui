@@ -1,4 +1,6 @@
-tsc -m amd --sourcemap --out tui/tui.all.js ^
+rmdir /S /Q tui
+rmdir /S /Q depends
+tsc -m amd --out tui/tui.all.js ^
 	../tui/tui.core.ts ^
 	../tui/tui.time.ts ^
 	../tui/tui.upload.ts ^
