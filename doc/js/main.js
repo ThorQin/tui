@@ -10,25 +10,25 @@ var detailItemMenu = [
 ]
 
 var docTableCol = [
-	{
-		name: "参数", key: 0, width: 300
-	},
-	{
-		name: "类型", key: 1, width: 300
-	},
-	{
-		name: "描述", key: 2
-	},
+	{ name: "参数", key: 0, width: 80, _important: true, format: tui.ctrl.Grid.textEditor() },
+	{ name: "类型", key: 1, width: 80, _important: true, format: tui.ctrl.Grid.textEditor() },
+	{ name: "描述", key: 2, format: tui.ctrl.Grid.textEditor() },
 	{
 		name: "", format: function (data) {
 			if (data.rowIndex < 0)
 				return;
+			var tb = data.grid;
+			var array = data.grid.data().src();
 			data.cell.firstChild.innerHTML = "";
 			var btnDel = tui.ctrl.button();
 			btnDel.text("<i class='fa fa-bars'></i>");
 			btnDel.menu(detailItemMenu);
 			btnDel.menuPos("Rb");
 			data.cell.firstChild.appendChild(btnDel[0]);
+			btnDel.on("select", function () {
+				array.splice(data.rowIndex, 1);
+				tb.data(array);
+			});
 		},
 		width: 32,
 		fixed:true

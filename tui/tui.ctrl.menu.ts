@@ -127,6 +127,7 @@ module tui.ctrl {
 			var div = document.createElement("div");
 			this._menuDiv = div;
 			div.className = Menu.CLASS;
+			$(div).attr("unselectable", "on");
 			$(div).attr("tabIndex", "-1");
 			for (var i = 0; i < data.length(); i++) {
 				var row = data.at(i);

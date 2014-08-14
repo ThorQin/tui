@@ -380,6 +380,7 @@ module tui.ctrl {
 				}
 			} else {
 				var totalNoBorderWidth = this._contentWidth - this._borderWidth * cols;
+				totalNoBorderWidth += (vScrollbarWidth === 0 ? 1 : 0);
 				var totalNoFixedWidth = totalNoBorderWidth;
 				var totalNeedComputed = 0;
 				var totalNeedComputedCount = 0;
@@ -438,7 +439,6 @@ module tui.ctrl {
 				for (var i = 0; i < columns.length; i++) {
 					total += columns[i].width;
 				}
-				totalNoBorderWidth += (vScrollbarWidth === 0 ? 1 : 0);
 				if (total < totalNoBorderWidth && columns.length > 0) {
 					for (var i = 0; i < columns.length; i++) {
 						if (!columns[i].fixed) {

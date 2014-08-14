@@ -168,7 +168,7 @@
 				for (var n in tableType) {
 					if (!tableType.hasOwnProperty(n))
 						continue;
-					if (item[n]) {
+					if (item[n] && item[n].length > 0) {
 						this.makeTable(n, item[n], container);
 					}
 				}
@@ -237,13 +237,17 @@
 							dlg.close();
 						}
 					}]);
+			var tb = tui.ctrl.grid("detailGrid");
 			tui.ctrl.button("detailAdd").on("click", function () {
-
+				var d = (<tui.ArrayProvider>tb.data()).src();
+				d.push(["", "", ""]);
+				tb.data(d);
+				tb.scrollTo(d.length - 1);
 			});
 			function refreshTable() {
 				var dtype = tui.ctrl.formAgent("selectedDetail").value();
 				var d = item[dtype] || [];
-				tui.ctrl.grid("detailGrid").data(d);
+				tb.data(d);
 			}
 			tui.on("param ret method event prop const", function () {
 				refreshTable();
