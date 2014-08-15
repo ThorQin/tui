@@ -224,16 +224,58 @@ if (typeof Array.prototype.indexOf !== "function") {
 }
 
 module tui {
+	export var KEY_BACK = 8;
 	export var KEY_TAB = 9;
 	export var KEY_ENTER = 13;
+	export var KEY_SHIFT = 16;
+	export var KEY_CTRL = 17;
+	export var KEY_ALT = 18;
+	export var KEY_PAUSE = 19;
+	export var KEY_CAPS = 20;
 	export var KEY_ESC = 27;
 	export var KEY_SPACE = 32;
+	export var KEY_PRIOR = 33;
+	export var KEY_NEXT = 34;
+	export var KEY_END = 35;
+	export var KEY_HOME = 36;
 	export var KEY_LEFT = 37;
 	export var KEY_UP = 38;
 	export var KEY_RIGHT = 39;
 	export var KEY_DOWN = 40;
-
-
+	export var KEY_PRINT = 44;
+	export var KEY_INSERT = 45;
+	export var KEY_DELETE = 46;
+	export var CONTROL_KEYS = {
+		9: "Tab",
+		13: "Enter",
+		16: "Shift",
+		17: "Ctrl",
+		18: "Alt",
+		19: "Pause",
+		20: "Caps",
+		27: "Escape",
+		33: "Prior",
+		34: "Next",
+		35: "End",
+		36: "Home",
+		37: "Left",
+		38: "Up",
+		39: "Right",
+		40: "Down",
+		45: "Insert",
+		112: "F1",
+		113: "F2",
+		114: "F3",
+		115: "F4",
+		116: "F5",
+		117: "F6",
+		118: "F7",
+		119: "F8",
+		120: "F9",
+		121: "F10",
+		122: "F11",
+		123: "F12"
+	};
 
 	export var undef = ((undefined?): string => {
 		return typeof undefined;

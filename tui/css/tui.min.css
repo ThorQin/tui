@@ -892,7 +892,8 @@ a:hover {
   color: #fff;
   font-size: 12px;
 }
-.tui-popup {
+.tui-popup,
+.tui-suggestion {
   display: inline-block;
   position: fixed;
   left: 0;
@@ -909,7 +910,9 @@ a:hover {
   background-color: #fff;
 }
 .tui-popup .tui-calendar,
-.tui-popup .tui-list {
+.tui-suggestion .tui-calendar,
+.tui-popup .tui-list,
+.tui-suggestion .tui-list {
   border: none;
   outline: none;
   -webkit-border-radius: 2px;
@@ -1766,13 +1769,13 @@ a:hover {
   filter: alpha(opacity=50);
 }
 .tui-grid .tui-grid-line.tui-grid-line-selected {
-  background-color: #d8d8d8;
+  background-color: #eeeeee;
 }
 .tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
 .tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
-  background-color: #d8d8d8;
+  background-color: #eeeeee;
 }
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected {
   background-color: #017bce;
@@ -1993,13 +1996,13 @@ a:hover {
   filter: alpha(opacity=50);
 }
 .tui-list .tui-grid-line.tui-grid-line-selected {
-  background-color: #d8d8d8;
+  background-color: #eeeeee;
 }
 .tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
 .tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
-  background-color: #d8d8d8;
+  background-color: #eeeeee;
 }
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected {
   background-color: #017bce;

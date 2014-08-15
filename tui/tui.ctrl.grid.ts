@@ -1065,56 +1065,81 @@ module tui.ctrl {
 
 		/// Following static methods are used for cell formatting.
 
-		static textEditor(whenDoubleClick: boolean = true): (data: IColumnFormatInfo) => void {
-			return function (data: IColumnFormatInfo) {
-				if (data.rowIndex < 0)
-					return;
-				var eventName = (whenDoubleClick ? "dblclick" : "mousedown");
-				$(data.cell.firstChild).on(eventName, function (e) {
-					if (!tui.isLButton(e.button))
-						return;
-					data.grid.scrollTo(data.rowIndex);
-					var txtBox = document.createElement("input");
-					txtBox.className = "tui-grid-text-editor";
-					txtBox.style.width = $(data.cell).innerWidth() - 16 + "px";
-					txtBox.style.height = $(data.cell).innerHeight() + "px";
-					txtBox.value = data.value;
-					$(txtBox).mousedown(function (e) {
-						e.stopPropagation();
-						e.stopImmediatePropagation();
-					});
-					$(txtBox).change(function (e) {
-						if (typeof data.colKey !== tui.undef)
-							data.row[data.colKey] = txtBox.value;
-						(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
-						data.value = txtBox.value;
-					});
-					function finishEdit() {
-						tui.removeNode(txtBox);
-						if (typeof data.colKey !== tui.undef)
-							data.row[data.colKey] = txtBox.value;
-						(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
-						data.value = txtBox.value;
-						data.grid.focus();
-					}
-					$(txtBox).blur(function () {
-						setTimeout(finishEdit, 0);
-					});
-					$(txtBox).keydown(function (e) {
-						if (e.keyCode === 13) {
-							finishEdit();
-						}
-						e.stopPropagation();
-					});
-					data.cell.appendChild(txtBox);
-					setTimeout(function () {
-						txtBox.focus();
-						txtBox.selectionStart = txtBox.value.length;
-					}, 10);
+		//static textEditor(whenDoubleClick: boolean = true): (data: IColumnFormatInfo) => void {
+		//	return function (data: IColumnFormatInfo) {
+		//		if (data.rowIndex < 0)
+		//			return;
+		//		var eventName = (whenDoubleClick ? "dblclick" : "mousedown");
+		//		$(data.cell.firstChild).on(eventName, function (e) {
+		//			if (!tui.isLButton(e.button))
+		//				return;
+		//			data.grid.scrollTo(data.rowIndex);
+		//			var txtBox = document.createElement("input");
+		//			txtBox.className = "tui-grid-text-editor";
+		//			txtBox.style.width = $(data.cell).innerWidth() - 16 + "px";
+		//			txtBox.style.height = $(data.cell).innerHeight() + "px";
+		//			txtBox.value = data.value;
+		//			$(txtBox).mousedown(function (e) {
+		//				e.stopPropagation();
+		//				e.stopImmediatePropagation();
+		//			});
+		//			$(txtBox).change(function (e) {
+		//				if (typeof data.colKey !== tui.undef)
+		//					data.row[data.colKey] = txtBox.value;
+		//				(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
+		//				data.value = txtBox.value;
+		//			});
+		//			function finishEdit() {
+		//				tui.removeNode(txtBox);
+		//				if (typeof data.colKey !== tui.undef)
+		//					data.row[data.colKey] = txtBox.value;
+		//				(<HTMLElement>data.cell.firstChild).innerHTML = txtBox.value;
+		//				data.value = txtBox.value;
+		//				data.grid.focus();
+		//			}
+		//			$(txtBox).blur(function () {
+		//				setTimeout(finishEdit, 0);
+		//			});
+		//			$(txtBox).keydown(function (e) {
+		//				if (e.keyCode === 13) {
+		//					finishEdit();
+		//				}
+		//				e.stopPropagation();
+		//			});
+		//			data.cell.appendChild(txtBox);
+		//			setTimeout(function () {
+		//				txtBox.focus();
+		//				txtBox.selectionStart = txtBox.value.length;
+		//			}, 10);
 
+		//		});
+		//	};
+		//} // end of textEditor
+
+		static textEditor(listData?): (data: IColumnFormatInfo) => void {
+			return function (data: IColumnFormatInfo) {
+				if (data.rowIndex < 0) {
+					return;
+				}
+				var editor = tui.ctrl.input(null, "text");
+				editor.addClass("tui-grid-selector");
+				if (listData)
+					editor.data(listData);
+				data.cell.appendChild(editor[0]);
+				editor.value(data.value);
+				$(editor[3]).on("mousedown", function () {
+					setTimeout(function () { editor.focus() }, 10);
 				});
+				editor.on("change", function () {
+					if (typeof data.colKey !== tui.undef)
+						data.row[data.colKey] = editor.value();
+					data.value = editor.value();
+				});
+				editor[0].style.width = $(data.cell).innerWidth() + "px";
+				editor[0].style.height = $(data.cell).innerHeight() + "px";
+				editor.refresh();
 			};
-		} // end of textEditor
+		} 
 
 		static checkbox(withHeader: boolean = true): (data: IColumnFormatInfo)=>void {
 			return function (data: IColumnFormatInfo) {

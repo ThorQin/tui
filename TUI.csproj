@@ -39,6 +39,7 @@
     <Content Include="doc\image\html5.png" />
     <Content Include="doc\image\logo.png" />
     <Content Include="doc\index.html" />
+    <Content Include="test\index.html" />
     <Content Include="tui\lang\en-us.js" />
     <Content Include="tui\lang\zh-cn.js" />
     <Content Include="web.config" />

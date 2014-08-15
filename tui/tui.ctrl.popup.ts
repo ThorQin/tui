@@ -25,6 +25,8 @@ module tui.ctrl {
 		private _childPopup: Popup = null;
 		private _checkInterval = null;
 		private _showing = false;
+		private _owner = null;
+
 		constructor() {
 			super("div", Popup.CLASS, null);
 		}
@@ -42,6 +44,16 @@ module tui.ctrl {
 
 		isShowing(): boolean {
 			return this._showing;
+		}
+
+		owner(): HTMLElement;
+		owner(elem?: HTMLElement): Popup;
+		owner(elem?: HTMLElement): any {
+			if (elem) {
+				this._owner = elem;
+				return this;
+			} else
+				return this._owner;
 		}
 
 		show(content: any, pos: { x: number; y: number }): void;
@@ -78,11 +90,16 @@ module tui.ctrl {
 					closeAllPopup();
 					this._parent = this._body;
 				}
-				this._parent.appendChild(elem);
-				elem.focus();
 				
 				_currentPopup = this;
 				elem.setAttribute("tabIndex", "-1");
+
+				this._parent.appendChild(elem);
+				if (this.owner())
+					this.owner().focus();
+				else
+					elem.focus();
+
 				if (typeof content === "string") {
 					elem.innerHTML = content;
 				} else if (content && content.nodeName) {
@@ -223,7 +240,7 @@ module tui.ctrl {
 		setTimeout(() => {
 			var obj = document.activeElement;
 			while (_currentPopup) {
-				if (_currentPopup.isPosterity(obj))
+				if (_currentPopup.isPosterity(obj) || _currentPopup.owner() === obj)
 					return;
 				else
 					_currentPopup.close();

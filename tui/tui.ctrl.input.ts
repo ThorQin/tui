@@ -55,6 +55,10 @@ module tui.ctrl {
 		private _columnKeyMap: {} = null;
 		// Whether has been initialized.
 		private _initialized = false;
+		// For text suggestion
+		private _suggestionList: List = null;
+		private _suggestionPopup: Popup = null;
+		private _suggestionText: string = null;
 
 		constructor(el?: HTMLElement, type?: string) {
 			super("span", Input.CLASS, el === null ? undefined: el);
@@ -67,185 +71,22 @@ module tui.ctrl {
 			this[0].appendChild(this._label);
 			this[0].appendChild(this._button);
 			this[0].appendChild(this._notify);
+			this[1] = this._label;
+			this[2] = this._button;
 
 			if (typeof type !== tui.undef)
 				this.type(type);
 			else
 				this.type(this.type());
 
-			//this.createTextbox();
-
-			var openPopup = (e) => {
-				if (this.type() === "calendar") {
-					var pop = tui.ctrl.popup();
-					var calendar = tui.ctrl.calendar();
-					calendar.time(self.value());
-					calendar.on("picked", (e) => {
-						if (self.readonly()) {
-							pop.close();
-							self.focus();
-							return false;
-						}
-						self.value(e["time"]);
-						pop.close();
-						self.focus();
-						if (self.fire("select", { ctrl: self[0], type: self.type(), time: e["time"] }) === false)
-							return;
-						self.doSubmit();
-					});
-					var calbox = document.createElement("div");
-					calbox.appendChild(calendar[0]);
-					var todayLink = document.createElement("a");
-					todayLink.innerHTML = "<i class='fa fa-clock-o'></i> " + tui.str("Today") + ": " + tui.formatDate(tui.today(), "yyyy-MM-dd");
-					todayLink.href = "javascript:void(0)";
-					$(todayLink).click(function (e) {
-						if (self.readonly()) {
-							pop.close();
-							self.focus();
-							return false;
-						}
-						self.value(tui.today());
-						pop.close();
-						self.focus();
-						if (self.fire("select", { ctrl: self[0], type: self.type(), time: e["time"] }) === false)
-							return;
-						self.doSubmit();
-					});
-					var todayLine = document.createElement("div");
-					todayLine.appendChild(todayLink);
-					todayLine.className = "tui-input-select-bar";
-					calbox.appendChild(todayLine);
-					pop.show(calbox, self[0], "Rb");
-					calendar.focus();
-				} else if (this.type() === "select") {
-					var pop = tui.ctrl.popup();
-					var list = tui.ctrl.list();
-					list.consumeMouseWheelEvent(true);
-					list.rowcheckable(false);
-					list.on("rowclick", (data) => {
-						if (self.readonly()) {
-							pop.close();
-							self.focus();
-							return false;
-						}
-						self.selectValue([list.activeItem()]);
-						pop.close();
-						self.focus();
-						if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
-							return;
-						self.doSubmit();
-					});
-					list.on("keydown", (data) => {
-						if (data["event"].keyCode === 13) { // Enter
-							if (self.readonly()) {
-								pop.close();
-								self.focus();
-								return false;
-							}
-							self.selectValue([list.activeItem()]);
-							pop.close();
-							self.focus();
-							if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
-								return;
-							self.doSubmit();
-						}
-					});
-					list[0].style.width = self[0].offsetWidth + "px";
-					list.data(self._data);
-					pop.show(list[0], self[0], "Rb");
-
-					var items = self._data ? self._data.length() : 0;
-					if (items < 1)
-						items = 1;
-					else if (items > 6)
-						items = 6;
-
-					list[0].style.height = items * list.lineHeight() + 4 + "px";
-					list.refresh();
-					pop.refresh();
-					var val = this.selectValue();
-					if (val && val.length > 0) {
-						list.activeRowByKey(val[0].key);
-						list.scrollTo(list.activerow());
-					}
-					list.focus();
-				} else if (this.type() === "multi-select") {
-					var pop = tui.ctrl.popup();
-					var list = tui.ctrl.list();
-					list.consumeMouseWheelEvent(true);
-
-					var calbox = document.createElement("div");
-					calbox.appendChild(list[0]);
-
-					list[0].style.width = self[0].offsetWidth + "px";
-					list.data(self._data);
-					list.uncheckAllItems();
-					var keys = getKeys(this.selectValue());
-					list.checkItems(keys);
-					calbox.appendChild(list[0]);
-					var bar = document.createElement("div");
-					bar.className = "tui-input-select-bar";
-					calbox.appendChild(bar);
-					var okLink = document.createElement("a");
-					okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Accept");
-					okLink.href = "javascript:void(0)";
-					$(okLink).click(function (e) {
-						if (self.readonly()) {
-							pop.close();
-							self.focus();
-							return false;
-						}
-						self.selectValue(list.checkedItems());
-						pop.close();
-						self.focus();
-						if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
-							return;
-						self.doSubmit();
-					});
-					list.on("keydown", (data) => {
-						if (data["event"].keyCode === 13) { // Enter
-							if (self.readonly()) {
-								pop.close();
-								self.focus();
-								return false;
-							}
-							self.selectValue(list.checkedItems());
-							pop.close();
-							self.focus();
-							if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
-								return;
-							self.doSubmit();
-						}
-					});
-					bar.appendChild(okLink);
-
-					pop.show(calbox, self[0], "Rb");
-
-					var items = self._data ? self._data.length() : 0;
-					if (items < 1)
-						items = 1;
-					else if (items > 6)
-						items = 6;
-
-					list[0].style.height = items * list.lineHeight() + 4 + "px";
-					list.refresh();
-					pop.refresh();
-					list.focus();
-				} else if (this.type() === "file") {
-					// Don't need do anything
-				} else {
-					this.fire("btnclick", { "ctrl": this[0], "event": e });
-				}
-			};
-			$(this._button).on("click", openPopup);
-
+			$(this._button).on("click", this.openPopup);
 			$(this._label).on("mousedown", (e) => {
 				if (!this.useLabelClick())
 					return;
 				if (!this.disabled() && (this.type() === "text" || this.type() === "password" || this.type() === "custom-text"))
 					setTimeout(() => { this._textbox.focus(); }, 0);
 				else if (this.type() === "select" || this.type() === "multi-select" || this.type() === "calendar") {
-					openPopup(e);
+					this.openPopup(e);
 				} else if (this.type() === "file") {
 
 				}
@@ -263,13 +104,14 @@ module tui.ctrl {
 				if (e.keyCode !== 32)
 					return;
 				if (this.type() === "select" || this.type() === "multi-select" || this.type() === "calendar") {
-					openPopup(e);
+					this.openPopup(e);
 					e.preventDefault();
 					e.stopPropagation();
 				}
 			});
 
-			if (this.type() === "select" || this.type() === "multi-select") {
+			if (this.type() === "text" || this.type() === "custom-text" ||
+				this.type() === "select" || this.type() === "multi-select") {
 				var predefined: any = this.attr("data-data");
 				if (predefined)
 					predefined = eval("(" + predefined + ")");
@@ -279,6 +121,8 @@ module tui.ctrl {
 			if (!this.hasAttr("data-label-click"))
 				this.useLabelClick(true);
 			this.value(this.value());
+			if (!this.hasAttr("data-any-suggestion"))
+				this.anySuggestion(true);
 			//this.refresh();
 		}
 
@@ -297,6 +141,7 @@ module tui.ctrl {
 				this[0].removeChild(this._textbox);
 			}
 			this._textbox = document.createElement("input");
+			this[3] = this._textbox;
 			if (type === "password") {
 				this._textbox.type = "password";
 			} else {
@@ -318,7 +163,6 @@ module tui.ctrl {
 					if (this.text() !== this._textbox.value) {
 						this.text(this._textbox.value);
 						self.fire("change", { "ctrl": this[0], "event": e, "text": this.text() });
-						this.refresh();
 					}
 				}, 0);
 			});
@@ -326,7 +170,6 @@ module tui.ctrl {
 				if (this.text() !== this._textbox.value) {
 					this.text(this._textbox.value);
 					this.fire("change", { "ctrl": this[0], "event": e, "text": this.text() });
-					this.refresh();
 				}
 			});
 			$(this._textbox).on("input", (e: any) => {
@@ -334,16 +177,244 @@ module tui.ctrl {
 					if (this.text() !== this._textbox.value) {
 						this.text(this._textbox.value);
 						self.fire("change", { "ctrl": self[0], "event": e, "text": self.text() });
-						this.refresh();
 					}
 				}, 0);
 			});
 			$(this._textbox).keydown((e: any) => {
-				if (e.keyCode === 13) {
+				if (!tui.CONTROL_KEYS[e.keyCode]) {
+					setTimeout(function () {
+						self.openSuggestion(self._textbox.value);
+					}, 0);
+				}
+				if (self._suggestionList) {
+					var list = self._suggestionList;
+					if (e.keyCode === tui.KEY_DOWN) {
+						var r = list.activerow();
+						if (r === null || r >= list.data().length() - 1)
+							list.activerow(0);
+						else
+							list.activerow(r + 1);
+						if (list.activeItem()) {
+							list.scrollTo(list.activerow());
+							self.value(list.activeItem().key);
+						}
+						e.preventDefault();
+						e.stopPropagation();
+					} else if (e.keyCode === tui.KEY_UP) {
+						var r = list.activerow();
+						if (r === null || r <= 0)
+							list.activerow(list.data().length() - 1);
+						else
+							list.activerow(r - 1);
+						if (list.activeItem()) {
+							list.scrollTo(list.activerow());
+							self.value(list.activeItem().key);
+						}
+						e.preventDefault();
+						e.stopPropagation();
+					} else if (e.keyCode === tui.KEY_ENTER) {
+						if (self.readonly()) {
+							self._suggestionPopup.close();
+							self._textbox.focus();
+							return false;
+						}
+						if (list.activeItem()) {
+							self.value(list.activeItem().key);
+							self._suggestionPopup.close();
+							self._textbox.focus();
+							self.fire("change", { "ctrl": self[0], "event": e, "text": self.text() });
+						}
+					}
+				}
+				if (e.keyCode === tui.KEY_ENTER) {
 					this.doSubmit();
 				}
 			});
 		}
+
+		private showCalendar() {
+			var self = this;
+			var pop = tui.ctrl.popup();
+			var calendar = tui.ctrl.calendar();
+			calendar.time(self.value());
+			calendar.on("picked", (e) => {
+				if (self.readonly()) {
+					pop.close();
+					self.focus();
+					return false;
+				}
+				self.value(e["time"]);
+				pop.close();
+				self.focus();
+				if (self.fire("select", { ctrl: self[0], type: self.type(), time: e["time"] }) === false)
+					return;
+				self.doSubmit();
+			});
+			var calbox = document.createElement("div");
+			calbox.appendChild(calendar[0]);
+			var todayLink = document.createElement("a");
+			todayLink.innerHTML = "<i class='fa fa-clock-o'></i> " + tui.str("Today") + ": " + tui.formatDate(tui.today(), "yyyy-MM-dd");
+			todayLink.href = "javascript:void(0)";
+			$(todayLink).click(function (e) {
+				if (self.readonly()) {
+					pop.close();
+					self.focus();
+					return false;
+				}
+				self.value(tui.today());
+				pop.close();
+				self.focus();
+				if (self.fire("select", { ctrl: self[0], type: self.type(), time: e["time"] }) === false)
+					return;
+				self.doSubmit();
+			});
+			var todayLine = document.createElement("div");
+			todayLine.appendChild(todayLink);
+			todayLine.className = "tui-input-select-bar";
+			calbox.appendChild(todayLine);
+			pop.show(calbox, self[0], "Rb");
+			calendar.focus();
+		}
+
+		private showSingleSelect() {
+			var self = this;
+			var pop = tui.ctrl.popup();
+			var list = tui.ctrl.list();
+			list.consumeMouseWheelEvent(true);
+			list.rowcheckable(false);
+			list.on("rowclick", (data) => {
+				if (self.readonly()) {
+					pop.close();
+					self.focus();
+					return false;
+				}
+				self.selectValue([list.activeItem()]);
+				pop.close();
+				self.focus();
+				if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
+					return;
+				self.doSubmit();
+			});
+			list.on("keydown", (data) => {
+				if (data["event"].keyCode === 13) { // Enter
+					if (self.readonly()) {
+						pop.close();
+						self.focus();
+						return false;
+					}
+					if (list.activeItem())
+						self.selectValue([list.activeItem()]);
+					else
+						self.selectValue(null);
+					pop.close();
+					self.focus();
+					if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
+						return;
+					self.doSubmit();
+				}
+			});
+			list[0].style.width = self[0].offsetWidth - 2 + "px";
+			list.data(self._data);
+			pop.show(list[0], self[0], "Rb");
+
+			var items = self._data ? self._data.length() : 0;
+			if (items < 1)
+				items = 1;
+			else if (items > 8)
+				items = 8;
+
+			list[0].style.height = items * list.lineHeight() + 4 + "px";
+			list.refresh();
+			pop.refresh();
+			var val = this.selectValue();
+			if (val && val.length > 0) {
+				list.activeRowByKey(val[0].key);
+				list.scrollTo(list.activerow());
+			}
+			list.focus();
+		}
+
+		private showMultiSelect() {
+			var self = this;
+			var pop = tui.ctrl.popup();
+			var list = tui.ctrl.list();
+			list.consumeMouseWheelEvent(true);
+
+			var calbox = document.createElement("div");
+			calbox.appendChild(list[0]);
+
+			list[0].style.width = self[0].offsetWidth - 2 + "px";
+			list.data(self._data);
+			list.uncheckAllItems();
+			var keys = getKeys(this.selectValue());
+			list.checkItems(keys);
+			calbox.appendChild(list[0]);
+			var bar = document.createElement("div");
+			bar.className = "tui-input-select-bar";
+			calbox.appendChild(bar);
+			var okLink = document.createElement("a");
+			okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Accept");
+			okLink.href = "javascript:void(0)";
+			$(okLink).click(function (e) {
+				if (self.readonly()) {
+					pop.close();
+					self.focus();
+					return false;
+				}
+				self.selectValue(list.checkedItems());
+				pop.close();
+				self.focus();
+				if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
+					return;
+				self.doSubmit();
+			});
+			list.on("keydown", (data) => {
+				if (data["event"].keyCode === 13) { // Enter
+					if (self.readonly()) {
+						pop.close();
+						self.focus();
+						return false;
+					}
+					self.selectValue(list.checkedItems());
+					pop.close();
+					self.focus();
+					if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
+						return;
+					self.doSubmit();
+				}
+			});
+			bar.appendChild(okLink);
+
+			pop.show(calbox, self[0], "Rb");
+
+			var items = self._data ? self._data.length() : 0;
+			if (items < 1)
+				items = 1;
+			else if (items > 8)
+				items = 8;
+
+			list[0].style.height = items * list.lineHeight() + 4 + "px";
+			list.refresh();
+			pop.refresh();
+			list.focus();
+		}
+
+		private openPopup = (() => {
+			var self = this;
+			return function (e) {
+				if (self.type() === "calendar") {
+					self.showCalendar();
+				} else if (self.type() === "select") {
+					self.showSingleSelect();
+				} else if (self.type() === "multi-select") {
+					self.showMultiSelect();
+				} else if (self.type() === "file") {
+					// Don't need do anything
+				} else {
+					self.fire("btnclick", { "ctrl": self[0], "event": e });
+				}
+			}
+		})();
 
 		private makeFileUpload() {
 			if (this._binding)
@@ -452,6 +523,91 @@ module tui.ctrl {
 			return JSON.stringify(result);
 		}
 
+		openSuggestion(text: string) {
+			if (this.type() !== "text" && this.type() !== "custom-text") {
+				this._suggestionPopup && this._suggestionPopup.close();
+				return;
+			}
+			if (!this._data || (!this.anySuggestion() && (!text || text.length === 0))) {
+				this._suggestionPopup && this._suggestionPopup.close();
+				return;
+			}
+			if (this._suggestionText === text) {
+				return;
+			}
+			var max = this.maxSuggestions();
+			var suggestions = [];
+			for (var i = 0; i < this._data.length(); i++) {
+				var val: string = this._data.cell(i, "value");
+				var m = val.toLowerCase().indexOf(text.toLowerCase());
+				var sug = "";
+				if (m >= 0) {
+					sug += val.substring(0, m);
+					sug += "<b style='color:#000'>" + val.substr(m, text.length) + "</b>";
+					sug += val.substring(m + text.length);
+					suggestions.push({ key: val, value: sug });
+				} else {
+					var k = this._data.cell(i, "key");
+					if (k) {
+						m = k.toLowerCase().indexOf(text.toLowerCase());
+						if (m >= 0) {
+							suggestions.push({ key: val, value: val });
+						}
+					}
+				}
+				if (max && suggestions.length >= max)
+					break;
+			}
+			if (suggestions.length === 0) {
+				this._suggestionPopup && this._suggestionPopup.close();
+				return;
+			}
+			this._suggestionText = text;
+			suggestions.sort(function (a, b): number {
+				return a.key.localeCompare(b.key);
+			});
+			var self = this;
+			var pop = this._suggestionPopup;
+			var list = this._suggestionList;
+			if (this._suggestionPopup === null) {
+				pop = this._suggestionPopup = tui.ctrl.popup();
+				list = this._suggestionList = tui.ctrl.list();
+				this._suggestionPopup.owner(self._textbox);
+				list.consumeMouseWheelEvent(true);
+				list.rowcheckable(false);
+				list.on("rowmousedown", (data) => {
+					if (self.readonly()) {
+						pop.close();
+						self._textbox.focus();
+						return false;
+					}
+					self.value(list.activeItem().key);
+					pop.close();
+					self._textbox.focus();
+					self.fire("change", { "ctrl": self[0], "event": data["event"], "text": self.text() });
+					return;
+					self.doSubmit();
+				});
+				pop.on("close", function () {
+					self._suggestionPopup = null;
+					self._suggestionList = null;
+					self._suggestionText = null;
+				});
+				pop.show(list[0], self[0], "Rb");
+			}
+			list[0].style.width = self[0].offsetWidth - 2 + "px";
+			list.data(suggestions);
+			list.activerow(null);
+			var items = suggestions.length;
+			if (items < 1)
+				items = 1;
+			else if (items > 8)
+				items = 8;
+			list[0].style.height = items * list.lineHeight() + 4 + "px";
+			list.refresh();
+			pop.refresh();
+		}
+
 		useLabelClick(): boolean;
 		useLabelClick(val: boolean): Input;
 		useLabelClick(val?: boolean): any {
@@ -529,6 +685,31 @@ module tui.ctrl {
 						return null;
 					}
 				}
+			}
+		}
+
+		anySuggestion(): boolean;
+		anySuggestion(val: boolean): Input;
+		anySuggestion(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-any-suggestion", val);
+				return this;
+			} else
+				return this.is("data-any-suggestion");
+		}
+
+		maxSuggestions(): number;
+		maxSuggestions(val: number): Input;
+		maxSuggestions(val?: number): any {
+			if (typeof val === "number") {
+				this.attr("data-max-suggestions", Math.floor(val));
+				return this;
+			} else {
+				val = parseInt(this.attr("data-max-suggestions"));
+				if (isNaN(val))
+					return null
+				else
+					return val;
 			}
 		}
 
@@ -950,6 +1131,16 @@ module tui.ctrl {
 
 		autoRefresh(): boolean {
 			return !this._initialized;
+		}
+
+		focus() {
+			if (this.type() === "text" ||
+				this.type() === "password" ||
+				this.type() === "custom-text") {
+				setTimeout(() => { this._textbox.focus(); }, 0);
+			} else if (this[0]) {
+				setTimeout(() => { this[0].focus(); }, 0);
+			}
 		}
 
 		refresh() {
