@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<link href="../depends/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link rel="stylesheet" href="../tui/css/tui.min.css" type="text/css" />
+	<script src="../depends/jquery-1.11.0.js"></script>
+	<script src="../tui/tui.core.js"></script>
+	<script src="../tui/tui.time.js"></script>
+	<script src="../tui/tui.upload.js"></script>
+	<script src="../tui/tui.dataprovider.js"></script>
+	<script src="../tui/tui.ctrl.control.js"></script>
+	<script src="../tui/tui.ctrl.button.js"></script>
+	<script src="../tui/tui.ctrl.checkbox.js"></script>
+	<script src="../tui/tui.ctrl.radiobox.js"></script>
+	<script src="../tui/tui.ctrl.calendar.js"></script>
+	<script src="../tui/tui.ctrl.popup.js"></script>
+	<script src="../tui/tui.ctrl.dialog.js"></script>
+	<script src="../tui/tui.ctrl.scrollbar.js"></script>
+	<script src="../tui/tui.ctrl.table.js"></script>
+	<script src="../tui/tui.ctrl.grid.js"></script>
+	<script src="../tui/tui.ctrl.list.js"></script>
+	<script src="../tui/tui.ctrl.input.js"></script>
+	<script src="../tui/tui.ctrl.textarea.js"></script>
+	<script src="../tui/tui.ctrl.form.js"></script>
+	<script src="../tui/tui.ctrl.formagent.js"></script>
+	<script src="../tui/tui.ctrl.tab.js"></script>
+	<script src="../tui/tui.ctrl.paginator.js"></script>
+	<script src="../tui/tui.ctrl.tips.js"></script>
+	<script src="../tui/tui.ctrl.accordiongroup.js"></script>
+	<script src="../tui/tui.ctrl.accordion.js"></script>
+	<script src="../tui/tui.ctrl.menu.js"></script>
+	<script src="../tui/tui.ctrl.navbar.js"></script>
+	<script>
+		var userName = [
+			{value: 'test'}, 
+			{key:'zgyjdx,zhongguoyejindaxue',value: '中国冶金大学'}, 
+			{key:'bjjxgcxy,beijingjixiegongchengxueyuan',value: '北京机械工程学院'},
+			{key:'zgrmjfj301yy,zhongguorenminjiefangjun301yiyuan',value:'中国人民解放军301医院'},
+			{key:'bjljzy,beijinglunjunzongyuan',value:'北京陆军总院'},
+			{key:'zgrmyzdx,zhongguorenminyouzhengdaxue',value:'中国人民邮政大学'},
+			{key:'bjdx,beijingdaxue',value:'北京大学'},
+			{ key: 'njdx,nanjingdaxue', value: '南京大学' },
+			{ key: 'nkdx,nankaidaxue', value: '南开大学' },
+			{ key: 'zgshzgs,zhongguoshihuazonggongsi', value: '中国石化总公司' },
+			{ key: 'zgsyzgs,zhongguoshiyouzonggongsi', value: '中国石油总公司' }
+		];
+		$(function () {
+			tui.on("setval", function () {
+				tui.ctrl.input("testInput").value("中国");
+			});
+		});
+	</script>
+</head>
+<body>
+	<span id="testInput" class="tui-input" data-any-suggestion="true" data-max-suggestions="8" data-data="userName"></span>
+	<span class="tui-input" data-type="calendar"></span>
+	<span class="tui-input" data-data="userName" data-type="select"></span>
+	<span class="tui-input" data-data="userName" data-type="multi-select"></span>
+
+	<a id="setval" class="tui-button">赋值</a>
+</body>
+</html>
