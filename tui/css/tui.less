@@ -123,13 +123,17 @@ a {
 	display:inline-block;
 }
 
-.tui-label {
+.tui-label,.tui-label-white {
 	.btn;
 	margin:2px;
 	color: #000;
 	background-color:@captionColor;
 	border: 1px solid @borderColor;
 	.border-radius(@buttonBorderRadius);
+}
+.tui-label-white {
+	background:none;
+	border:none;
 }
 
 .tui-btn-group,.tui-input-group,.tui-paginator {

@@ -371,7 +371,7 @@ module tui {
 					response = doc.body.innerHTML;
 					if (settings.responseType && settings.responseType.toLowerCase() === 'json') {
 						if (doc.body.firstChild && doc.body.firstChild.nodeName.toUpperCase() === 'PRE') {
-							doc.normalize();
+							doc.normalize && doc.normalize();
 							response = doc.body.firstChild.firstChild.nodeValue;
 						}
 						if (response) {

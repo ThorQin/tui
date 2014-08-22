@@ -239,7 +239,7 @@ var doc;
                 var d = tb.data().src();
                 d.push(["", "", ""]);
                 tb.data(d);
-                tb.scrollTo(d.length - 1);
+                tb.editRow(d.length - 1);
             });
             function refreshTable() {
                 var dtype = tui.ctrl.formAgent("selectedDetail").value();

@@ -45,11 +45,76 @@
 			{ key: 'zgshzgs,zhongguoshihuazonggongsi', value: '中国石化总公司' },
 			{ key: 'zgsyzgs,zhongguoshiyouzonggongsi', value: '中国石油总公司' }
 		];
+		var sex = [
+			{ key: 0, value: "男" },
+			{ key: 1, value: "女" },
+		];
+		function choiceClass(data) {
+			tui.msgbox("选择班级");
+		}
+		var interesting = [
+			{ value: "读书" },
+			{ value: "旅游" },
+			{ value: "电影" },
+			{ value: "音乐" },
+			{ value: "爬山" },
+			{ value: "美食" },
+			{ value: "健身" },
+			{ value: "PC游戏" },
+			{ value: "XBOX" },
+			{ value: "PlayStation" },
+			{ value: "Wii" },
+			{ value: "写代码" }
+		];
+		var tbCols = [
+			{ key: 8, format: tui.ctrl.Grid.checkbox(), fixed:true, width:40},
+			{ name: "编号", key: 0 },
+			{ name: "姓名", key: 1, format: tui.ctrl.Grid.textEditor() },
+			{ name: "性别", key: 2, format: tui.ctrl.Grid.selector(sex) },
+			{ name: "兴趣", key: 3, format: tui.ctrl.Grid.textEditor(interesting) },
+			{ name: "年龄", key: 4, format: tui.ctrl.Grid.textEditor() },
+			{ name: "照片", key: 5, format: tui.ctrl.Grid.fileSelector("fileupload", "image/*") },
+			{ name: "所在班级", key: 6, format: tui.ctrl.Grid.customSelector(choiceClass) },
+			{ name: "出生日期", key: 7, format: tui.ctrl.Grid.calendarSelector() },
+			{ format: tui.ctrl.Grid.menu(interesting, null), align: "center" },
+			{ format: tui.ctrl.Grid.button("删除", null), align: "center" }
+			//{ format: tui.ctrl.Grid.button("<i class='fa fa-arrow-up'></i>", null), align: "center" }
+		];
+		var tbNormalCols = [
+			{ name: "编号", key: 0 },
+			{ name: "姓名", key: 1 },
+			{ name: "性别", key: 2 },
+			{ name: "兴趣", key: 3 },
+			{ name: "年龄", key: 4 },
+			{ name: "照片", key: 5 },
+			{ name: "所在班级", key: 6 },
+			{ name: "出生日期", key: 7 }
+		];
+		var tbData = [];
+		(function () {
+			for (var i = 0; i < 100; i++) {
+				tbData.push([
+					i, "某人" + i, Math.round(Math.random()), "",
+					Math.round(Math.random() * 100), null, "", null
+				]);
+			}
+		})();
 		$(function () {
+			var tb = tui.ctrl.grid("tbGrid");
 			tui.on("setval", function () {
 				tui.ctrl.input("testInput").value("中国");
 			});
+			tui.on("btnColDef", function (data) {
+				if (data.ctrl._ctrl.checked())
+					tb.columns(tbCols);
+				else
+					tb.columns(tbNormalCols);
+			});
+			tui.on("btnTest", function () {
+				tui.msgbox(tb[0].scrollTop);
+			});
 		});
+
 	</script>
 </head>
 <body>
@@ -59,5 +124,13 @@
 	<span class="tui-input" data-data="userName" data-type="multi-select"></span>
 
 	<a id="setval" class="tui-button">赋值</a>
+	<br>
+	<a id="btnColDef" class="tui-checkbox" data-checked="true">编辑模式</a>
+	<a id="btnTest" class="tui-button">测试</a>
+	<div id="tbGrid" class="tui-grid" data-columns="tbCols" 
+		 data-rowselectable="true" data-resizable="true" 
+		 data-data="tbData" style="width:1000px;height:400px"></div>
+
+
 </body>
 </html>

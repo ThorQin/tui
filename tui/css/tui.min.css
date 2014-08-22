@@ -1598,6 +1598,7 @@ a:hover {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+  z-index: 4;
 }
 .tui-grid .tui-scrollbar[data-direction=horizontal] {
   position: absolute;
@@ -1656,6 +1657,7 @@ a:hover {
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   color: #000000;
+  z-index: 3;
 }
 .tui-grid .tui-grid-cell,
 .tui-grid .tui-grid-head-cell {
@@ -1676,6 +1678,36 @@ a:hover {
   white-space: nowrap;
   height: 38px;
   line-height: 38px;
+}
+.tui-grid .tui-grid-cell .tui-button,
+.tui-grid .tui-grid-head-cell .tui-button {
+  margin-top: -4px;
+  margin-bottom: 0;
+  height: 28px;
+  line-height: 28px;
+  padding: 5px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: none;
+  color: black;
+  outline: none;
+  filter: none;
+  min-width: 20px;
+}
+.tui-grid .tui-grid-cell .tui-button.tui-grid-menu-button,
+.tui-grid .tui-grid-head-cell .tui-button.tui-grid-menu-button {
+  border: none;
+}
+.tui-grid .tui-grid-cell .tui-button:hover,
+.tui-grid .tui-grid-head-cell .tui-button:hover,
+.tui-grid .tui-grid-cell .tui-button.tui-focus,
+.tui-grid .tui-grid-head-cell .tui-button.tui-focus,
+.tui-grid .tui-grid-cell .tui-button:active,
+.tui-grid .tui-grid-head-cell .tui-button:active,
+.tui-grid .tui-grid-cell .tui-button.tui-actived,
+.tui-grid .tui-grid-head-cell .tui-button.tui-actived {
+  background: #ccc;
+  color: black;
 }
 .tui-grid .tui-grid-head-cell.tui-grid-sortable {
   cursor: pointer;
@@ -1712,18 +1744,6 @@ a:hover {
 .tui-grid .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;
 }
-.tui-grid .tui-grid-cell .tui-grid-text-editor {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  border: none;
-  outline: none;
-  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
-  padding: 0px 8px;
-  color: #555555;
-}
 .tui-grid .tui-grid-cell .tui-checkbox {
   color: #555555;
 }
@@ -1731,7 +1751,7 @@ a:hover {
 .tui-grid .tui-grid-cell .tui-checkbox.tui-actived {
   background: inherit;
 }
-.tui-grid .tui-grid-cell .tui-grid-selector {
+.tui-grid .tui-grid-cell .tui-grid-editor {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -1744,7 +1764,7 @@ a:hover {
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
-.tui-grid .tui-grid-cell .tui-grid-selector > span {
+.tui-grid .tui-grid-cell .tui-grid-editor > span {
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
@@ -1752,6 +1772,12 @@ a:hover {
   background: none;
   border-left: none;
   color: #555555;
+}
+.tui-grid .tui-grid-cell .tui-grid-editor.tui-focus {
+  z-index: 2;
+  -webkit-box-shadow: 0px 0px 7px #60a1d5;
+  -moz-box-shadow: 0px 0px 7px #60a1d5;
+  box-shadow: 0px 0px 7px #60a1d5;
 }
 .tui-grid .tui-grid-splitter {
   display: inline-block;
@@ -1774,7 +1800,7 @@ a:hover {
 .tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
-.tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+.tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
   background-color: #eeeeee;
 }
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected {
@@ -1786,15 +1812,25 @@ a:hover {
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox {
   color: #ffffff;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
   color: #ffffff;
   background-color: #017bce;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector > span {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > span,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > input {
   color: #ffffff;
 }
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #017bce;
+}
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button {
+  color: #ffffff;
+}
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:hover,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-focus,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:active,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-actived {
+  background: #006abd;
 }
 .tui-grid .tui-hidden {
   display: none;
@@ -1825,6 +1861,7 @@ a:hover {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+  z-index: 4;
 }
 .tui-list .tui-scrollbar[data-direction=horizontal] {
   position: absolute;
@@ -1883,6 +1920,7 @@ a:hover {
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   color: #000000;
+  z-index: 3;
 }
 .tui-list .tui-grid-cell,
 .tui-list .tui-grid-head-cell {
@@ -1903,6 +1941,36 @@ a:hover {
   white-space: nowrap;
   height: 30px;
   line-height: 30px;
+}
+.tui-list .tui-grid-cell .tui-button,
+.tui-list .tui-grid-head-cell .tui-button {
+  margin-top: -4px;
+  margin-bottom: 0;
+  height: 28px;
+  line-height: 28px;
+  padding: 5px;
+  padding-top: 0;
+  padding-bottom: 0;
+  background: none;
+  color: black;
+  outline: none;
+  filter: none;
+  min-width: 20px;
+}
+.tui-list .tui-grid-cell .tui-button.tui-grid-menu-button,
+.tui-list .tui-grid-head-cell .tui-button.tui-grid-menu-button {
+  border: none;
+}
+.tui-list .tui-grid-cell .tui-button:hover,
+.tui-list .tui-grid-head-cell .tui-button:hover,
+.tui-list .tui-grid-cell .tui-button.tui-focus,
+.tui-list .tui-grid-head-cell .tui-button.tui-focus,
+.tui-list .tui-grid-cell .tui-button:active,
+.tui-list .tui-grid-head-cell .tui-button:active,
+.tui-list .tui-grid-cell .tui-button.tui-actived,
+.tui-list .tui-grid-head-cell .tui-button.tui-actived {
+  background: #ccc;
+  color: black;
 }
 .tui-list .tui-grid-head-cell.tui-grid-sortable {
   cursor: pointer;
@@ -1939,18 +2007,6 @@ a:hover {
 .tui-list .tui-grid-cell.tui-grid-sort-cell {
   background-color: #f8f8f8;
 }
-.tui-list .tui-grid-cell .tui-grid-text-editor {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  border: none;
-  outline: none;
-  font: normal 14px 'Microsoft Yahei', Arial, Verdana;
-  padding: 0px 8px;
-  color: #555555;
-}
 .tui-list .tui-grid-cell .tui-checkbox {
   color: #555555;
 }
@@ -1958,7 +2014,7 @@ a:hover {
 .tui-list .tui-grid-cell .tui-checkbox.tui-actived {
   background: inherit;
 }
-.tui-list .tui-grid-cell .tui-grid-selector {
+.tui-list .tui-grid-cell .tui-grid-editor {
   position: absolute;
   left: 0px;
   top: 0px;
@@ -1971,7 +2027,7 @@ a:hover {
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
-.tui-list .tui-grid-cell .tui-grid-selector > span {
+.tui-list .tui-grid-cell .tui-grid-editor > span {
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
@@ -1979,6 +2035,12 @@ a:hover {
   background: none;
   border-left: none;
   color: #555555;
+}
+.tui-list .tui-grid-cell .tui-grid-editor.tui-focus {
+  z-index: 2;
+  -webkit-box-shadow: 0px 0px 7px #60a1d5;
+  -moz-box-shadow: 0px 0px 7px #60a1d5;
+  box-shadow: 0px 0px 7px #60a1d5;
 }
 .tui-list .tui-grid-splitter {
   display: inline-block;
@@ -2001,7 +2063,7 @@ a:hover {
 .tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
-.tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+.tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
   background-color: #eeeeee;
 }
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected {
@@ -2013,15 +2075,25 @@ a:hover {
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox {
   color: #ffffff;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
   color: #ffffff;
   background-color: #017bce;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-selector > span {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > span,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > input {
   color: #ffffff;
 }
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
   background-color: #017bce;
+}
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button {
+  color: #ffffff;
+}
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:hover,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-focus,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:active,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-actived {
+  background: #006abd;
 }
 .tui-list .tui-hidden {
   display: none;
@@ -2401,7 +2473,8 @@ a:hover {
   text-decoration: none;
   display: inline-block;
 }
-.tui-label {
+.tui-label,
+.tui-label-white {
   font: normal 14px 'Microsoft Yahei', Arial, Verdana;
   padding: 6px 14px;
   text-align: center;
@@ -2415,6 +2488,10 @@ a:hover {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
+}
+.tui-label-white {
+  background: none;
+  border: none;
 }
 .tui-btn-group,
 .tui-input-group,

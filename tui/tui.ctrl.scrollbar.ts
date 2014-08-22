@@ -186,8 +186,9 @@ module tui.ctrl {
 					pos = beginLeft + diff;
 				}
 				self.value(self.posToValue(pos));
-				if (oldValue !== self.value())
-					self.fire("scroll", { value: self.value(), type:"drag"});
+				if (oldValue !== self.value()) {
+					self.fire("scroll", { value: self.value(), type: "drag" });
+				}
 			}
 
 			function dragEnd(e) {
