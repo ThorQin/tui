@@ -70,7 +70,11 @@ module tui.ctrl {
 		private _noRefresh = false;
 		private _initialized = false;
 		//private _initInterval = null;
+		
+		// Following variables are very useful when grid switch to edit mode 
+		// because grid cell need spend more time to draw.
 		private _drawingTimer = null;
+		private _delayDrawing = true;
 
 		constructor(el?: HTMLElement) {
 			super("div", Grid.CLASS, el);
@@ -96,21 +100,25 @@ module tui.ctrl {
 			this._space = document.createElement("span");
 			this._space.className = "tui-scroll-space";
 			this[0].appendChild(this._space);
-
+			var scrollTimeDelay = (tui.ieVer > 8 ? 100 : 50);
 			this._vscroll.on("scroll", function (data) {
-				var diff = Math.abs(data["value"] - self._scrollTop);
-				self._scrollTop = data["value"];
-				if (diff < 3 * self._lineHeight && self._drawingTimer === null) {
+				if (!self._delayDrawing) {
+					self._scrollTop = data["value"];
 					self.drawLines();
 				} else {
-					self.drawLines(true);
-					if (self._drawingTimer !== null)
-						clearTimeout(self._drawingTimer);
-					self._drawingTimer = setTimeout(function () {
-						self.clearBufferLines();
+					var diff = Math.abs(data["value"] - self._scrollTop);
+					self._scrollTop = data["value"];
+					if (diff < 3 * self._lineHeight && self._drawingTimer === null) {
 						self.drawLines();
-						self._drawingTimer = null;
-					}, 40); 
+					} else {
+						self.drawLines(true);
+						clearTimeout(self._drawingTimer);
+						self._drawingTimer = setTimeout(function () {
+							self.clearBufferLines();
+							self.drawLines();
+							self._drawingTimer = null;
+						}, scrollTimeDelay);
+					}
 				}
 			});
 			this._hscroll.on("scroll", function (data) {
@@ -248,6 +256,10 @@ module tui.ctrl {
 					}
 				}
 			});
+
+			if (this.hasAttr("data-delay-drawing"))
+				this._delayDrawing = this.is("data-delay-drawing");
+
 			var predefined: any = this.attr("data-data");
 			if (predefined)
 				predefined = eval("(" + predefined + ")");
@@ -636,60 +648,72 @@ module tui.ctrl {
 			return this._selectrows.indexOf(rowIndex) >= 0;
 		}
 
-		private drawLine(line: HTMLDivElement, index: number, bindEvent: boolean = false, empty: boolean = false) {
-			var self = this;
+		private drawLine(line: HTMLDivElement, index: number, empty: boolean) {
 			var columns = this.myColumns();
-			var data = this.myData();
-			//var rowData = data.at(index);
+			
 			if (line.childNodes.length !== columns.length) {
 				line.innerHTML = "";
+				var rowSel = this.rowselectable();
 				for (var i = 0; i < columns.length; i++) {
 					var cell = document.createElement("span");
-					if (this.rowselectable())
-						cell.setAttribute("unselectable", "on");
+					//if (rowSel)
+					//	cell.setAttribute("unselectable", "on");
 					cell.className = "tui-grid-cell tui-grid-" + this._tableId + "-" + i;
-					var contentSpan = document.createElement("span");
-					contentSpan.className = "tui-grid-cell-content";
-					cell.appendChild(contentSpan);
 					line.appendChild(cell);
 				}
 			}
-			if (!empty) {
-				var rowData = data.at(index);
-				for (var i = 0; i < line.childNodes.length; i++) {
-					var cell = <HTMLSpanElement>line.childNodes[i];
-					var col = columns[i];
-					var key = null;
-					if (typeof col.key !== tui.undef)
-						key = data.mapKey(col.key);
-					var value = (key !== null && rowData ? rowData[key] : "");
-					this.drawCell(cell, <HTMLSpanElement>cell.firstChild, col, key, value, rowData, index, i);
-				}
-			}
-
-			if (!bindEvent)
+			if (empty) {
 				return;
-			$(line).on("contextmenu", function (e) {
+			}
+			
+			var self = this;
+			var data = this.myData();
+			var rowData = data.at(index);
+			for (var i = 0; i < line.childNodes.length; i++) {
+				var cell = <HTMLSpanElement>line.childNodes[i];
+				cell.innerHTML = "";
+				var contentSpan = document.createElement("span");
+				contentSpan.className = "tui-grid-cell-content";
+				cell.appendChild(contentSpan);
+				var col = columns[i];
+				var key = null;
+				if (typeof col.key !== tui.undef)
+					key = data.mapKey(col.key);
+				var value = (key !== null && rowData ? rowData[key] : "");
+				this.drawCell(cell, contentSpan, col, key, value, rowData, index, i);
+			}
+			var jqLine = $(line);
+			jqLine.on("contextmenu", function (e) {
 				var index = line["_rowIndex"];
 				self.fire("rowcontextmenu", {"event": e, "index": index, "row": line });
 			});
-			$(line).mousedown(function (e) {
+			//if (self.rowdraggable()) {
+			//	jqLine.attr("draggable", "true");
+			//	line.ondragstart = function () {
+			//		//alert("dragstart");
+			//	};
+
+			//}
+			jqLine.mousedown(function (e) {
 				var index = line["_rowIndex"];
 				if (self.rowselectable()) {
 					self.activerow(index);
 					self.scrollTo(index);
 				}
+				//if (self.rowdraggable() && line.dragDrop) {
+				//	line.dragDrop();
+				//}
 				self.fire("rowmousedown", { "event": e, "index": index, "row": line });
 			});
-			$(line).mouseup( function (e) {
+			jqLine.mouseup( function (e) {
 				var index = line["_rowIndex"];
 				self.fire("rowmouseup", { "event": e, "index": index, "row": line });
 			});
-			$(line).on("click", function (e) {
+			jqLine.on("click", function (e) {
 				var index = line["_rowIndex"];
 				self.fire("rowclick", { "event": e, "index": index, "row": line });
 			});
-			$(line).on("dblclick", function (e) {
+			jqLine.on("dblclick", function (e) {
 				var index = line["_rowIndex"];
 				self.fire("rowdblclick", { "event": e, "index": index, "row": line });
 			});
@@ -715,10 +739,11 @@ module tui.ctrl {
 				} else {
 					var line = document.createElement("div");
 					line.className = "tui-grid-line";
-					this[0].insertBefore(line, this._headline);
+					//this[0].insertBefore(line, this._headline);
+					this[0].appendChild(line);
 					newBuffer.push(line);
 					line["_rowIndex"] = i;
-					this.drawLine(line, i, true, empty);
+					this.drawLine(line, i, empty);
 					this.moveLine(line, i - begin, base);
 				}
 				if (this.isRowSelected(i)) {
@@ -907,6 +932,17 @@ module tui.ctrl {
 			this.refresh();
 		}
 
+		delayDrawing(): boolean;
+		delayDrawing(val: boolean): Grid;
+		delayDrawing(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-delay-drawing", val);
+				this._delayDrawing = val;
+				return this;
+			} else
+				return this._delayDrawing;
+		}
+
 		hasHScroll(): boolean;
 		hasHScroll(val: boolean): Grid;
 		hasHScroll(val?: boolean): any {
@@ -958,6 +994,16 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.is("data-rowselectable");
+		}
+
+		rowdraggable(): boolean;
+		rowdraggable(val: boolean): Grid;
+		rowdraggable(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-rowdraggable", val);
+				return this;
+			} else
+				return this.is("data-rowdraggable");
 		}
 
 		scrollTo(rowIndex: number) {
@@ -1358,11 +1404,10 @@ module tui.ctrl {
 				handleKeyDownEvent(e, data, type);
 			});
 
-			editor.value(data.value);
 			editor[0].style.width = $(data.cell).innerWidth() - 1 + "px";
 			editor[0].style.height = $(data.cell).innerHeight() + "px";
 			data.cell.appendChild(editor[0]);
-			editor.refresh();
+			editor.value(data.value);
 		};
 	}
 

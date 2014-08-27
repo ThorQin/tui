@@ -80,26 +80,35 @@ module tui.ctrl {
 				}]);
 			}
 			this._grid.on("rowclick", (data) => {
-				this.fire("rowclick", data);
+				return this.fire("rowclick", data);
 			});
 			this._grid.on("rowdblclick", (data) => {
-				this.fire("rowdblclick", data);
+				return this.fire("rowdblclick", data);
 			});
 			this._grid.on("rowmousedown", (data) => {
-				this.fire("rowmousedown", data);
+				return this.fire("rowmousedown", data);
+			});
+			this._grid.on("rowdragstart", (data) => {
+				return this.fire("rowdragstart", data);
+			});
+			this._grid.on("rowdragover", (data) => {
+				return this.fire("rowdragover", data);
+			});
+			this._grid.on("rowdragend", (data) => {
+				return this.fire("rowdragend", data);
 			});
 			this._grid.on("rowmouseup", (data) => {
-				this.fire("rowmouseup", data);
+				return this.fire("rowmouseup", data);
 			});
 			this._grid.on("rowcontextmenu", (data) => {
-				this.fire("rowcontextmenu", data);
+				return this.fire("rowcontextmenu", data);
 			});
 			this._grid.on("resizecolumn", (data) => {
-				this.fire("resizecolumn", data);
+				return this.fire("resizecolumn", data);
 			});
 			this._grid.on("keydown", (data) => {
 				if (this.fire("keydown", data) === false)
-					return;
+					return false;
 				var keyCode = data["event"].keyCode;
 				if (keyCode === 32) {
 					var activeRowIndex = self._grid.activerow();
@@ -145,9 +154,10 @@ module tui.ctrl {
 						this.onCheckRow(row, activeRowIndex, data["event"]);
 					}
 				}
-				this.fire("keyup", data);
+				return this.fire("keyup", data);
 			});
-
+			if (!this.hasAttr("data-delay-drawing"))
+				this.delayDrawing(false);
 			if (!this.hasAttr("data-rowselectable"))
 				this.rowselectable(true);
 			if (!this.hasAttr("data-rowcheckable"))
@@ -467,6 +477,12 @@ module tui.ctrl {
 			this._grid.autofitColumn(columnIndex, expandOnly, displayedOnly);
 		}
 
+		delayDrawing(): boolean;
+		delayDrawing(val: boolean): List;
+		delayDrawing(val?: boolean): any {
+			return this._grid.delayDrawing(val);
+		}
+
 		hasHScroll(): boolean;
 		hasHScroll(val: boolean): List;
 		hasHScroll(val?: boolean): any {
@@ -477,6 +493,12 @@ module tui.ctrl {
 		columns(val?: GridColumn[]): List;
 		columns(val?: GridColumn[]): any {
 			return this._grid.columns(val);
+		}
+
+		rowdragable(): boolean;
+		rowdragable(val: boolean): List;
+		rowdragable(val?: boolean): any {
+			return this._grid.rowdragable(val);
 		}
 
 		rowselectable(): boolean;

@@ -15,8 +15,27 @@ var docTableCol = [
 	{ name: "描述", key: 2, format: tui.ctrl.Grid.textEditor() },
 	{
 		name: "", format: tui.ctrl.Grid.menu(detailItemMenu, function (item, data) {
-			array.splice(data.rowIndex, 1);
-			tb.data(array);
+			var array = data.grid.data().src();
+			if (item.key === "delete") {
+				array.splice(data.rowIndex, 1);
+				data.grid.data(array);
+			} else if (item.key === "moveUp") {
+				if (data.rowIndex > 0) {
+					var tmp = array[data.rowIndex - 1];
+					array[data.rowIndex - 1] = array[data.rowIndex];
+					array[data.rowIndex] = tmp;
+					data.grid.data(array);
+				}
+			} else if (item.key === "moveDown") {
+				if (data.rowIndex < array.length - 1) {
+					var tmp = array[data.rowIndex + 1];
+					array[data.rowIndex + 1] = array[data.rowIndex];
+					array[data.rowIndex] = tmp;
+					data.grid.data(array);
+				}
+			}
+			
+			
 		}),	width: 32, fixed:true
 	},
 ];

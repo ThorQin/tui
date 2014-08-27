@@ -4,15 +4,15 @@
 	<meta charset="utf-8" />
 	<title>TUI.JS Editor</title>
 	<!--#DEPENDS STYLE#-->
-	<link href="../js/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link href="../js/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
 	<!--#TUI STYLE#-->
 	<link rel="stylesheet" href="../js/tui/css/tui.min.css" type="text/css" />
 	<!-- Page related css -->
 	<link rel="stylesheet" href="../css/main.min.css" type="text/css" />
 	<!--#DEPENDS LIBRARY#-->
-	<script src="../js/jquery-1.11.0.js"></script>
+	<script src="../js/jquery-1.11.1.min.js"></script>
 	<!--#TUI BEGIN#-->
-	<script src="../js/tui/tui.all.js"></script>
+	<script src="../js/tui/tui.all.min.js"></script>
 	<script src="../js/tui/lang/zh-cn.js"></script>
 	<script src="../js/tui/lang/en-us.js"></script>
 	<script src="../js/docmaker.js"></script>
@@ -62,7 +62,7 @@
 		$(function () {
 			var content;
 			var modified = false;
-			var docmaker = new doc.DocMaker("docIndex", "docContent", "../image", true);
+			var docmaker = new doc.DocMaker("docIndex", "docContent", true);
 			docmaker.on("changed", function () {
 				modified = true;
 			});

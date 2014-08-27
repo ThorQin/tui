@@ -2,9 +2,9 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<link href="../depends/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link href="../depends/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
 	<link rel="stylesheet" href="../tui/css/tui.min.css" type="text/css" />
-	<script src="../depends/jquery-1.11.0.js"></script>
+	<script src="../depends/jquery-1.11.1.js"></script>
 	<script src="../tui/tui.core.js"></script>
 	<script src="../tui/tui.time.js"></script>
 	<script src="../tui/tui.upload.js"></script>
@@ -44,6 +44,22 @@
 			{ key: 'nkdx,nankaidaxue', value: '南开大学' },
 			{ key: 'zgshzgs,zhongguoshihuazonggongsi', value: '中国石化总公司' },
 			{ key: 'zgsyzgs,zhongguoshiyouzonggongsi', value: '中国石油总公司' }
+		];
+
+		var tbMoney = {
+			head: ["key", "value", "checked"],
+			data: [
+				[0, "人民币", false],
+				[1, "美元", false],
+				[2, "欧元", false],
+				[3, "卢布", false]
+			]
+		};
+		var tbMoneyKV = [
+			{key:0, value:"人民币", checked:false},
+			{ key: 1, value: "美元", checked: false },
+			{ key: 2, value: "欧元", checked: false },
+			{ key: 3, value: "卢布", checked: false }
 		];
 		var sex = [
 			{ key: 0, value: "男" },
@@ -88,14 +104,28 @@
 			{ name: "年龄", key: 4 },
 			{ name: "照片", key: 5 },
 			{ name: "所在班级", key: 6 },
-			{ name: "出生日期", key: 7 }
+			{ name: "出生日期", key: 7 },
+			{ name: "编号", key: 0 },
+			{ name: "姓名", key: 1 },
+			{ name: "性别", key: 2 },
+			{ name: "兴趣", key: 3 },
+			{ name: "年龄", key: 4 },
+			{ name: "照片", key: 5 },
+			{ name: "所在班级", key: 6 },
+			{ name: "编号", key: 0 },
+			{ name: "姓名", key: 1 },
+			{ name: "性别", key: 2 },
+			{ name: "兴趣", key: 3 },
+			{ name: "年龄", key: 4 },
+			{ name: "照片", key: 5 },
+			{ name: "所在班级", key: 6 }
 		];
 		var tbData = [];
 		(function () {
-			for (var i = 0; i < 100; i++) {
+			for (var i = 0; i < 10000; i++) {
 				tbData.push([
 					i, "某人" + i, Math.round(Math.random()), "",
-					Math.round(Math.random() * 100), null, "", null
+					Math.round(Math.random() * 100), null, "test", null
 				]);
 			}
 		})();
@@ -110,15 +140,27 @@
 				else
 					tb.columns(tbNormalCols);
 			});
-			tui.on("btnTest", function () {
-				tui.msgbox(tb[0].scrollTop);
+
+			$("#dd").on("dragstart", function (e) {
+				e.originalEvent.dataTransfer.effectAllowed = "move";
+				e.stopPropagation();
 			});
+			$("#dd").on("mousedown", function (e) {
+				if (e.originalEvent.srcElement && e.originalEvent.srcElement.dragDrop)
+					e.originalEvent.srcElement.dragDrop();
+			});
+			$("#dd").on("dragenter", function (e) {
+				e.originalEvent.dataTransfer.dropEffect = 'move';
+				e.stopPropagation();
+			});
+			$("#dd").attr("unselectable", "on");
+
 		});
 
 	</script>
 </head>
 <body>
-	<span id="testInput" class="tui-input" data-any-suggestion="true" data-max-suggestions="8" data-data="userName"></span>
+	<span id="testInput" class="tui-input" data-empty-suggestion="false" data-max-suggestions="8" data-data="userName"></span>
 	<span class="tui-input" data-type="calendar"></span>
 	<span class="tui-input" data-data="userName" data-type="select"></span>
 	<span class="tui-input" data-data="userName" data-type="multi-select"></span>
@@ -126,11 +168,28 @@
 	<a id="setval" class="tui-button">赋值</a>
 	<br>
 	<a id="btnColDef" class="tui-checkbox" data-checked="true">编辑模式</a>
-	<a id="btnTest" class="tui-button">测试</a>
+
 	<div id="tbGrid" class="tui-grid" data-columns="tbCols" 
 		 data-rowselectable="true" data-resizable="true" 
+		 data-rowdraggable="true"
 		 data-data="tbData" style="width:1000px;height:400px"></div>
 
+	<a class="tui-button" data-menu="[
+		{key:'k1', value:'菜单1'},
+		{key:'k2', value:'菜单2', children:[
+			{key:'k1', value:'菜单1'},
+			{key:'k2', value:'菜单2'},
+			{key:'k3', value:'菜单3'}
+			]},
+		{key:'k3', value:'菜单3'}
+		]">一个按钮</a>
+
+	<div id="dd" draggable="true" >
+		<div style="width:100px;height:100px;">
+			drag me
+		</div>
+		
+	</div>
 
 </body>
 </html>

@@ -10,14 +10,12 @@
 	export class DocMaker extends tui.EventObject {
 		private _catalog: any;
 		private _div: HTMLElement;
-		private _imagePath: string;
 		private _edit: boolean;
 		private _doc: any;
 
-		constructor(catalog: any, contentDiv: any, imagePath: string = "image", edit: boolean = false) {
+		constructor(catalog: any, contentDiv: any, edit: boolean = false) {
 			super();
 			this._edit = edit;
-			this._imagePath = imagePath;
 			if (typeof catalog === "string") {
 				this._catalog = document.getElementById(catalog)["_ctrl"];
 			} else if (typeof catalog === "object" && catalog)
@@ -180,7 +178,7 @@
 				}
 				if (item.pic) {
 					var img = document.createElement("img");
-					img.src = this._imagePath + "/" + item.pic;
+					img.src = item.pic;
 					img.className = "doc-pic";
 					container.appendChild(img);
 				}
@@ -193,6 +191,7 @@
 						container.appendChild(childDiv);
 					}
 				}
+				tui.ctrl.initCtrls(container);
 			};
 			item.refresh();
 		}
@@ -200,6 +199,11 @@
 		private showCaptionDialog(parent: any, item?: any) {
 			var dlg = tui.ctrl.dialog();
 			var self = this;
+			var itemClone: any = item ? tui.clone(item) : {};
+			for (var n in tableType) {
+				if (!itemClone.hasOwnProperty(n) || itemClone[n] === null)
+					itemClone[n] = [];
+			}
 			dlg.showResource("captionDlg",
 				"段落", [
 					{
@@ -217,14 +221,27 @@
 								item.pic = val.pic;
 								item.code = val.code;
 								item.index = val.index;
+								for (var n in tableType) {
+									if (itemClone[n].length > 0)
+										item[n] = itemClone[n];
+									else
+										delete item[n];
+								}
 								item.refresh();
 							} else {
+								if (typeof val.id !== tui.undef)
+									itemClone.id = val.id;
+								itemClone.name = val.name;
+								itemClone.desc = val.desc;
+								itemClone.pic = val.pic;
+								itemClone.code = val.code;
+								itemClone.index = val.index;
 								var items;
 								if (parent.content)
 									items = parent.content;
 								else
 									items = parent.content = [];
-								items.push(val);
+								items.push(itemClone);
 								parent.refresh();
 							}
 							dlg.close();
@@ -246,17 +263,16 @@
 			});
 			function refreshTable() {
 				var dtype = tui.ctrl.formAgent("selectedDetail").value();
-				var d = item[dtype] || [];
-				tb.data(d);
+				tb.data(itemClone[dtype]);
 			}
 			tui.on("param ret method event prop const", function () {
 				refreshTable();
 			});
-			if (item) {
-				if (parent === null) {
+			if (itemClone) {
+				if (parent === null) { // For root item only
 					tui.removeNode(document.getElementById("lineItemId"));
 				}
-				tui.ctrl.input("itemForm").value(item);
+				tui.ctrl.input("itemForm").value(itemClone);
 				refreshTable();
 			} 
 		}

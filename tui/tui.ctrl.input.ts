@@ -120,10 +120,9 @@ module tui.ctrl {
 			}
 			if (!this.hasAttr("data-label-click"))
 				this.useLabelClick(true);
+			if (!this.hasAttr("data-empty-suggestion"))
+				this.emptySuggestion(true);
 			this.value(this.value());
-			if (!this.hasAttr("data-any-suggestion"))
-				this.anySuggestion(true);
-			//this.refresh();
 		}
 
 		private doSubmit() {
@@ -288,7 +287,7 @@ module tui.ctrl {
 					self.focus();
 					return false;
 				}
-				self.selectValue([list.activeItem()]);
+				self.selectValue(self.getKeyValue([list.activeItem()]));
 				pop.close();
 				self.focus();
 				if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
@@ -303,7 +302,7 @@ module tui.ctrl {
 						return false;
 					}
 					if (list.activeItem())
-						self.selectValue([list.activeItem()]);
+						self.selectValue(self.getKeyValue([list.activeItem()]));
 					else
 						self.selectValue(null);
 					pop.close();
@@ -361,7 +360,7 @@ module tui.ctrl {
 					self.focus();
 					return false;
 				}
-				self.selectValue(list.checkedItems());
+				self.selectValue(self.getKeyValue(list.checkedItems()));
 				pop.close();
 				self.focus();
 				if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
@@ -375,7 +374,7 @@ module tui.ctrl {
 						self.focus();
 						return false;
 					}
-					self.selectValue(list.checkedItems());
+					self.selectValue(self.getKeyValue(list.checkedItems()));
 					pop.close();
 					self.focus();
 					if (self.fire("select", { ctrl: self[0], type: self.type(), checkedItems: list.checkedItems() }) === false)
@@ -490,9 +489,9 @@ module tui.ctrl {
 			for (var i = 0; i < val.length; i++) {
 				if (text.length > 0)
 					text += "; ";
-				var t = map[val[i][self._keyColumKey]];
+				var t = map[val[i].key];
 				if (typeof t === tui.undef)
-					t = validText(val[i][self._valueColumnKey]);
+					t = validText(val[i].value);
 				else
 					t = validText(t);
 				text += t;
@@ -510,7 +509,7 @@ module tui.ctrl {
 				return key;
 		}
 
-		private onlyKeyValue(value: any[]) {
+		private getKeyValue(value: any[]) {
 			var result: any[] = [];
 			for (var i = 0; i < value.length; i++) {
 				if (typeof value[i][this._keyColumKey] !== tui.undef) {
@@ -520,7 +519,7 @@ module tui.ctrl {
 					result.push(item);
 				}
 			}
-			return JSON.stringify(result);
+			return result;
 		}
 
 		openSuggestion(text: string) {
@@ -528,7 +527,7 @@ module tui.ctrl {
 				this._suggestionPopup && this._suggestionPopup.close();
 				return;
 			}
-			if (!this._data || (!this.anySuggestion() && (!text || text.length === 0))) {
+			if (!this._data || (!this.emptySuggestion() && (!text || text.length === 0))) {
 				this._suggestionPopup && this._suggestionPopup.close();
 				return;
 			}
@@ -539,7 +538,9 @@ module tui.ctrl {
 			var suggestions = [];
 			for (var i = 0; i < this._data.length(); i++) {
 				var val: string = this._data.cell(i, "value");
-				var m = val.toLowerCase().indexOf(text.toLowerCase());
+				var m = -1;
+				if (typeof val !== undef && val !== null)
+					m = val.toLowerCase().indexOf(text.toLowerCase());
 				var sug = "";
 				if (m >= 0) {
 					sug += val.substring(0, m);
@@ -548,8 +549,9 @@ module tui.ctrl {
 					suggestions.push({ key: val, value: sug });
 				} else {
 					var k = this._data.cell(i, "key");
-					if (k) {
-						m = k.toLowerCase().indexOf(text.toLowerCase());
+					if (typeof k !== undef && k !== null) {
+
+						m = (k+"").toLowerCase().indexOf(text.toLowerCase());
 						if (m >= 0) {
 							suggestions.push({ key: val, value: val });
 						}
@@ -688,14 +690,14 @@ module tui.ctrl {
 			}
 		}
 
-		anySuggestion(): boolean;
-		anySuggestion(val: boolean): Input;
-		anySuggestion(val?: boolean): any {
+		emptySuggestion(): boolean;
+		emptySuggestion(val: boolean): Input;
+		emptySuggestion(val?: boolean): any {
 			if (typeof val === "boolean") {
-				this.is("data-any-suggestion", val);
+				this.is("data-empty-suggestion", val);
 				return this;
 			} else
-				return this.is("data-any-suggestion");
+				return this.is("data-empty-suggestion");
 		}
 
 		maxSuggestions(): number;
@@ -816,7 +818,7 @@ module tui.ctrl {
 		}
 
 		text(): string;
-		text(txt?: string): Input;
+		text(txt: string): Input;
 		text(txt?: string): any {
 			var type = this.type();
 			if (typeof txt === "string") {
@@ -875,7 +877,7 @@ module tui.ctrl {
 				return this._data;
 		}
 
-
+		// Display value with specified text
 		valueHasText(): boolean;
 		valueHasText(val: boolean): Input;
 		valueHasText(val?: boolean): any {
@@ -931,7 +933,7 @@ module tui.ctrl {
 			if (typeof val !== tui.undef) {
 				if (type === "select" || type === "multi-select") {
 					if (val && typeof val.length === "number") {
-						this.attr("data-value", this.onlyKeyValue(val));
+						this.attr("data-value", JSON.stringify(val));
 						this.attr("data-text", this.formatSelectTextByData(val));
 						this._invalid = false;
 					} else if (val === null) {
@@ -1017,6 +1019,23 @@ module tui.ctrl {
 				} else if (type === "text" || type === "password" || type === "custom-text") {
 					this.attr("data-text", val);
 					this.attr("data-value", val);
+					this._invalid = false;
+					this._initialized = false;
+					this.refresh();
+				} else if (type === "custom-select") {
+					if (val.key && val.value) {
+						this.attr("data-value", val.key);
+						this.attr("data-text", val.value);
+					} else if (val.key) {
+						this.attr("data-value", val.key);
+						this.attr("data-text", val.key);
+					} else if (val.value) {
+						this.attr("data-value", val.value);
+						this.attr("data-text", val.value);
+					} else {
+						this.attr("data-value", val);
+						this.attr("data-text", val);
+					}
 					this._invalid = false;
 					this._initialized = false;
 					this.refresh();
@@ -1144,7 +1163,13 @@ module tui.ctrl {
 		}
 
 		refresh() {
-			if (!this[0] || this[0].offsetWidth === 0 || this[0].offsetHeight === 0)
+			if (!this[0] || this._initialized)
+				return;
+
+			// IE8 hack (first get element width or height obtain zero)
+			this[0].offsetWidth || this[0].offsetHeight; 
+
+			if (this[0].offsetWidth <= 0 || this[0].offsetHeight <= 0)
 				return;
 			this._initialized = true;
 
