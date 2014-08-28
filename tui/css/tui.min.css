@@ -11,7 +11,7 @@
   right: 0;
   bottom: 0;
   cursor: default;
-  z-index: 2147483647;
+  z-index: 2147483646;
 }
 .tui-round {
   -webkit-border-radius: 3px;
@@ -899,7 +899,7 @@ a:hover {
   left: 0;
   top: 0;
   outline: none;
-  z-index: 2147483645;
+  z-index: 2147483644;
   -webkit-box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.3);
   -moz-box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.3);
   box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.3);
@@ -923,7 +923,7 @@ a:hover {
   background-color: #888;
   opacity: 0.5;
   filter: alpha(opacity=50);
-  z-index: 2147483644;
+  z-index: 2147483643;
 }
 .tui-dialog {
   outline: none;
@@ -938,7 +938,7 @@ a:hover {
   -webkit-box-shadow: 0px 1px 30px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0px 1px 30px rgba(0, 0, 0, 0.5);
   box-shadow: 0px 1px 30px rgba(0, 0, 0, 0.5);
-  z-index: 2147483644;
+  z-index: 2147483643;
   text-align: left;
 }
 .tui-dialog > div {
@@ -1598,7 +1598,7 @@ a:hover {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  z-index: 4;
+  z-index: 5;
 }
 .tui-grid .tui-scrollbar[data-direction=horizontal] {
   position: absolute;
@@ -1657,7 +1657,7 @@ a:hover {
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   color: #000000;
-  z-index: 3;
+  z-index: 4;
 }
 .tui-grid .tui-grid-cell,
 .tui-grid .tui-grid-head-cell {
@@ -1774,7 +1774,7 @@ a:hover {
   color: #555555;
 }
 .tui-grid .tui-grid-cell .tui-grid-editor.tui-focus {
-  z-index: 2;
+  z-index: 3;
   -webkit-box-shadow: 0px 0px 7px #60a1d5;
   -moz-box-shadow: 0px 0px 7px #60a1d5;
   box-shadow: 0px 0px 7px #60a1d5;
@@ -1794,42 +1794,66 @@ a:hover {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
-.tui-grid .tui-grid-line.tui-grid-line-selected {
+.tui-grid .tui-grid-line-drop {
+  display: block;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  background: none;
+  border: 2px dotted red;
+  z-index: 2;
+}
+.tui-grid .tui-grid-line.tui-grid-line-selected,
+.tui-grid .tui-grid-line.tui-grid-line-drag {
   background-color: #eeeeee;
 }
-.tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
+.tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell,
+.tui-grid .tui-grid-line.tui-grid-line-drag .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
-.tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
+.tui-grid .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor,
+.tui-grid .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor {
   background-color: #eeeeee;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag {
   background-color: #017bce;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell {
   color: #ffffff;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-checkbox {
   color: #ffffff;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor {
   color: #ffffff;
   background-color: #017bce;
 }
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > span,
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > input {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor > span,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > input,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor > input {
   color: #ffffff;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell.tui-grid-sort-cell {
   background-color: #017bce;
 }
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button {
   color: #ffffff;
 }
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:hover,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button:hover,
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-focus,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button.tui-focus,
 .tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:active,
-.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-actived {
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button:active,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-actived,
+.tui-grid.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button.tui-actived {
   background: #006abd;
 }
 .tui-grid .tui-hidden {
@@ -1861,7 +1885,7 @@ a:hover {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  z-index: 4;
+  z-index: 5;
 }
 .tui-list .tui-scrollbar[data-direction=horizontal] {
   position: absolute;
@@ -1920,7 +1944,7 @@ a:hover {
   -moz-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   color: #000000;
-  z-index: 3;
+  z-index: 4;
 }
 .tui-list .tui-grid-cell,
 .tui-list .tui-grid-head-cell {
@@ -2037,7 +2061,7 @@ a:hover {
   color: #555555;
 }
 .tui-list .tui-grid-cell .tui-grid-editor.tui-focus {
-  z-index: 2;
+  z-index: 3;
   -webkit-box-shadow: 0px 0px 7px #60a1d5;
   -moz-box-shadow: 0px 0px 7px #60a1d5;
   box-shadow: 0px 0px 7px #60a1d5;
@@ -2057,42 +2081,66 @@ a:hover {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
-.tui-list .tui-grid-line.tui-grid-line-selected {
+.tui-list .tui-grid-line-drop {
+  display: block;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  background: none;
+  border: 2px dotted red;
+  z-index: 2;
+}
+.tui-list .tui-grid-line.tui-grid-line-selected,
+.tui-list .tui-grid-line.tui-grid-line-drag {
   background-color: #eeeeee;
 }
-.tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
+.tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell,
+.tui-list .tui-grid-line.tui-grid-line-drag .tui-grid-cell.tui-grid-sort-cell {
   background-color: #bbb;
 }
-.tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
+.tui-list .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor,
+.tui-list .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor {
   background-color: #eeeeee;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag {
   background-color: #017bce;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell {
   color: #ffffff;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-checkbox,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-checkbox {
   color: #ffffff;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor {
   color: #ffffff;
   background-color: #017bce;
 }
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > span,
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > input {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor > span,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-grid-editor > input,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-grid-editor > input {
   color: #ffffff;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell.tui-grid-sort-cell,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell.tui-grid-sort-cell {
   background-color: #017bce;
 }
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button {
   color: #ffffff;
 }
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:hover,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button:hover,
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-focus,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button.tui-focus,
 .tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button:active,
-.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-actived {
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button:active,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-selected .tui-grid-cell .tui-button.tui-actived,
+.tui-list.tui-focus .tui-grid-line.tui-grid-line-drag .tui-grid-cell .tui-button.tui-actived {
   background: #006abd;
 }
 .tui-list .tui-hidden {
@@ -2445,7 +2493,7 @@ a:hover {
   color: #dddddd;
   position: fixed;
   max-width: 300px;
-  z-index: 2147483646;
+  z-index: 2147483645;
   background-color: #555555;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;

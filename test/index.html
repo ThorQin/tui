@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<link href="../depends/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
+	<link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="../tui/css/tui.min.css" type="text/css" />
 	<script src="../depends/jquery-1.11.1.js"></script>
 	<script src="../tui/tui.core.js"></script>
@@ -131,6 +131,9 @@
 		})();
 		$(function () {
 			var tb = tui.ctrl.grid("tbGrid");
+			tb.on("rowdragstart", function () {
+				
+			});
 			tui.on("setval", function () {
 				tui.ctrl.input("testInput").value("中国");
 			});
@@ -140,21 +143,6 @@
 				else
 					tb.columns(tbNormalCols);
 			});
-
-			$("#dd").on("dragstart", function (e) {
-				e.originalEvent.dataTransfer.effectAllowed = "move";
-				e.stopPropagation();
-			});
-			$("#dd").on("mousedown", function (e) {
-				if (e.originalEvent.srcElement && e.originalEvent.srcElement.dragDrop)
-					e.originalEvent.srcElement.dragDrop();
-			});
-			$("#dd").on("dragenter", function (e) {
-				e.originalEvent.dataTransfer.dropEffect = 'move';
-				e.stopPropagation();
-			});
-			$("#dd").attr("unselectable", "on");
-
 		});
 
 	</script>

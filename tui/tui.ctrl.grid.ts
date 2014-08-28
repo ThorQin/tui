@@ -656,8 +656,8 @@ module tui.ctrl {
 				var rowSel = this.rowselectable();
 				for (var i = 0; i < columns.length; i++) {
 					var cell = document.createElement("span");
-					//if (rowSel)
-					//	cell.setAttribute("unselectable", "on");
+					if (rowSel)
+						cell.setAttribute("unselectable", "on");
 					cell.className = "tui-grid-cell tui-grid-" + this._tableId + "-" + i;
 					line.appendChild(cell);
 				}
@@ -684,37 +684,124 @@ module tui.ctrl {
 			}
 			var jqLine = $(line);
 			jqLine.on("contextmenu", function (e) {
-				var index = line["_rowIndex"];
 				self.fire("rowcontextmenu", {"event": e, "index": index, "row": line });
 			});
-			//if (self.rowdraggable()) {
-			//	jqLine.attr("draggable", "true");
-			//	line.ondragstart = function () {
-			//		//alert("dragstart");
-			//	};
-
-			//}
+			var dragIndex = null;
+			var mouseDownPt: { x: number; y: number; } = null;
 			jqLine.mousedown(function (e) {
-				var index = line["_rowIndex"];
 				if (self.rowselectable()) {
 					self.activerow(index);
 					self.scrollTo(index);
 				}
-				//if (self.rowdraggable() && line.dragDrop) {
-				//	line.dragDrop();
-				//}
-				self.fire("rowmousedown", { "event": e, "index": index, "row": line });
+				if (self.fire("rowmousedown", { "event": e, "index": index, "row": line }) === false)
+					return;
+				if (self.rowdraggable() && tui.isLButton(e.button)) {
+					mouseDownPt = { x: e.clientX, y: e.clientY };
+				}
+			//	e.stopPropagation();
 			});
-			jqLine.mouseup( function (e) {
-				var index = line["_rowIndex"];
+			jqLine.mouseenter(function (e) {
+				if (dragIndex !== null) {
+					self.scrollTo(dragIndex);
+				}
+			});
+			jqLine.mousemove(function (e) {
+				if (mouseDownPt === null || dragIndex !== null) {
+					return;
+				}
+				if (Math.abs(e.clientX - mouseDownPt.x) < 5 &&
+					Math.abs(e.clientY - mouseDownPt.y) < 5) {
+					return;
+				}
+				dragIndex = index;
+				if (self.fire("rowdragstart", { "event": e, "index": index, "row": line }) === false)
+					return;
+				jqLine.addClass("tui-grid-line-drag");
+				dragIndex = index;
+				var m = tui.mask();
+				// DRAG A LINE
+				var upTimer = null;
+				var downTimer = null;
+				var firstScroll = true;
+				var targetBox = document.createElement("div");
+				targetBox.className = "tui-grid-line-drop";
+				function move(e) {
+					var x = e.clientX;
+					var y = e.clientY;
+					var pos = tui.fixedPosition(self[0]);
+					if (x < pos.x || x > pos.x + self[0].offsetWidth ||
+						y < pos.y || y > pos.y + self[0].offsetHeight) {
+						m.style.cursor = "not-allowed";
+					} else
+						m.style.cursor = "move";
+
+					if (y < pos.y + self.headHeight()) {
+						clearInterval(downTimer);
+						downTimer = null;
+						upTimer === null && (upTimer = setInterval(function () {
+							if (firstScroll)
+								self.scrollTo(self._bufferedBegin);
+							else if (self._bufferedBegin > 0) {
+								self.scrollTo(self._bufferedBegin - 1);
+							}
+							firstScroll = false;
+						}, 80)) && (firstScroll = true);
+					} else if (y > pos.y + self[0].offsetHeight) {
+						clearInterval(upTimer);
+						upTimer = null;
+						downTimer === null && (downTimer = setInterval(function () {
+							if (firstScroll)
+								self.scrollTo(self._bufferedEnd - 1);
+							else if (self._bufferedEnd < self._data.length()) {
+								self.scrollTo(self._bufferedEnd);
+							}
+							firstScroll = false;
+						}, 80)) && (firstScroll = true);
+					} else {
+						clearInterval(downTimer);
+						clearInterval(upTimer);
+						downTimer = null;
+						upTimer = null;
+
+						// Use mouse position to detect which row is currently moved to.
+						var idx = Math.ceil((x - (pos.y + self.headHeight())) / self.lineHeight());
+						var targetLine = self._bufferedLines[idx - self._bufferedBegin];
+						targetBox.style.left = targetLine.style.left;
+						targetBox.style.top = targetLine.style.top;
+						targetBox.style.width = targetLine.offsetWidth + "px";
+						targetBox.style.height = targetLine.offsetHeight + "px";
+						self[0].appendChild(targetBox);
+					}
+				}
+				function release() {
+					if (!tui.isLButton(e.button))
+						return;
+					jqLine.removeClass("tui-grid-line-drag");
+					dragIndex = null;
+					mouseDownPt = null;
+					clearInterval(downTimer);
+					clearInterval(upTimer);
+					downTimer = null;
+					upTimer = null;
+					tui.removeNode(targetBox);
+					$(m).off("mousemove", move);
+					$(m).off("mouseup", release);
+					$(document).off("mouseup", release);
+					tui.unmask();
+				}
+				$(m).on("mousemove", move);
+				$(m).on("mouseup", release);
+				$(document).on("mouseup", release);
+			});
+			jqLine.mouseup(function (e) {
+				if (tui.isLButton(e.button))
+					mouseDownPt = null;
 				self.fire("rowmouseup", { "event": e, "index": index, "row": line });
 			});
 			jqLine.on("click", function (e) {
-				var index = line["_rowIndex"];
 				self.fire("rowclick", { "event": e, "index": index, "row": line });
 			});
 			jqLine.on("dblclick", function (e) {
-				var index = line["_rowIndex"];
 				self.fire("rowdblclick", { "event": e, "index": index, "row": line });
 			});
 		}
@@ -1308,10 +1395,12 @@ module tui.ctrl {
 			if (data.rowIndex < data.grid.data().length() - 1)
 				data.grid.editCell(data.rowIndex + 1, data.colIndex);
 			e.stopPropagation();
+			e.preventDefault();
 		} else if (k === tui.KEY_UP) {
 			if (data.rowIndex > 0)
 				data.grid.editCell(data.rowIndex - 1, data.colIndex);
 			e.stopPropagation();
+			e.preventDefault();
 		} else if (k === tui.KEY_LEFT) {
 			if (type !== "text" || e.ctrlKey) {
 				col = data.colIndex - 1;
@@ -1405,7 +1494,7 @@ module tui.ctrl {
 			});
 
 			editor[0].style.width = $(data.cell).innerWidth() - 1 + "px";
-			editor[0].style.height = $(data.cell).innerHeight() + "px";
+			editor[0].style.height = $(data.cell).innerHeight() - 1 + "px";
 			data.cell.appendChild(editor[0]);
 			editor.value(data.value);
 		};
