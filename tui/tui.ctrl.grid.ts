@@ -544,7 +544,7 @@ module tui.ctrl {
 			if (col.sort) {
 				$(cell).addClass("tui-grid-sortable");
 				$(cell).mousedown(function (event) {
-					if (!tui.isLButton(event.button))
+					if (!tui.isLButton(event))
 						return;
 					if (self._sortColumn !== colIndex)
 						self.sort(colIndex);
@@ -695,107 +695,204 @@ module tui.ctrl {
 				}
 				if (self.fire("rowmousedown", { "event": e, "index": index, "row": line }) === false)
 					return;
-				if (self.rowdraggable() && tui.isLButton(e.button)) {
+				if (self.rowdraggable() && tui.isLButton(e)) {
 					mouseDownPt = { x: e.clientX, y: e.clientY };
+					dragIndex = null;
+					function testdrag(e) {
+						if (mouseDownPt === null || dragIndex !== null) {
+							return;
+						}
+						if (Math.abs(e.clientX - mouseDownPt.x) < 5 &&
+							Math.abs(e.clientY - mouseDownPt.y) < 5) {
+							return;
+						}
+						if (self.fire("rowdragstart", { "event": e, "index": index, "row": line }) === false)
+							return;
+						jqLine.addClass("tui-grid-line-drag");
+						dragIndex = index;
+						var m = tui.mask();
+						m.setAttribute("data-cursor-tooltip", "true");
+						self.focus();
+						// DRAG A LINE
+						var upTimer = null;
+						var downTimer = null;
+						var firstScroll = true;
+						var lineHeight = self.lineHeight();
+						var headHeight = self.headHeight();
+						var targetBox = document.createElement("div");
+						var targetIndex = null;
+						var position = null;
+						targetBox.className = "tui-grid-line-drop";
+
+						function fireBefore(targetLine) {
+							if (self.fire("rowdragover", { "event": e, "index": dragIndex, "targetIndex": targetIndex, position: "before" }) !== false) {
+								targetBox.style.top = targetLine.offsetTop - 2 + "px";
+								targetBox.style.height = "3px";
+								targetBox.className = "tui-grid-line-drop-before";
+								m.setAttribute("data-tooltip", "<i class='fa fa-level-up'></i> Move before ...");
+								position = "before";
+								return true;
+							} else
+								return false;
+						}
+						function fireAfter(targetLine) {
+							if (self.fire("rowdragover", { "event": e, "index": dragIndex, "targetIndex": targetIndex, position: "after" }) !== false) {
+								targetBox.style.top = targetLine.offsetTop + targetLine.offsetHeight - 2 + "px";
+								targetBox.style.height = "3px";
+								targetBox.className = "tui-grid-line-drop-after";
+								m.setAttribute("data-tooltip", "<i class='fa fa-level-down'></i> Move after ...");
+								position = "after";
+								return true;
+							} else
+								return false;
+						}
+						function fireInside(targetLine) {
+							if (self.fire("rowdragover", { "event": e, "index": dragIndex, "targetIndex": targetIndex, position: "inside" }) !== false) {
+								targetBox.style.top = targetLine.offsetTop - 2 + "px";
+								targetBox.style.height = targetLine.clientHeight + "px";
+								targetBox.className = "tui-grid-line-drop";
+								m.setAttribute("data-tooltip", "<i class='fa fa-arrow-right'></i> Move into ...");
+								position = "inside";
+								return true;
+							} else
+								return false;
+						}
+						function move(e) {
+							if (!tui.isLButton(e)) {
+								targetIndex = null;
+								position = null;
+								release(e, true);
+								return;
+							}
+							var x = e.clientX;
+							var y = e.clientY;
+							var pos = tui.fixedPosition(self[0]);
+							if (x < pos.x || x > pos.x + self[0].offsetWidth ||
+								y < pos.y || y > pos.y + self[0].offsetHeight) {
+								m.style.cursor = "not-allowed";
+							} else
+								m.style.cursor = "move";
+
+							if (y < pos.y + headHeight) {
+								clearInterval(downTimer);
+								downTimer = null;
+								upTimer === null && (upTimer = setInterval(function () {
+									if (firstScroll)
+										self.scrollTo(self._bufferedBegin);
+									else if (self._bufferedBegin > 0) {
+										self.scrollTo(self._bufferedBegin - 1);
+									}
+									firstScroll = false;
+								}, 80)) && (firstScroll = true);
+								tui.removeNode(targetBox);
+								targetIndex = null;
+								position = null;
+								m.removeAttribute("data-tooltip");
+							} else if (y > pos.y + self[0].offsetHeight) {
+								clearInterval(upTimer);
+								upTimer = null;
+								downTimer === null && (downTimer = setInterval(function () {
+									if (firstScroll)
+										self.scrollTo(self._bufferedEnd - 1);
+									else if (self._bufferedEnd < self._data.length()) {
+										self.scrollTo(self._bufferedEnd);
+									}
+									firstScroll = false;
+								}, 80)) && (firstScroll = true);
+								tui.removeNode(targetBox);
+								targetIndex = null;
+								position = null;
+								m.removeAttribute("data-tooltip");
+							} else {
+								clearInterval(downTimer);
+								clearInterval(upTimer);
+								downTimer = null;
+								upTimer = null;
+
+								// Use mouse position to detect which row is currently moved to.
+								var base = headHeight - self._scrollTop % lineHeight;
+								targetIndex = Math.floor((y - (pos.y + base)) / lineHeight);
+
+								var targetLine = self._bufferedLines[targetIndex];
+								if (!targetLine) {
+									targetIndex = self._bufferedEnd - 1;
+									return;
+								} else
+									targetIndex += self._bufferedBegin;
+								if (targetIndex === dragIndex) {
+									tui.removeNode(targetBox);
+									targetIndex = null;
+									return;
+								}
+
+								pos = tui.fixedPosition(targetLine);
+								targetBox.style.left = targetLine.offsetLeft - 2 + "px";
+								targetBox.style.width = targetLine.offsetWidth + "px";
+								if (y - pos.y <= 12) {
+									if (!fireBefore(targetLine))
+										fireInside(targetLine);
+								} else if (pos.y + targetLine.offsetHeight - y <= 12) {
+									if (!fireAfter(targetLine))
+										fireInside(targetLine);
+								} else {
+									if (!fireInside(targetLine)) {
+										if (y - pos.y <= lineHeight / 2)
+											fireBefore(targetLine);
+										else
+											fireAfter(targetLine);
+									}
+								}
+								self[0].appendChild(targetBox);
+							}
+						}
+						function release(env, canceled?: boolean) {
+							jqLine.removeClass("tui-grid-line-drag");
+							console.debug("mouse release");
+							mouseDownPt = null;
+							clearInterval(downTimer);
+							clearInterval(upTimer);
+							downTimer = null;
+							upTimer = null;
+							tui.removeNode(targetBox);
+							$(m).off("mousemove", move);
+							$(m).off("mouseup", release);
+							$(document).off("mouseup", release);
+							$(self[0]).off("keydown", keydown);
+							tui.unmask();
+							tui.closeTooltip();
+							self.fire("rowdragend", { "event": env, "index": dragIndex, "targetIndex": targetIndex, position: position, canceled: !!canceled });
+							dragIndex = null;
+						}
+						function keydown(e: JQueryEventObject) {
+							if (e.keyCode === tui.KEY_ESC) {
+								targetIndex = null;
+								position = null;
+								release(e, true);
+								e.stopPropagation();
+							}
+						}
+						$(m).on("mousemove", move);
+						$(m).on("mouseup", release);
+						$(document).on("mouseup", release);
+						$(self[0]).on("keydown", keydown);
+					}
+					function release() {
+						mouseDownPt = null;
+						$(document).off("mouseup", release);
+						$(document).off("mousemove", testdrag);
+					}
+					$(document).on("mouseup", release);
+					$(document).on("mousemove", testdrag);
 				}
 			//	e.stopPropagation();
 			});
 			jqLine.mouseenter(function (e) {
-				if (dragIndex !== null) {
-					self.scrollTo(dragIndex);
-				}
+				self.fire("rowmouseenter", { "event": e, "index": index, "row": line });
 			});
-			jqLine.mousemove(function (e) {
-				if (mouseDownPt === null || dragIndex !== null) {
-					return;
-				}
-				if (Math.abs(e.clientX - mouseDownPt.x) < 5 &&
-					Math.abs(e.clientY - mouseDownPt.y) < 5) {
-					return;
-				}
-				dragIndex = index;
-				if (self.fire("rowdragstart", { "event": e, "index": index, "row": line }) === false)
-					return;
-				jqLine.addClass("tui-grid-line-drag");
-				dragIndex = index;
-				var m = tui.mask();
-				// DRAG A LINE
-				var upTimer = null;
-				var downTimer = null;
-				var firstScroll = true;
-				var targetBox = document.createElement("div");
-				targetBox.className = "tui-grid-line-drop";
-				function move(e) {
-					var x = e.clientX;
-					var y = e.clientY;
-					var pos = tui.fixedPosition(self[0]);
-					if (x < pos.x || x > pos.x + self[0].offsetWidth ||
-						y < pos.y || y > pos.y + self[0].offsetHeight) {
-						m.style.cursor = "not-allowed";
-					} else
-						m.style.cursor = "move";
-
-					if (y < pos.y + self.headHeight()) {
-						clearInterval(downTimer);
-						downTimer = null;
-						upTimer === null && (upTimer = setInterval(function () {
-							if (firstScroll)
-								self.scrollTo(self._bufferedBegin);
-							else if (self._bufferedBegin > 0) {
-								self.scrollTo(self._bufferedBegin - 1);
-							}
-							firstScroll = false;
-						}, 80)) && (firstScroll = true);
-					} else if (y > pos.y + self[0].offsetHeight) {
-						clearInterval(upTimer);
-						upTimer = null;
-						downTimer === null && (downTimer = setInterval(function () {
-							if (firstScroll)
-								self.scrollTo(self._bufferedEnd - 1);
-							else if (self._bufferedEnd < self._data.length()) {
-								self.scrollTo(self._bufferedEnd);
-							}
-							firstScroll = false;
-						}, 80)) && (firstScroll = true);
-					} else {
-						clearInterval(downTimer);
-						clearInterval(upTimer);
-						downTimer = null;
-						upTimer = null;
-
-						// Use mouse position to detect which row is currently moved to.
-						var idx = Math.ceil((x - (pos.y + self.headHeight())) / self.lineHeight());
-						var targetLine = self._bufferedLines[idx - self._bufferedBegin];
-						targetBox.style.left = targetLine.style.left;
-						targetBox.style.top = targetLine.style.top;
-						targetBox.style.width = targetLine.offsetWidth + "px";
-						targetBox.style.height = targetLine.offsetHeight + "px";
-						self[0].appendChild(targetBox);
-					}
-				}
-				function release() {
-					if (!tui.isLButton(e.button))
-						return;
-					jqLine.removeClass("tui-grid-line-drag");
-					dragIndex = null;
-					mouseDownPt = null;
-					clearInterval(downTimer);
-					clearInterval(upTimer);
-					downTimer = null;
-					upTimer = null;
-					tui.removeNode(targetBox);
-					$(m).off("mousemove", move);
-					$(m).off("mouseup", release);
-					$(document).off("mouseup", release);
-					tui.unmask();
-				}
-				$(m).on("mousemove", move);
-				$(m).on("mouseup", release);
-				$(document).on("mouseup", release);
+			jqLine.mouseleave(function (e) {
+				self.fire("rowmouseleave", { "event": e, "index": index, "row": line });
 			});
 			jqLine.mouseup(function (e) {
-				if (tui.isLButton(e.button))
-					mouseDownPt = null;
 				self.fire("rowmouseup", { "event": e, "index": index, "row": line });
 			});
 			jqLine.on("click", function (e) {
@@ -826,7 +923,6 @@ module tui.ctrl {
 				} else {
 					var line = document.createElement("div");
 					line.className = "tui-grid-line";
-					//this[0].insertBefore(line, this._headline);
 					this[0].appendChild(line);
 					newBuffer.push(line);
 					line["_rowIndex"] = i;

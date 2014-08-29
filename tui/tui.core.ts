@@ -613,12 +613,12 @@ module tui {
 	/**
 	 * Test whether the button code is indecated that the event is triggered by a left mouse button.
 	 */
-	export function isLButton(buttonCode: number): boolean {
-		if (tui.ieVer !== -1 && tui.ieVer < 9) {
-			return (buttonCode === 1);
-		} else {
-			return buttonCode === 0;
-		}
+	export function isLButton(e): boolean {
+		var button = (typeof e.which !== "undefined") ? e.which : e.button;
+		if (button == 1) {
+			return true;
+		} else
+			return false;
 	}
 
 	/**

@@ -100,6 +100,12 @@ module tui.ctrl {
 			this._grid.on("rowmouseup", (data) => {
 				return this.fire("rowmouseup", data);
 			});
+			this._grid.on("rowmouseenter", (data) => {
+				return this.fire("rowmouseenter", data);
+			});
+			this._grid.on("rowmouseleave", (data) => {
+				return this.fire("rowmouseleave", data);
+			});
 			this._grid.on("rowcontextmenu", (data) => {
 				return this.fire("rowcontextmenu", data);
 			});
@@ -237,10 +243,24 @@ module tui.ctrl {
 			this.refresh();
 		}
 
+		expandRow(rowIndex: number) {
+			var row = this.data().at(rowIndex);
+			row[this._expandColumnKey] = true;
+			this.formatData();
+			this.fire("rowexpand", { row: row, index: rowIndex });
+		}
+
 		private onExpandRow(row, rowIndex: number, event) {
 			row[this._expandColumnKey] = true;
 			this.formatData();
 			this.fire("rowexpand", { event: event, row: row, index: rowIndex });
+		}
+
+		foldRow(rowIndex: number) {
+			var row = this.data().at(rowIndex);
+			row[this._expandColumnKey] = false;
+			this.formatData();
+			this.fire("rowfold", { row: row, index: rowIndex });
 		}
 
 		private onFoldRow(row, rowIndex: number, event) {
@@ -495,10 +515,10 @@ module tui.ctrl {
 			return this._grid.columns(val);
 		}
 
-		rowdragable(): boolean;
-		rowdragable(val: boolean): List;
-		rowdragable(val?: boolean): any {
-			return this._grid.rowdragable(val);
+		rowdraggable(): boolean;
+		rowdraggable(val: boolean): List;
+		rowdraggable(val?: boolean): any {
+			return this._grid.rowdraggable(val);
 		}
 
 		rowselectable(): boolean;

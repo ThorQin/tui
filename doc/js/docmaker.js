@@ -18,13 +18,10 @@ var doc;
         __extends(DocMaker, _super);
         function DocMaker(catalog, contentDiv, edit) {
             if (typeof edit === "undefined") { edit = false; }
+            var _this = this;
             _super.call(this);
             this._fullMenu = [
                 { key: "edit", value: "编辑章节", icon: "fa-edit" },
-                { value: "-" },
-                { key: "moveUp", value: "上移", icon: "fa-level-up" },
-                { key: "moveDown", value: "下移", icon: "fa-level-down" },
-                { key: "moveTo", value: "移动到...", icon: "fa-move" },
                 { value: "-" },
                 { key: "addChild", value: "添加子章节" },
                 { key: "insertBefore", value: "在本章节之前插入新章节" },
@@ -37,41 +34,18 @@ var doc;
                 { value: "-" },
                 { key: "addChild", value: "添加子章节" }
             ];
-            this._firstChildMenu = [
-                { key: "edit", value: "编辑章节", icon: "fa-edit" },
-                { value: "-" },
-                { key: "moveDown", value: "下移", icon: "fa-level-down" },
-                { key: "moveTo", value: "移动到...", icon: "fa-move" },
-                { value: "-" },
-                { key: "addChild", value: "添加子章节" },
-                { key: "insertBefore", value: "在本章节之前插入新章节" },
-                { key: "insertAfter", value: "在本章节之后插入新章节" },
-                { value: "-" },
-                { key: "delete", value: "删除本章节以及所有子章节", icon: "fa-trash-o" }
-            ];
-            this._lastChildMenu = [
-                { key: "edit", value: "编辑章节", icon: "fa-edit" },
-                { value: "-" },
-                { key: "moveUp", value: "上移", icon: "fa-level-up" },
-                { key: "moveTo", value: "移动到...", icon: "fa-move" },
-                { value: "-" },
-                { key: "addChild", value: "添加子章节" },
-                { key: "insertBefore", value: "在本章节之前插入新章节" },
-                { key: "insertAfter", value: "在本章节之后插入新章节" },
-                { value: "-" },
-                { key: "delete", value: "删除本章节以及所有子章节", icon: "fa-trash-o" }
-            ];
-            this._uniqueChildMenu = [
-                { key: "edit", value: "编辑章节", icon: "fa-edit" },
-                { value: "-" },
-                { key: "moveTo", value: "移动到...", icon: "fa-move" },
-                { value: "-" },
-                { key: "addChild", value: "添加子章节" },
-                { key: "insertBefore", value: "在本章节之前插入新章节" },
-                { key: "insertAfter", value: "在本章节之后插入新章节" },
-                { value: "-" },
-                { key: "delete", value: "删除本章节以及所有子章节", icon: "fa-trash-o" }
-            ];
+            this._dragStart = (function () {
+                var self = _this;
+                return function (data) {
+                    var catalogList = self._catalog;
+                    catalogList.foldRow(data.index);
+                    //catalogList.data().at(data["index"]).expand = false;
+                    //var dp = new tui.ArrayProvider([doc]);
+                    //dp.addKeyMap("value", "name");
+                    //dp.addKeyMap("children", "content");
+                    //catalogList.data(dp);
+                };
+            })();
             this._edit = edit;
             if (typeof catalog === "string") {
                 this._catalog = document.getElementById(catalog)["_ctrl"];
@@ -132,15 +106,10 @@ var doc;
                 if (_this._edit) {
                     var self = _this;
                     var btnMenu = tui.ctrl.button();
+                    btnMenu.attr("data-menu", "test");
                     btnMenu.text("<i class='fa fa-bars'></i> 编辑");
                     if (parent === null)
                         btnMenu.menu(_this._rootMenu);
-                    else if (parent.content.length === 1)
-                        btnMenu.menu(_this._uniqueChildMenu);
-                    else if (idx === 0)
-                        btnMenu.menu(_this._firstChildMenu);
-                    else if (idx === parent.content.length - 1)
-                        btnMenu.menu(_this._lastChildMenu);
                     else
                         btnMenu.menu(_this._fullMenu);
                     btnMenu.menuPos("Rb");
@@ -281,6 +250,7 @@ var doc;
                 var item = {};
                 item.key = doc[i].key;
                 item.value = doc[i].name;
+                doc[i].expand = true;
                 if (!edit)
                     item.checked = false;
                 else
@@ -295,15 +265,17 @@ var doc;
 
         DocMaker.prototype.refreshCatalog = function () {
             //this.makeItems(doc, null, null, 0, this._div);
+            var doc = this._doc;
             var catalog = [];
             var accordions = [];
-            var doc = this._doc;
             this.buildCatalog(doc.content, catalog, this._edit);
 
             // Then build catalog
             if (this._catalog instanceof tui.ctrl.List) {
                 var catalogList = this._catalog;
-                var dp = new tui.ArrayProvider(catalog);
+                var dp = new tui.ArrayProvider([doc]);
+                dp.addKeyMap("value", "name");
+                dp.addKeyMap("children", "content");
                 catalogList.data(dp);
             } else if (this._catalog instanceof tui.ctrl.AccordionGroup) {
                 for (var i = 0; i < catalog.length; i++) {
@@ -337,6 +309,10 @@ var doc;
 
             // Refresh catalog
             this.refreshCatalog();
+            if (this._edit) {
+                var catalogList = this._catalog;
+                catalogList.on("rowdragstart", this._dragStart);
+            }
         };
         return DocMaker;
     })(tui.EventObject);

@@ -31,12 +31,30 @@ module tui {
 			_maskDiv.parentNode.removeChild(_maskDiv);
 		_maskDiv.innerHTML = "";
 		_maskDiv.style.cursor = "";
+		_maskDiv.removeAttribute("tabIndex");
+		_maskDiv.removeAttribute("data-tooltip");
+		_maskDiv.removeAttribute("data-cursor-tooltip");
 		return _maskDiv;
 	}
 
-	export function showTooltip(target: HTMLElement, tooltip: string) {
-		if (target === _tooltipTarget || target === _tooltip)
+	export function showTooltipAtCursor(target: HTMLElement, tooltip: string, x: number, y: number) {
+		if (target === _tooltipTarget || target === _tooltip) {
+			_tooltip.style.left = x - 17 + "px";
+			_tooltip.style.top = y + 20 + "px";
+			_tooltip.innerHTML = tooltip;
 			return;
+		}
+		document.body.appendChild(_tooltip);
+		_tooltip.innerHTML = tooltip;
+		_tooltipTarget = target;
+		_tooltip.style.left = x - 17 + "px";
+		_tooltip.style.top = y + 20 + "px";
+	}
+
+	export function showTooltip(target: HTMLElement, tooltip: string) {
+		if (target === _tooltipTarget || target === _tooltip) {
+			return;
+		}
 		document.body.appendChild(_tooltip);
 		_tooltip.innerHTML = tooltip;
 		_tooltipTarget = target;
@@ -55,14 +73,17 @@ module tui {
 		_tooltipTarget = null;
 	}
 
-	export function whetherShowTooltip(target: HTMLElement) {
+	export function whetherShowTooltip(target: HTMLElement, e:JQueryMouseEventObject) {
 		if (tui.isAncestry(target, _tooltip))
 			return;
 		var obj = target;
 		while (obj) {
 			var tooltip = obj.getAttribute("data-tooltip");
 			if (tooltip) {
-				showTooltip(obj, tooltip);
+				if (obj.getAttribute("data-cursor-tooltip") === "true")
+					showTooltipAtCursor(obj, tooltip, e.clientX, e.clientY);
+				else
+					showTooltip(obj, tooltip);
 				return;
 			} else {
 				obj = obj.parentElement;
@@ -549,18 +570,17 @@ module tui.ctrl {
 		}
 	}
 
-
-	var checkTooltipTimeout = null;
+	//var checkTooltipTimeout = null;
 	var _hoverElement: any;
 	$(window.document).mousemove(function (e: any) {
 		_hoverElement = e.target || e.toElement;
 		
 		if (e.button === 0 && (e.which === 1 || e.which === 0)) {
-			if (checkTooltipTimeout)
-				clearTimeout(checkTooltipTimeout);
-			checkTooltipTimeout = setTimeout(function () {
-				whetherShowTooltip(_hoverElement);
-			}, 20);
+			//if (checkTooltipTimeout)
+			//	clearTimeout(checkTooltipTimeout);
+			//checkTooltipTimeout = setTimeout(function () {
+				whetherShowTooltip(_hoverElement, e);
+			//}, 150);
 		}
 	});
 	$(window).scroll(() => { closeTooltip(); });

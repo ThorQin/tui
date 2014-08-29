@@ -85,7 +85,7 @@ module tui.ctrl {
 			$(this[0]).mousedown((e) => {
 				tui.fire("#tui.check.popup");
 				// Should check which target object was triggered.
-				if (!tui.isLButton(e.button)) {
+				if (!tui.isLButton(e)) {
 					return;
 				}
 				var obj = e.target;
@@ -122,7 +122,7 @@ module tui.ctrl {
 			});
 
 			$(this._btnHead).mousedown(function (e) {
-				if (!tui.isLButton(e.button))
+				if (!tui.isLButton(e))
 					return;
 				if (self.total() <= 0)
 					return;
@@ -139,7 +139,7 @@ module tui.ctrl {
 			});
 
 			$(this._btnFoot).mousedown(function (e) {
-				if (!tui.isLButton(e.button))
+				if (!tui.isLButton(e))
 					return;
 				if (self.total() <= 0)
 					return;
@@ -199,7 +199,7 @@ module tui.ctrl {
 			}
 
 			$(this._btnThumb).mousedown(function (e) {
-				if (!tui.isLButton(e.button))
+				if (!tui.isLButton(e))
 					return;
 				beginX = e.clientX;
 				beginY = e.clientY;

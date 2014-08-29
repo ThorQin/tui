@@ -1794,14 +1794,22 @@ a:hover {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
-.tui-grid .tui-grid-line-drop {
+.tui-grid .tui-grid-line-drop,
+.tui-grid .tui-grid-line-drop-before,
+.tui-grid .tui-grid-line-drop-after {
   display: block;
   position: absolute;
   left: 0px;
   right: 0px;
-  background: none;
-  border: 2px dotted red;
+  background-color: #f1adee;
+  border: 2px solid #cb05fd;
+  opacity: 0.4;
   z-index: 2;
+}
+.tui-grid .tui-grid-line-drop-before,
+.tui-grid .tui-grid-line-drop-after {
+  border: none;
+  background-color: #cb05fd;
 }
 .tui-grid .tui-grid-line.tui-grid-line-selected,
 .tui-grid .tui-grid-line.tui-grid-line-drag {
@@ -2081,14 +2089,22 @@ a:hover {
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
-.tui-list .tui-grid-line-drop {
+.tui-list .tui-grid-line-drop,
+.tui-list .tui-grid-line-drop-before,
+.tui-list .tui-grid-line-drop-after {
   display: block;
   position: absolute;
   left: 0px;
   right: 0px;
-  background: none;
-  border: 2px dotted red;
+  background-color: #f1adee;
+  border: 2px solid #cb05fd;
+  opacity: 0.4;
   z-index: 2;
+}
+.tui-list .tui-grid-line-drop-before,
+.tui-list .tui-grid-line-drop-after {
+  border: none;
+  background-color: #cb05fd;
 }
 .tui-list .tui-grid-line.tui-grid-line-selected,
 .tui-list .tui-grid-line.tui-grid-line-drag {

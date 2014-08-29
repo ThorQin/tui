@@ -246,14 +246,19 @@
 			.opacity(0.5);
 		}
 	}
-	.tui-grid-line-drop {
+	.tui-grid-line-drop, .tui-grid-line-drop-before, .tui-grid-line-drop-after {
 		display:block;
 		position:absolute;
 		left:0px;
 		right:0px;
-		background:none;
-		border:2px dotted red;
+		background-color:#f1adee;
+		border:2px solid #cb05fd;
+		opacity:0.4;
 		z-index:@floatRowLayer;
+	}
+	.tui-grid-line-drop-before,.tui-grid-line-drop-after {
+		border:none;
+		background-color:#cb05fd;
 	}
 	.tui-grid-line.tui-grid-line-selected,.tui-grid-line.tui-grid-line-drag {
 		background-color:@lineSelectUnfocusedBackgroundColor;
