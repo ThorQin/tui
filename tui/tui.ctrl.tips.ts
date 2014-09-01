@@ -17,13 +17,33 @@ module tui.ctrl {
 		}
 
 		useVisible(): boolean;
-		useVisible(val: boolean): Form;
+		useVisible(val: boolean): Tips;
 		useVisible(val?: boolean): any {
 			if (typeof val !== tui.undef) {
 				this.is("data-use-visible", !!val);
 				return this;
 			} else
 				return this.is("data-use-visible");
+		}
+
+		autoCloseTime(): number;
+		autoCloseTime(val: number): Tips;
+		autoCloseTime(val?: number): any {
+			if (typeof val === "number") {
+				if (isNaN(val) || val <= 0)
+					this.removeAttr("data-auto-close-time");
+				else
+					this.attr("data-auto-close-time", Math.floor(val));
+				return this;
+			} else {
+				val = parseInt(this.attr("data-auto-close-time"));
+				if (isNaN(val))
+					return null
+				else if (val <= 0)
+					return null;
+				else
+					return val;
+			}
 		}
 
 		show();
@@ -36,14 +56,23 @@ module tui.ctrl {
 			}
 			this.removeClass("tui-invisible");
 			this.removeClass("tui-hidden");
+			this[0].style.opacity = "0";
+			$(this[0]).animate({ opacity: 1 }, 100, () => {
+				var autoClose = this.autoCloseTime();
+				if (autoClose !== null) {
+					setTimeout(() => { this.close(); }, autoClose);
+				}
+			});
 		}
 
 		close() {
-			this.fire("close", {ctrl:this[0]});
-			if (this.useVisible())
-				this.addClass("tui-invisible");
-			else
-				this.addClass("tui-hidden");
+			this.fire("close", { ctrl: this[0] });
+			$(this[0]).animate({ opacity: 0 }, 300, () => {
+				if (this.useVisible())
+					this.addClass("tui-invisible");
+				else
+					this.addClass("tui-hidden");
+			});
 		}
 	}
 	export function tips(elem: HTMLElement): Tips;

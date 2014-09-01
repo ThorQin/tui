@@ -603,11 +603,48 @@ module tui {
 		return elem.ownerDocument.defaultView || elem.ownerDocument.parentWindow; 
 	}
 
+	function cloneInternal(obj, excludeProperties: any) {
+		if (obj === null)
+			return null;
+		else if (typeof obj === undef)
+			return undefined;
+		else if (obj instanceof Array) {
+			var newArray = [];
+			for (var idx in obj) {
+				if (obj.hasOwnProperty(idx) && excludeProperties.indexOf(idx) < 0) {
+					newArray.push(cloneInternal(obj[idx], excludeProperties));
+				}
+			}
+			return newArray;
+		} else if (typeof obj === "number")
+			return obj;
+		else if (typeof obj === "string")
+			return obj;
+		else if (typeof obj === "boolean")
+			return obj;
+		else if (typeof obj === "function")
+			return obj;
+		else {
+			var newObj = {};
+			for (var idx in obj) {
+				if (obj.hasOwnProperty(idx) && excludeProperties.indexOf(idx) < 0) {
+					newObj[idx] = cloneInternal(obj[idx], excludeProperties);
+				}
+			}
+			return newObj;
+		}
+	}
+
 	/**
 	 * Deeply copy an object to an other object, but only contain properties without methods
 	 */
-	export function clone(obj) {
-		return JSON.parse(JSON.stringify(obj));
+	export function clone(obj, excludeProperties?: any) {
+		if (typeof excludeProperties === "string" && $.trim(excludeProperties).length > 0) {
+			return cloneInternal(obj, [excludeProperties]);
+		} else if (excludeProperties instanceof Array) {
+			return cloneInternal(obj, excludeProperties);
+		} else
+			return JSON.parse(JSON.stringify(obj));
 	}
 
 	/**
@@ -1065,7 +1102,7 @@ module tui {
 		var l = _accMap[key];
 		if (l) {
 			for (var i = 0; i < l.length; i++) {
-				if (tui.fire(l[i], { name: l[i] }) === false)
+				if (tui.fire(l[i], { name: l[i], event: e }) === false)
 					return;
 			}
 		}
@@ -1077,7 +1114,7 @@ module tui {
 			l = _accMap[key];
 		else {
 			l = [];
-			_accMap[key] = {};
+			_accMap[key] = l;
 		}
 		if (l.indexOf(actionId) < 0)
 			l.push(actionId);

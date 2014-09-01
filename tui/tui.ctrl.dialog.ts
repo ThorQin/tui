@@ -58,6 +58,8 @@ module tui {
 			private _buttonDiv: HTMLDivElement;
 			private _closeIcon: HTMLSpanElement;
 			private _resourceElement: HTMLElement = null;
+			private _placeHolder: HTMLElement = null;
+			private _hiddenOriginal: boolean = false;
 			private _isMoved: boolean = false;
 			private _isInitialize: boolean = true;
 			private _titleText: string = null;
@@ -78,6 +80,7 @@ module tui {
 				if (this[0])
 					return this;
 				this._resourceElement = null;
+				this._placeHolder = null;
 				return this.showElement(<HTMLElement>tui.toElement(content, true), title, buttons);
 			}
 
@@ -96,8 +99,7 @@ module tui {
 
 			/**
 		     * Show a element from page, put the element into the dialog, 
-			 * if pass an element id to method then when close dialog the selected element
-			 * will be put back to body.
+			 * when dialog closed the specify element will be put back to its original place.
 			 */
 			showElement(elem: any, title?: string, buttons?: DialogButton[]) {
 				if (this[0])
@@ -105,11 +107,21 @@ module tui {
 				if (typeof elem === "string") {
 					var elemId = elem;
 					elem = document.getElementById(elem);
-					if (!elem) {
-						throw new Error("Resource id not found: " + elemId);
-					}
-					this._resourceElement = elem;
 				}
+				if (!elem) {
+					throw new Error("Invalid element!");
+				}
+				this._resourceElement = elem;
+				if ($(elem).hasClass("tui-hidden"))
+					this._hiddenOriginal = true;
+				else
+					this._hiddenOriginal = false;
+				if (elem.parentNode !== null) {
+					this._placeHolder = document.createElement("span");
+					this._placeHolder.className = "tui-hidden";
+					elem.parentNode.insertBefore(this._placeHolder, elem);
+				} else
+					this._placeHolder = null;
 				// Temporary inhibit refresh to prevent unexpected calculation
 				this._noRefresh = true;
 				this.elem("div", Dialog.CLASS);
@@ -321,9 +333,12 @@ module tui {
 				this._buttonDiv = null;
 				this._closeIcon = null;
 				this._titleText = null;
-				if (this._resourceElement) {
-					$(this._resourceElement).addClass("tui-hidden");
-					document.body.appendChild(this._resourceElement);
+				if (this._placeHolder) {
+					this._placeHolder.parentNode && this._placeHolder.parentNode.insertBefore(this._resourceElement, this._placeHolder);
+					tui.removeNode(this._placeHolder);
+					this._placeHolder = null;
+					if (this._hiddenOriginal)
+						$(this._resourceElement).addClass("tui-hidden");
 					this._resourceElement = null;
 				}
 				this.fire("close");
@@ -465,7 +480,7 @@ module tui {
 		return dlg;
 	}
 
-	export function askbox(message: string, title?: string, callback?: (result: boolean) => {}): ctrl.Dialog {
+	export function askbox(message: string, title?: string, callback?: (result: boolean) => void): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
 		var wrap = document.createElement("div");
 		wrap.className = "tui-dlg-warp tui-dlg-ask";

@@ -1712,6 +1712,10 @@ a:hover {
 .tui-grid .tui-grid-head-cell.tui-grid-sortable {
   cursor: pointer;
 }
+.tui-grid .tui-grid-head-cell.tui-grid-sortable > .tui-grid-cell-content {
+  cursor: pointer;
+  text-decoration: underline;
+}
 .tui-grid .tui-grid-head-cell.tui-grid-cell-sort-asc .tui-grid-cell-content:before {
   display: inline-block;
   font-family: FontAwesome;
@@ -2007,6 +2011,10 @@ a:hover {
 .tui-list .tui-grid-head-cell.tui-grid-sortable {
   cursor: pointer;
 }
+.tui-list .tui-grid-head-cell.tui-grid-sortable > .tui-grid-cell-content {
+  cursor: pointer;
+  text-decoration: underline;
+}
 .tui-list .tui-grid-head-cell.tui-grid-cell-sort-asc .tui-grid-cell-content:before {
   display: inline-block;
   font-family: FontAwesome;
@@ -2221,6 +2229,7 @@ a:hover {
   position: relative;
   padding-right: 40px;
   min-height: 18px;
+  overflow: hidden;
 }
 .tui-tips .tui-tips-close {
   display: inline-block;

@@ -39,11 +39,47 @@ var doc;
                 return function (data) {
                     var catalogList = self._catalog;
                     catalogList.foldRow(data.index);
-                    //catalogList.data().at(data["index"]).expand = false;
-                    //var dp = new tui.ArrayProvider([doc]);
-                    //dp.addKeyMap("value", "name");
-                    //dp.addKeyMap("children", "content");
-                    //catalogList.data(dp);
+                };
+            })();
+            this._dragEnd = (function () {
+                var self = _this;
+                return function (data) {
+                    if (data.canceled)
+                        return;
+                    var catalogList = self._catalog;
+                    var dragRow = catalogList.data().at(data.index);
+                    if (!dragRow.__parent)
+                        return;
+                    var dp = dragRow.__parent;
+                    var tagetRow = catalogList.data().at(data.targetIndex);
+                    if (data.position === "before") {
+                        if (!tagetRow.__parent)
+                            return;
+                        var tp = tagetRow.__parent;
+                        var didx = dp.content.indexOf(dragRow);
+                        dp.content.splice(didx, 1);
+                        var tidx = tp.content.indexOf(tagetRow);
+                        tp.content.splice(tidx, 0, dragRow);
+                    } else if (data.position === "after") {
+                        if (!tagetRow.__parent)
+                            return;
+                        var tp = tagetRow.__parent;
+                        var didx = dp.content.indexOf(dragRow);
+                        dp.content.splice(didx, 1);
+                        var tidx = tp.content.indexOf(tagetRow);
+                        tp.content.splice(tidx + 1, 0, dragRow);
+                    } else {
+                        var didx = dp.content.indexOf(dragRow);
+                        dp.content.splice(didx, 1);
+                        if (!tagetRow.content)
+                            tagetRow.content = [];
+                        tagetRow.content.push(dragRow);
+                    }
+
+                    //catalogList.data(catalogList.data());
+                    self.refreshCatalog();
+                    self.makeItem(self._doc, 0, null, 0, self._div);
+                    self.fire("change", null);
                 };
             })();
             this._edit = edit;
@@ -116,6 +152,21 @@ var doc;
                     btnMenu.on("select", function (data) {
                         if (data.item.key === "edit") {
                             self.showCaptionDialog(parent, item);
+                        } else if (data.item.key === "insertBefore") {
+                            self.showCaptionDialog(parent, idx, "before");
+                        } else if (data.item.key === "insertAfter") {
+                            self.showCaptionDialog(parent, idx, "after");
+                        } else if (data.item.key === "addChild") {
+                            self.showCaptionDialog(item);
+                        } else if (data.item.key === "delete") {
+                            tui.askbox("确认删除章节 '" + item.name + "' 吗？", "删除", function (result) {
+                                if (result === true) {
+                                    parent.content.splice(idx, 1);
+                                    parent.refresh();
+                                    self.refreshCatalog();
+                                    self.fire("change", null);
+                                }
+                            });
                         }
                     });
                     caption.appendChild(btnMenu[0]);
@@ -163,10 +214,10 @@ var doc;
             item.refresh();
         };
 
-        DocMaker.prototype.showCaptionDialog = function (parent, item) {
+        DocMaker.prototype.showCaptionDialog = function (parent, item, pos) {
             var dlg = tui.ctrl.dialog();
             var self = this;
-            var itemClone = item ? tui.clone(item) : {};
+            var itemClone = (typeof item === "object" ? tui.clone(item, "__parent") : {});
             for (var n in tableType) {
                 if (!itemClone.hasOwnProperty(n) || itemClone[n] === null)
                     itemClone[n] = [];
@@ -179,7 +230,7 @@ var doc;
                         if (!fm.validate())
                             return;
                         var val = fm.value();
-                        if (item) {
+                        if (item && typeof item === "object") {
                             if (typeof val.id !== tui.undef)
                                 item.id = val.id;
                             item.name = val.name;
@@ -207,11 +258,19 @@ var doc;
                                 items = parent.content;
                             else
                                 items = parent.content = [];
-                            items.push(itemClone);
+                            if (typeof item === "number" && !isNaN(item)) {
+                                if (pos === "before") {
+                                    items.splice(item, 0, itemClone);
+                                } else {
+                                    items.splice(item + 1, 0, itemClone);
+                                }
+                            } else
+                                items.push(itemClone);
                             parent.refresh();
                         }
                         dlg.close();
                         self.refreshCatalog();
+                        self.fire("change", null);
                     }
                 },
                 {
@@ -268,6 +327,7 @@ var doc;
             var doc = this._doc;
             var catalog = [];
             var accordions = [];
+            doc.expand = true;
             this.buildCatalog(doc.content, catalog, this._edit);
 
             // Then build catalog
@@ -312,6 +372,7 @@ var doc;
             if (this._edit) {
                 var catalogList = this._catalog;
                 catalogList.on("rowdragstart", this._dragStart);
+                catalogList.on("rowdragend", this._dragEnd);
             }
         };
         return DocMaker;

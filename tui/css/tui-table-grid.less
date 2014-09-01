@@ -180,6 +180,10 @@
 	.tui-grid-head-cell {
 		&.tui-grid-sortable {
 			cursor:pointer;
+			> .tui-grid-cell-content {
+				cursor:pointer;
+				text-decoration:underline;
+			}
 		}
 		&.tui-grid-cell-sort-asc .tui-grid-cell-content:before {
 			.icon-base;

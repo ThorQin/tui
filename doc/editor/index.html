@@ -17,6 +17,13 @@
 	<script src="../js/tui/lang/en-us.js"></script>
 	<script src="../js/docmaker.js"></script>
 	<script src="../js/main.js"></script>
+	<script id="passwordDlg" type="text/html">
+		<div style="white-space:nowrap;padding:20px 10px;">
+			<span class="tui-label-white">保存口令：</span>
+			<span id="pwdInput" class="tui-input" data-type="password" data-form="saveForm" data-submit-form="saveForm"
+				  data-field="password" data-validator="{'*any':'请输入保存密码，以确认您有权限保存'}"></span>
+		</div>
+	</script>
 	<script id="captionDlg" type="text/html">
 		<div>
 			<div class="tui-tab">
@@ -55,13 +62,14 @@
 	<!--#TUI END#-->
 	<script>
 		var docList = [
-			{ key: "editDoc", value: "快速上手", target: "quickstart.js" },
-			{ key: "editDoc", value: "开发手册", target: "reference.js" },
+			{ key: "editDoc", value: "快速上手", target: "../content/?file=quickstart.json" },
+			{ key: "editDoc", value: "开发手册", target: "../content/?file=reference.json" },
 		];
 		
 		$(function () {
 			var content;
 			var modified = false;
+			var editUrl = null;
 			var docmaker = new doc.DocMaker("docIndex", "docContent", true);
 			docmaker.on("changed", function () {
 				modified = true;
@@ -71,6 +79,7 @@
 				tui.ctrl.list("docIndex").data(null);
 				$("#docContent").html("");
 				$("#mainContent").addClass("tui-hidden");
+				tui.deleteAccelerate("Ctrl+S", "btnSave");
 			}
 			function doLoadDoc(url, successCallback) {
 				closeDoc();
@@ -85,7 +94,9 @@
 							content = [];
 						}
 						docmaker.make(content);
+						editUrl = url;
 						$("#btnSave").removeClass("tui-hidden");
+						tui.addAccelerate("Ctrl+S", "btnSave");
 						setupCatalogSize();
 						successCallback();
 					} else
@@ -108,6 +119,29 @@
 					modified = false;
 				});
 			});
+			tui.ctrl.formAgent("contentAgent").on("getValue", function (data) {
+				data.value = docmaker.content()
+			});
+			
+			tui.on("btnSave", function (data) {
+				data.event.preventDefault();
+				var saveDlg = tui.ctrl.dialog();
+				saveDlg.showResource("passwordDlg", "保存文档", [
+					{
+						name: tui.str("ok"), func: function () {
+							var fm = tui.ctrl.form("saveForm");
+							fm.action(editUrl + "&action=save");
+							fm.on("success", function () {
+								saveDlg.close();
+								tui.ctrl.tips("tipOk").show();
+							});
+							fm.submit();
+						}
+					},
+					{ name: tui.str("cancel"), func: function () { saveDlg.close(); } }
+				]);
+				tui.ctrl.input("pwdInput").focus();
+			});
 			window.onbeforeunload = function () {
 				if (modified) {
 					return "文档修改还没有保存，您确定要离开吗？";
@@ -126,13 +160,19 @@
 		<a id="btnSave" class="tui-button tui-hidden" data-tooltip="保存当前文档 (Ctrl+S)"><i class="fa fa-save"></i> 保存</a>
 		<span id="fileInfo" class="tui-title"></span>
 	</div>
+	
 	<div id="mainContent" class="tui-hidden">
 		<div id="docIndex" class="tui-list index" data-rowdraggable="true"></div>
 		<div id="docContent"></div>
 	</div>
+	<div id="tipOk" class="tui-tips tui-success tui-shadow tui-hidden" 
+		 style="position:fixed;top:60px;width:80px;left:50%;margin-left:-100px;"
+		 data-auto-close-time="1000">
+		<i class="fa fa-check"></i> 保存成功
+	</div>
 	<!--表单-->
-	<span class="tui-form" data-action="save.aspx">
-
+	<span id="saveForm" class="tui-form">
+		<span id="contentAgent" data-field="content"></span>
 	</span>
 </body>
 </html>

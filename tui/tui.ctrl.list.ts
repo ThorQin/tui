@@ -36,7 +36,7 @@ module tui.ctrl {
 						var isExpanded = !!info.row[this._expandColumnKey];
 						var hasCheckbox = (typeof info.row[this._checkedColumnKey] !== tui.undef);
 						var isChecked = !!info.row[this._checkedColumnKey];
-						var hasChild = !!info.row[this._childrenColumKey];
+						var hasChild = !!info.row[this._childrenColumKey] && info.row[this._childrenColumKey].length > 0;
 						var isHalfChecked = (this.triState() && info.row[this._checkedColumnKey] === TriState.HalfChecked);
 						var spaceSpan = document.createElement("span");
 

@@ -39,7 +39,7 @@
 		<script>
 			docmaker = new doc.DocMaker(tui.ctrl.accordionGroup("docIndex"), "docContent");
 			tui.ctrl.accordionGroup("docIndex").installMonitor(window);
-			tui.loadURL("content/quickstart.js", function (status, xhr) {
+			tui.loadURL("content/content/?file=quickstart.json", function (status, xhr) {
 				if (status === "success") {
 					docmaker.make(eval("(" + xhr.responseText + ")"));
 				}

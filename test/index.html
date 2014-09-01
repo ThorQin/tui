@@ -33,6 +33,9 @@
 	<script src="../tui/tui.ctrl.menu.js"></script>
 	<script src="../tui/tui.ctrl.navbar.js"></script>
 	<script>
+		var listData = [
+			{ key: "root", value: "root", children: [{key:"test", value:"child"}]}
+		];
 		var userName = [
 			{ value: 'test', checked: false },
 			{key:'zgyjdx,zhongguoyejindaxue',value: '中国冶金大学', checked:false}, 
@@ -89,7 +92,7 @@
 			{ name: "姓名", key: 1, format: tui.ctrl.Grid.textEditor() },
 			{ name: "性别", key: 2, format: tui.ctrl.Grid.selector(sex) },
 			{ name: "兴趣", key: 3, format: tui.ctrl.Grid.textEditor(interesting) },
-			{ name: "年龄", key: 4, format: tui.ctrl.Grid.textEditor() },
+			{ name: "年龄", key: 4, format: tui.ctrl.Grid.textEditor() ,sort:true},
 			{ name: "照片", key: 5, format: tui.ctrl.Grid.fileSelector("fileupload", "image/*") },
 			{ name: "所在班级", key: 6, format: tui.ctrl.Grid.customSelector(choiceClass) },
 			{ name: "出生日期", key: 7, format: tui.ctrl.Grid.calendarSelector() },
@@ -144,7 +147,7 @@
 			});
 			tui.on("btnpop", function () {
 				var dlg = tui.ctrl.dialog();
-				dlg.showResource("res");
+				dlg.showElement("res");
 			});
 		});
 
@@ -163,8 +166,9 @@
 		<div id="tbGrid" class="tui-grid" data-columns="tbCols"
 			 data-rowselectable="true" data-resizable="true"
 			 data-rowdraggable="true"
-			 data-data="tbData" style="width:1000px;height:400px"></div>
+			 data-data="tbData" style="width:1000px;height:385px"></div>
 	</div>
+	<div class="tui-list" data-data="listData"></div>
 	<a id="btnpop" class="tui-button" data-tooltip="测试一下">弹出</a>
 </body>
 </html>

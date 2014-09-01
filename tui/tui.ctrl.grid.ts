@@ -794,8 +794,8 @@ module tui.ctrl {
 								downTimer === null && (downTimer = setInterval(function () {
 									if (firstScroll)
 										self.scrollTo(self._bufferedEnd - 1);
-									else if (self._bufferedEnd < self._data.length()) {
-										self.scrollTo(self._bufferedEnd);
+									else if (self._bufferedEnd <= self._data.length()) {
+										self.scrollTo(self._bufferedEnd - 1);
 									}
 									firstScroll = false;
 								}, 80)) && (firstScroll = true);

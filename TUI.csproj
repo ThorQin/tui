@@ -28,11 +28,11 @@
     <Content Include="build\tui\lang\zh-cn.js" />
     <Content Include="build\tui\tui.all.js" />
     <Content Include="build\tui\tui.all.min.js" />
-    <Content Include="doc\content\index.html" />
+    <Content Include="doc\editor\index.html" />
     <Content Include="doc\reference.html" />
     <Content Include="doc\quickstart.html" />
-    <Content Include="doc\content\reference.js" />
-    <Content Include="doc\content\quickstart.js" />
+    <None Include="doc\content\reference.json" />
+    <None Include="doc\content\quickstart.json" />
     <Content Include="doc\image\design.svg" />
     <Content Include="doc\image\browser.png" />
     <Content Include="doc\image\dispBack.png" />
@@ -124,23 +124,28 @@
     <Content Include="build\tui\css\tui-tips.less" />
     <Content Include="build\tui\css\tui.less" />
     <Content Include="build\tui\tui.all.js.map" />
-    <None Include="web.Debug.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
-    <None Include="web.Release.config">
-      <DependentUpon>web.config</DependentUpon>
-    </None>
+    <Content Include="doc\content\index.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="doc\content\index.ashx.cs">
+      <DependentUpon>index.ashx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
