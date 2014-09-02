@@ -58,6 +58,8 @@ var doc;
                         var tp = tagetRow.__parent;
                         var didx = dp.content.indexOf(dragRow);
                         dp.content.splice(didx, 1);
+                        if (dp.content.length <= 0)
+                            delete dp.content;
                         var tidx = tp.content.indexOf(tagetRow);
                         tp.content.splice(tidx, 0, dragRow);
                     } else if (data.position === "after") {
@@ -66,11 +68,15 @@ var doc;
                         var tp = tagetRow.__parent;
                         var didx = dp.content.indexOf(dragRow);
                         dp.content.splice(didx, 1);
+                        if (dp.content.length <= 0)
+                            delete dp.content;
                         var tidx = tp.content.indexOf(tagetRow);
                         tp.content.splice(tidx + 1, 0, dragRow);
                     } else {
                         var didx = dp.content.indexOf(dragRow);
                         dp.content.splice(didx, 1);
+                        if (dp.content.length <= 0)
+                            delete dp.content;
                         if (!tagetRow.content)
                             tagetRow.content = [];
                         tagetRow.content.push(dragRow);
@@ -96,6 +102,10 @@ var doc;
             else
                 throw new Error("Invalid parameter need a HTML element or specify element's id.");
         }
+        DocMaker.prototype.content = function () {
+            return tui.clone(this._doc, ["__parent", "refresh", "expand", "checked", "num", "level", "key"]);
+        };
+
         DocMaker.prototype.makeTable = function (name, items, container) {
             var tb = document.createElement("table");
             tb.className = "doc-table";
@@ -162,6 +172,8 @@ var doc;
                             tui.askbox("确认删除章节 '" + item.name + "' 吗？", "删除", function (result) {
                                 if (result === true) {
                                     parent.content.splice(idx, 1);
+                                    if (parent.content.length <= 0)
+                                        delete parent.content;
                                     parent.refresh();
                                     self.refreshCatalog();
                                     self.fire("change", null);
@@ -190,7 +202,17 @@ var doc;
                 }
                 if (item.code) {
                     var code = document.createElement("pre");
-                    code.innerHTML = item.code;
+                    code.innerHTML = item.code.replace(/[&<>]/g, function (s) {
+                        if (s === "&")
+                            return "&amp;";
+                        else if (s === "<")
+                            return "&lt;";
+                        else if (s === ">")
+                            return "&gt;";
+                        else
+                            return s;
+                    });
+                    ;
                     code.className = "tui-panel doc-code";
                     container.appendChild(code);
                 }
@@ -233,10 +255,21 @@ var doc;
                         if (item && typeof item === "object") {
                             if (typeof val.id !== tui.undef)
                                 item.id = val.id;
+                            else
+                                delete item.id;
                             item.name = val.name;
-                            item.desc = val.desc;
-                            item.pic = val.pic;
-                            item.code = val.code;
+                            if (val.desc)
+                                item.desc = val.desc;
+                            else
+                                delete item.desc;
+                            if (val.pic)
+                                item.pic = val.pic;
+                            else
+                                delete item.pic;
+                            if (val.code)
+                                item.code = val.code;
+                            else
+                                delete item.code;
                             item.index = val.index;
                             for (var n in tableType) {
                                 if (itemClone[n].length > 0)
@@ -249,10 +282,23 @@ var doc;
                             if (typeof val.id !== tui.undef)
                                 itemClone.id = val.id;
                             itemClone.name = val.name;
-                            itemClone.desc = val.desc;
-                            itemClone.pic = val.pic;
-                            itemClone.code = val.code;
+                            if (val.desc)
+                                itemClone.desc = val.desc;
+                            else
+                                delete itemClone.desc;
+                            if (val.pic)
+                                itemClone.pic = val.pic;
+                            else
+                                delete itemClone.pic;
+                            if (val.code)
+                                itemClone.code = val.code;
+                            else
+                                delete itemClone.code;
                             itemClone.index = val.index;
+                            for (var n in tableType) {
+                                if (itemClone[n].length <= 0)
+                                    delete itemClone[n];
+                            }
                             var items;
                             if (parent.content)
                                 items = parent.content;

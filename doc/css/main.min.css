@@ -202,6 +202,7 @@ body {
   font-family: 'Courier New';
   tab-size: 4;
   overflow: visible;
+  white-space: pre-wrap;
 }
 .doc-code:before {
   content: "CODE:";
@@ -253,26 +254,4 @@ body {
 }
 .doc-section-dlg-tab .tui-radiobox.tui-underline[data-checked]:before {
   content: none;
-}
-#detailGrid .tui-button {
-  margin-top: -4px;
-  margin-bottom: 0;
-  height: 28px;
-  line-height: 28px;
-  padding: 5px;
-  padding-top: 0;
-  padding-bottom: 0;
-  border: none;
-  background: none;
-  color: black;
-  outline: none;
-  filter: none;
-  min-width: 20px;
-}
-#detailGrid .tui-button:hover,
-#detailGrid .tui-button.tui-focus,
-#detailGrid .tui-button:active,
-#detailGrid .tui-button.tui-actived {
-  background: #f0f0f0;
-  color: black;
 }

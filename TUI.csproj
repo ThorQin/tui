@@ -170,12 +170,14 @@
     <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>AMD</TypeScriptModuleKind>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptRemoveComments>true</TypeScriptRemoveComments>
     <TypeScriptSourceMap>false</TypeScriptSourceMap>
     <TypeScriptModuleKind>AMD</TypeScriptModuleKind>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(VSToolsPath)\TypeScript\Microsoft.TypeScript.targets')" />
   <PropertyGroup>

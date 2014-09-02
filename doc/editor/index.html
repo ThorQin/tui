@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<title>TUI.JS Editor</title>
 	<!--#DEPENDS STYLE#-->
-	<link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="../js/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
 	<!--#TUI STYLE#-->
 	<link rel="stylesheet" href="../js/tui/css/tui.min.css" type="text/css" />
 	<!-- Page related css -->
@@ -20,8 +20,8 @@
 	<script id="passwordDlg" type="text/html">
 		<div style="white-space:nowrap;padding:20px 10px;">
 			<span class="tui-label-white">保存口令：</span>
-			<span id="pwdInput" class="tui-input" data-type="password" data-form="saveForm" data-submit-form="saveForm"
-				  data-field="password" data-validator="{'*any':'请输入保存密码，以确认您有权限保存'}"></span>
+			<span id="pwdInput" class="tui-input" data-type="password" data-submit-form="saveForm"
+				  data-validator="{'*any':'请输入保存密码，以确认您有权限保存'}"></span>
 		</div>
 	</script>
 	<script id="captionDlg" type="text/html">
@@ -68,10 +68,11 @@
 		
 		$(function () {
 			var content;
+			var savedPassword = null;
 			var modified = false;
 			var editUrl = null;
 			var docmaker = new doc.DocMaker("docIndex", "docContent", true);
-			docmaker.on("changed", function () {
+			docmaker.on("change", function () {
 				modified = true;
 			});
 
@@ -119,28 +120,40 @@
 					modified = false;
 				});
 			});
-			tui.ctrl.formAgent("contentAgent").on("getValue", function (data) {
+			tui.ctrl.formAgent("contentAgent").on("getvalue", function (data) {
 				data.value = docmaker.content()
+			});
+			tui.ctrl.formAgent("passAgent").on("getvalue", function (data) {
+				if (!data.value)
+					data.value = savedPassword;
 			});
 			
 			tui.on("btnSave", function (data) {
 				data.event.preventDefault();
-				var saveDlg = tui.ctrl.dialog();
-				saveDlg.showResource("passwordDlg", "保存文档", [
-					{
-						name: tui.str("ok"), func: function () {
-							var fm = tui.ctrl.form("saveForm");
-							fm.action(editUrl + "&action=save");
-							fm.on("success", function () {
-								saveDlg.close();
-								tui.ctrl.tips("tipOk").show();
-							});
-							fm.submit();
-						}
-					},
-					{ name: tui.str("cancel"), func: function () { saveDlg.close(); } }
-				]);
-				tui.ctrl.input("pwdInput").focus();
+				var saveDlg = null;
+				var fm = tui.ctrl.form("saveForm");
+				fm.action(editUrl + "&action=save");
+				fm.on("success", function () {
+					if (saveDlg) {
+						savedPassword = tui.ctrl.input("pwdInput").value();
+						saveDlg.close();
+					}
+					tui.ctrl.tips("tipOk").show();
+					modified = false;
+				});
+				if (!savedPassword) {
+					saveDlg = tui.ctrl.dialog();
+					saveDlg.showResource("passwordDlg", "保存文档", [
+						{
+							name: tui.str("ok"), func: function () {
+								fm.submit();
+							}
+						},
+						{ name: tui.str("cancel"), func: function () { saveDlg.close(); } }
+					]);
+					tui.ctrl.input("pwdInput").focus();
+				} else
+					fm.submit();
 			});
 			window.onbeforeunload = function () {
 				if (modified) {
@@ -173,6 +186,7 @@
 	<!--表单-->
 	<span id="saveForm" class="tui-form">
 		<span id="contentAgent" data-field="content"></span>
+		<span id="passAgent" data-field="password" data-target="pwdInput"></span>
 	</span>
 </body>
 </html>

@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<title>TUI.JS</title>
 	
-	<link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="js/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="js/tui/css/tui.min.css" type="text/css" />
 
 	<!-- Page related css -->
@@ -188,24 +188,19 @@ tui.msgbox(str("This is a test"));
 					支持数据回显，使得数据的操作非常简单...
 				</td>
 				<td>
-					<div class="tui-panel doc-code">
-						&lt;span class="tui-form"
-						data-action="api/query" data-method="get" &gt;<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;&lt;span data-field="name"<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;data-target="aTextInput"&gt;&lt;/span&gt;<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;&lt;span data-field="sex"<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;data-target="aSelecInput"&gt;&lt;/span&gt;<br>
-						&lt;/span&gt;<br>
+					<div class="tui-panel doc-code">&lt;span class="tui-form" data-action="api/query"&gt;
+	&lt;span data-field="name" data-target="aTextInput"&gt;&lt;/span&gt;
+	&lt;span data-field="sex" data-target="aSelecInput"&gt;&lt;/span&gt;
+&lt;/span&gt;
 					</div>
 				</td>
 			</tr>
 			<tr>
 				<td>
-					<div class="tui-panel doc-code">
-						&lt;span class="tui-input" data-type="select"&gt;&lt;/span&gt;<br>
-						&lt;a class="tui-button" data-type="select"&gt;按钮&lt;/a&gt;<br>
-						&lt;div class="tui-calendar" data-type="select"&gt;&lt;/div&gt;<br>
-						...
+					<div class="tui-panel doc-code">&lt;span class="tui-input" data-type="select"&gt;&lt;/span&gt;
+&lt;a class="tui-button" data-type="select"&gt;按钮&lt;/a&gt;
+&lt;div class="tui-calendar" data-type="select"&gt;&lt;/div&gt;
+...
 					</div>
 				</td>
 				<td>
@@ -225,14 +220,12 @@ tui.msgbox(str("This is a test"));
 					也可以直接继承自 tui.ctrl.Control 基类，完全自己定制 ...
 				</td>
 				<td>
-					<div class="tui-panel doc-code">
-						export class DemoCtrl extends Control&lt;DemoCtrl&gt; {<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;static CLASS: string = "your-class-name";<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;constructor(el?: HTMLElement) {<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// ......<br>
-						&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-						}
-					</div>
+					<div class="tui-panel doc-code">export class DemoCtrl extends Control&lt;DemoCtrl&gt; {
+	static CLASS: string = "your-class-name";
+	constructor(el?: HTMLElement) {
+		// ......
+	}
+}</div>
 				</td>
 			</tr>
 			<tr>
@@ -251,8 +244,8 @@ tui.msgbox(str("This is a test"));
 		<div>
 			<div style="float:left;padding-left:80px;">
 				&copy;2014 <a href="mailto:thor.qin@outlook.com">Thor Qin</a>
-				| <a href="./">Project Home</a>
-				| <a href="#">Lisence</a>
+				| <a href="./editor/">Doc Editor</a>
+				| <a href="http://mit-license.org/">Lisence</a>
 			</div>
 			<div style="float:right;padding-right:80px;"><a href="#">Back to top</a></div>
 		</div>

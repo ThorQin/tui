@@ -255,7 +255,7 @@ module tui.ctrl {
 					}
 				}
 				var param = { value: val };
-				this.fire("pregetvalue", param);
+				this.fire("getvalue", param);
 				return param.value;
 			}
 		}

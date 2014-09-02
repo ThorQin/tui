@@ -10,7 +10,7 @@ var detailItemMenu = [
 ]
 
 var docTableCol = [
-	{ name: "参数", key: 0, width: 80, _important: true, format: tui.ctrl.Grid.textEditor() },
+	{ name: "名称", key: 0, width: 80, _important: true, format: tui.ctrl.Grid.textEditor() },
 	{ name: "类型", key: 1, width: 80, _important: true, format: tui.ctrl.Grid.textEditor() },
 	{ name: "描述", key: 2, format: tui.ctrl.Grid.textEditor() },
 	{
@@ -46,7 +46,7 @@ function setupCatalogSize() {
 	if (g instanceof tui.ctrl.AccordionGroup)
 		g.maxHeight(size.height - 240);
 	else if (g) {
-		g[0].style.minHeight = size.height - 240 + "px";
+		g[0].style.minHeight = size.height - 140 + "px";
 		g.refresh();
 	}
 }
