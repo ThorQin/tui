@@ -1,7 +1,29 @@
+rem =====================================
+rem CLEAN BUILD
+rem =====================================
 rmdir /S /Q tui
+del *.zip
+
+
+rem =====================================
+rem BUILD SOURCE PACKAGE
+rem =====================================
 mkdir tui
+mkdir tui\build
+xcopy /Y /S tools tui\build\tools\
+copy build.bat tui\build\build.bat
 xcopy /Y /S ..\tui tui\tui\
 xcopy /Y /S ..\depends tui\depends\
+copy ..\.gitignore tui\
+copy ..\license tui\
+copy ..\README.md tui\
+tools\7z a -tzip tui-1.0-src.zip tui
+
+rem =====================================
+rem BUILD RELEASE PACKAGE
+rem =====================================
+del tui\.gitignore
+rmdir /S /Q tui\build
 
 tsc -m amd --sourcemap --out tui/tui/tui.all.js ^
 	tui/tui/tui.core.ts ^
