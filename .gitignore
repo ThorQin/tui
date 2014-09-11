@@ -3,3 +3,5 @@ tui/*.js
 tui/css/tui.min.css
 build/tui
 *.map
+build/*.zip
+*.zip

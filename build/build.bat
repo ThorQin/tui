@@ -6,24 +6,14 @@ del *.zip
 
 
 rem =====================================
-rem BUILD SOURCE PACKAGE
-rem =====================================
-mkdir tui
-mkdir tui\build
-xcopy /Y /S tools tui\build\tools\
-copy build.bat tui\build\build.bat
-xcopy /Y /S ..\tui tui\tui\
-xcopy /Y /S ..\depends tui\depends\
-copy ..\.gitignore tui\
-copy ..\license tui\
-copy ..\README.md tui\
-tools\7z a -tzip tui-1.0-src.zip tui
-
-rem =====================================
 rem BUILD RELEASE PACKAGE
 rem =====================================
-del tui\.gitignore
-rmdir /S /Q tui\build
+mkdir tui
+
+xcopy /Y /S ..\tui tui\tui\
+xcopy /Y /S ..\depends tui\depends\
+copy ..\license tui\
+copy ..\README.md tui\
 
 tsc -m amd --sourcemap --out tui/tui/tui.all.js ^
 	tui/tui/tui.core.ts ^
@@ -58,5 +48,6 @@ tools\ajaxmin tui\tui\tui.all.js -out tui\tui\tui.all.min.js
 java -jar tools/js.jar -f tools/less-rhino-1.7.0.js tools/lessc-rhino-1.7.0.js -x tui/tui/css/tui.less tui/tui/css/tui.min.css
 del tui\tui\css\*.less
 
-tools\7z a -tzip tui-1.0-release.zip tui
+tools\7z a -tzip tui-1.0.zip tui
 
+rmdir /S /Q tui
