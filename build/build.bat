@@ -1,6 +1,6 @@
 rmdir /S /Q tui
 mkdir tui
-xcopy /Y ..\tui tui\tui\
+xcopy /Y /S ..\tui tui\tui\
 xcopy /Y /S ..\depends tui\depends\
 
 tsc -m amd --sourcemap --out tui/tui/tui.all.js ^
@@ -31,15 +31,10 @@ tsc -m amd --sourcemap --out tui/tui/tui.all.js ^
 	tui/tui/tui.ctrl.menu.ts ^
 	tui/tui/tui.ctrl.navbar.ts
 	
+del tui\tui\*.ts
+tools\ajaxmin tui\tui\tui.all.js -out tui\tui\tui.all.min.js
+java -jar tools/js.jar -f tools/less-rhino-1.7.0.js tools/lessc-rhino-1.7.0.js -x tui/tui/css/tui.less tui/tui/css/tui.min.css
+del tui\tui\css\*.less
 
-
-xcopy /Y /S ..\tui\css tui\css\
-xcopy /Y /S ..\tui\lang tui\lang\
-xcopy /Y /S ..\depends depends\
-
-ajaxmin tui\tui.all.js -out tui\tui.all.min.js
-
-lessc -x tui/css/tui.less > tui/css/tui.min.css
-
-
+tools\7z a -tzip tui-1.0-release.zip tui
 

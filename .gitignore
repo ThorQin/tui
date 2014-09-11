@@ -1,6 +1,5 @@
 tui/*.map
 tui/*.js
 tui/css/tui.min.css
-tui/build/depends
-tui/build/tui
+build/tui
 *.map
