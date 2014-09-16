@@ -15,7 +15,8 @@ xcopy /Y /S ..\depends tui\depends\
 copy ..\license tui\
 copy ..\README.md tui\
 
-tsc -m amd --sourcemap --out tui/tui/tui.all.js ^
+rem tools\tsc.exe -m amd --sourcemap --out tui/tui/tui.all.js ^
+tools\tsc\tsc.exe -m amd --out tui/tui/tui.all.js ^
 	tui/tui/tui.core.ts ^
 	tui/tui/tui.time.ts ^
 	tui/tui/tui.upload.ts ^
@@ -44,8 +45,16 @@ tsc -m amd --sourcemap --out tui/tui/tui.all.js ^
 	tui/tui/tui.ctrl.navbar.ts
 	
 del tui\tui\*.ts
-tools\ajaxmin tui\tui\tui.all.js -out tui\tui\tui.all.min.js
-java -jar tools/js.jar -f tools/less-rhino-1.7.0.js tools/lessc-rhino-1.7.0.js -x tui/tui/css/tui.less tui/tui/css/tui.min.css
+
+tools\ajaxmin\ajaxmin tui\tui\tui.all.js ^
+	-out tui\tui\tui.all.min.js ^
+	-map:v3 tui\tui\tui.all.min.js.map
+	
+java -jar tools/lessc/js.jar -f ^
+	tools/lessc/less-rhino-1.7.0.js ^
+	tools/lessc/lessc-rhino-1.7.0.js -x^
+	tui/tui/css/tui.less tui/tui/css/tui.min.css
+	
 del tui\tui\css\*.less
 
 tools\7z a -tzip tui-1.0.zip tui

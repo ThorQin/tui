@@ -161,6 +161,7 @@ module tui.ctrl {
 				setTimeout(() => {
 					if (this.text() !== this._textbox.value) {
 						this.text(this._textbox.value);
+						self.openSuggestion(self._textbox.value);
 						self.fire("change", { "ctrl": this[0], "event": e, "text": this.text() });
 					}
 				}, 0);
@@ -168,6 +169,7 @@ module tui.ctrl {
 			$(this._textbox).on("change", (e: any) => {
 				if (this.text() !== this._textbox.value) {
 					this.text(this._textbox.value);
+					self.openSuggestion(self._textbox.value);
 					this.fire("change", { "ctrl": this[0], "event": e, "text": this.text() });
 				}
 			});
@@ -175,16 +177,17 @@ module tui.ctrl {
 				setTimeout(() => {
 					if (this.text() !== this._textbox.value) {
 						this.text(this._textbox.value);
+						self.openSuggestion(self._textbox.value);
 						self.fire("change", { "ctrl": self[0], "event": e, "text": self.text() });
 					}
 				}, 0);
 			});
 			$(this._textbox).keydown((e: any) => {
-				if (!tui.CONTROL_KEYS[e.keyCode]) {
-					setTimeout(function () {
-						self.openSuggestion(self._textbox.value);
-					}, 0);
-				}
+				//if (!tui.CONTROL_KEYS[e.keyCode]) {
+				//	setTimeout(function () {
+				//		self.openSuggestion(self._textbox.value);
+				//	}, 0);
+				//}
 				if (self._suggestionList) {
 					var list = self._suggestionList;
 					if (e.keyCode === tui.KEY_DOWN) {

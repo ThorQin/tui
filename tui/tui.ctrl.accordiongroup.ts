@@ -121,11 +121,13 @@ module tui.ctrl {
 
 		private _onScroll = (() => {
 			var self = this;
+			var scrollTimer = null;
 			return function (e) {
 				if (self._monitoredParent === null)
 					return;
 				if (self._inScrolling)
 					return;
+				
 				var parent = getRealTagetScrollElement(self._monitoredParent);
 				for (var i = 0; i < self._anchors.length; i++) {
 					var elemId = self._anchors[i];
@@ -133,8 +135,14 @@ module tui.ctrl {
 					if (!elem)
 						continue;
 					var pos = tui.relativePosition(elem, parent);
-					if (Math.abs(pos.y - parent.scrollTop - self.distance()) <= 20) {
-						self.value("#" + elem.id);
+					if (Math.abs(pos.y - parent.scrollTop - self.distance()) <= 100) {
+						if (scrollTimer != null) {
+							clearTimeout(scrollTimer);
+							scrollTimer = null;
+						}
+						scrollTimer = setTimeout(function(){
+								self.value("#" + elem.id);
+							}, 50);
 						break;
 					}
 				}
