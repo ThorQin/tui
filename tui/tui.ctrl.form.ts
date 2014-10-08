@@ -7,6 +7,7 @@ module tui.ctrl {
 			"success", "notmodified", "error", "timeout", "abort", "parsererror"
 		];
 		private static ignoreErrors: number[] = null;
+		private static defaultErrorProc: (data:{ jqXHR: any; status: string; }) => {} = null;
 
 		private _immediateValue: any;
 
@@ -65,18 +66,14 @@ module tui.ctrl {
 				return this.is("data-show-error");
 		}
 
-		isShowWait(): boolean;
-		isShowWait(val: boolean): Form;
-		isShowWait(val?: boolean): any {
-			if (typeof val !== tui.undef) {
-				this.is("data-show-wait", !!val);
+		waiting(): string;
+		waiting(msg?: string): Form;
+		waiting(msg?: string): any {
+			if (typeof msg === "string") {
+				this.attr("data-waiting", msg);
 				return this;
-			} else {
-				if (this.hasAttr("data-show-wait"))
-					return this.is("data-show-wait");
-				else
-					return false;
-			}
+			} else
+				return this.attr("data-waiting");
 		}
 
 		action(): string;
@@ -286,8 +283,8 @@ module tui.ctrl {
 				return;
 			var self = this;
 			var waitDlg: Dialog = null;
-			if (this.isShowWait()) {
-				waitDlg = tui.waitbox(str("Loading..."));
+			if (this.waiting()) {
+				waitDlg = tui.waitbox(str(this.waiting()));
 			}
 			$.ajax({
 				"type": this.method(),
@@ -318,17 +315,19 @@ module tui.ctrl {
 						var target: any = self.target();
 						var property: string = self.targetProperty();
 						if (target) {
+							var respJson = /^\s*application\/json\s*(;.+)?/i.test(jqXHR.getResponseHeader("content-type"));
+							var respVal = (respJson ? jqXHR["responseJSON"] : jqXHR.responseText);
 							target = document.getElementById(target);
 							if (target && target["_ctrl"]) {
 								var ctrl = target["_ctrl"];
 								if (typeof ctrl[property] === "function") {
-									ctrl[property](jqXHR["responseJSON"]);
+									ctrl[property](respVal);
 								}
 							} else if (target) {
 								if (typeof target[property] === "function") {
-									target[property](jqXHR.responseText);
+									target[property](respVal);
 								} else {
-									target[property] = jqXHR.responseText;
+									target[property] = respVal;
 								}
 							}
 						}
@@ -338,7 +337,11 @@ module tui.ctrl {
 							form && form.submit();
 						}
 					} else {
-					if (self.isShowError() && !(Form.ignoreErrors && Form.ignoreErrors.indexOf(jqXHR.status) >= 0)) {
+						if (typeof Form.defaultErrorProc === "function") {
+							if (Form.defaultErrorProc({ jqXHR: jqXHR, status: status }) === false)
+								return;
+						}
+						if (self.isShowError() && !(Form.ignoreErrors && Form.ignoreErrors.indexOf(jqXHR.status) >= 0)) {
 							tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
 						}
 					}
@@ -349,6 +352,10 @@ module tui.ctrl {
 
 		static ignoreError(errorCodeList: number[]) {
 			Form.ignoreErrors = errorCodeList;
+		}
+		
+		static defaultError(proc: (data:{ jqXHR: any; status: string; }) => {}) {
+			Form.defaultErrorProc = proc;
 		}
 	}
 
