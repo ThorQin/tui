@@ -73,7 +73,12 @@ module tui.ctrl {
 			} else if (param && typeof param.x === "number" && typeof param.y === "number") {
 				elem = this.elem("div", Popup.CLASS);
 				this._position = param;
-			} 
+				this._bindType = "LT";
+			} else if (typeof param === tui.undef) {
+				elem = this.elem("div", Popup.CLASS);
+				this._position = {x:0, y:0};
+				this._bindType = "LT";			
+			}
 			if (elem) {
 				if (this._bindElem) {
 					this._parentPopup = this.getParentPopup(this._bindElem);
@@ -168,8 +173,8 @@ module tui.ctrl {
 			if (!this[0])
 				return;
 			var elem = this[0];
-			var cw = document.documentElement.clientWidth;
-			var ch = document.documentElement.clientHeight;
+			var cw = windowSize().width;
+			var ch = windowSize().height;
 			var sw = elem.offsetWidth;
 			var sh = elem.offsetHeight;
 			var box: { x: number; y: number; w?: number; h?: number; } = { x: 0, y: 0, w: 0, h: 0 };
@@ -221,7 +226,7 @@ module tui.ctrl {
 			};
 			compute[this._bindType.substring(0, 1)](); // parse x
 			compute[this._bindType.substring(1, 2)](); // parse y
-
+			
 			if (pos.x > cw - 2)
 				pos.x = cw - 2;
 			if (pos.x < 2)

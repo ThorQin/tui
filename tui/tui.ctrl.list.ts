@@ -25,12 +25,14 @@ module tui.ctrl {
 			this[0] = this._grid[0];
 			this[0]._ctrl = this;
 			this.addClass(List.CLASS);
-			this._grid.noHead(true);
+			
 			var columns = this._grid.columns();
 			if (columns === null) {
 				this._grid.columns([{
 					key: "value",
 					format: (info: IColumnFormatInfo) => {
+						if (info.rowIndex < 0)
+							return;
 						var rowcheckable = this.rowcheckable();
 						var cell = info.cell.firstChild;
 						var isExpanded = !!info.row[this._expandColumnKey];
@@ -162,6 +164,8 @@ module tui.ctrl {
 				}
 				return this.fire("keyup", data);
 			});
+			if (!this.hasAttr("data-no-head"))
+				this.noHead(true);
 			if (!this.hasAttr("data-delay-drawing"))
 				this.delayDrawing(false);
 			if (!this.hasAttr("data-rowselectable"))
@@ -501,6 +505,12 @@ module tui.ctrl {
 		delayDrawing(val: boolean): List;
 		delayDrawing(val?: boolean): any {
 			return this._grid.delayDrawing(val);
+		}
+		
+		noHead(): boolean;
+		noHead(val: boolean): Grid;
+		noHead(val?: boolean): any {
+			return this._grid.noHead(val);
 		}
 
 		hasHScroll(): boolean;

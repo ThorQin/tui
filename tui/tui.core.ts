@@ -568,25 +568,24 @@ module tui {
 	}
 
 	/**
-	 * Obtain hosted document's window size
+	 * Obtain hosted document's window size (exclude scrollbars if have)
+	 * NOTE: this function will spend much CPU time to run, 
+	 * so you SHOULD NOT try to call this function repeatedly.
 	 */
 	export function windowSize(): { width: number; height: number } {
-		var w = 630, h = 460;
-		if (document.body && document.body.offsetWidth) {
-			w = document.body.offsetWidth;
-			h = document.body.offsetHeight;
-		}
-		if (document.compatMode === 'CSS1Compat' &&
-			document.documentElement &&
-			document.documentElement.offsetWidth) {
-			w = document.documentElement.offsetWidth;
-			h = document.documentElement.offsetHeight;
-		}
-		if (window.innerWidth && window.innerHeight) {
-			w = window.innerWidth;
-			h = window.innerHeight;
-		}
-		return { width: w, height: h };
+		var div = document.createElement("div");
+		div.style.display = "block";
+		div.style.position = "fixed";
+		div.style.left = "0";
+		div.style.top = "0";
+		div.style.right = "0";
+		div.style.bottom = "0";
+		div.style.visibility = "hidden";
+		var parent = document.body || document.documentElement;
+		parent.appendChild(div);
+		var size = { width: div.offsetWidth, height: div.offsetHeight };
+		parent.removeChild(div);
+		return size;
 	};
 
 	/**
@@ -679,6 +678,15 @@ module tui {
 		$(document).bind("keydown", ban);
 	}
 
+	export function cancelDefault(event: any): boolean {
+		if(event.preventDefault) {
+			event.preventDefault();
+		} else {
+			event.returnValue = false;
+		}
+		return false;
+	}
+	
 	/**
 	 * Detect whether the given parent element is the real ancestry element
 	 * @param elem
