@@ -198,6 +198,12 @@ module tui.ctrl {
 			if (this._list)
 				this._list.enumerate(func);
 		}
+		
+		consumeMouseWheelEvent(): boolean;
+		consumeMouseWheelEvent(val: boolean): Grid;
+		consumeMouseWheelEvent(val?: boolean): any {
+			return this._list.consumeMouseWheelEvent(val);
+		}
 
 		useAnimation(): boolean;
 		useAnimation(val: boolean): Accordion;
