@@ -14,6 +14,7 @@ module tui.ctrl {
 		private _checkedColumnKey: string;
 		private _expandColumnKey: string;
 		private _levelColumnKey: string;
+		private _iconColumnKey: string;
 		private _valueColumnKey: string;
 		//private _columnKeyMap: {} = null;
 
@@ -35,6 +36,7 @@ module tui.ctrl {
 							return;
 						var rowcheckable = this.rowcheckable();
 						var cell = info.cell.firstChild;
+						var itemIcon = info.row[this._iconColumnKey];
 						var isExpanded = !!info.row[this._expandColumnKey];
 						var hasCheckbox = (typeof info.row[this._checkedColumnKey] !== tui.undef);
 						var isChecked = !!info.row[this._checkedColumnKey];
@@ -58,7 +60,12 @@ module tui.ctrl {
 								});
 							}
 						}
-						
+						if (typeof itemIcon === "string") {
+							var icon = document.createElement("i");
+							icon.className = "fa " + itemIcon;
+							icon.style.marginRight = "4px";
+							cell.insertBefore(icon, cell.firstChild);
+						}
 						if (hasCheckbox && rowcheckable) {
 							var checkIcon = document.createElement("span");
 							checkIcon.className = "tui-list-checkbox";
@@ -612,6 +619,7 @@ module tui.ctrl {
 				this._levelColumnKey = finalData.mapKey("level");
 				this._valueColumnKey = finalData.mapKey("value");
 				this._expandColumnKey = finalData.mapKey("expand");
+				this._iconColumnKey = finalData.mapKey("icon");
 				if (this.triState())
 					this.initTriState();
 				else
