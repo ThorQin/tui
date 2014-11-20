@@ -57,6 +57,6 @@ java -jar tools/lessc/js.jar -f ^
 	
 del tui\tui\css\*.less
 
-tools\7z a -tzip tui-1.0.6.zip tui
+tools\7z a -tzip tui-1.0.7.zip tui
 
-rmdir /S /Q tui
+rem rmdir /S /Q tui

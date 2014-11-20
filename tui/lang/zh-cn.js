@@ -9,6 +9,7 @@
         "Minutes": "分钟",
         "Second": "秒",
         "Seconds": "秒",
+		"Choose Time": "选择时间",
         "Failed": "失败",
         "Error": "错误",
         "Upload failed, please check file type!": "文件上传失败，请检查文件类型！",
@@ -32,7 +33,6 @@
         "Clear": "清除",
         "Select": "选择",
         "Today": "今天",
-        "yyyy-MM-dd": "yyyy 年 M 月 d 日",
         "Invalid input.": "输入内容无效。",
         "Previous": "上一页",
         "Next": "下一页"

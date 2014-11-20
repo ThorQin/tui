@@ -116,6 +116,14 @@
 .tui-input-select-bar {
 	padding:5px;
 	font-size:14px;
+	color: @linkForeColor;
 	border-top: 1px dotted @borderColor;
 	text-align:center;
+	white-space:nowrap;
+	.tui-checkbox {
+		color: @linkForeColor;
+		&:hover {
+			color:@linkHoverForeColor;
+		}
+	}
 }

@@ -2,6 +2,9 @@
 
 // Calendar Control
 .tui-calendar {
+	@activeBackColor:#f5f5f5;
+	@weekendBackColor:#fafafa;
+	@todayBackColor:#017bce;
 	padding:2px;
 	border: 1px solid @borderColor;
 	white-space:nowrap;
@@ -22,14 +25,14 @@
 			color:#d0d0d0;
 		}
 		&.tui-weekend {
-			background-color:#fafafa;
+			background-color:@weekendBackColor;
 		}
 		&.tui-today {
 			color:#f00;
-			border:1px solid #017bce;
+			border:1px solid @todayBackColor;
 		}
 		&.tui-actived {
-			background-color:#017bce;
+			background-color:@todayBackColor;
 			color:#fff;
 		}
 		&.tui-prev-month-btn {
@@ -39,7 +42,7 @@
 				.fa-angle-left;
 			}
 			&:hover {
-				background-color:#f5f5f5;
+				background-color:@activeBackColor;
 			}
 		}
 		&.tui-prev-year-btn {
@@ -49,7 +52,7 @@
 				.fa-angle-double-left;
 			}
 			&:hover {
-				background-color:#f5f5f5;
+				background-color:@activeBackColor;
 			}
 		}
 		&.tui-next-month-btn {
@@ -59,7 +62,7 @@
 				.fa-angle-right;
 			}
 			&:hover {
-				background-color:#f5f5f5;
+				background-color:@activeBackColor;
 			}
 		}
 		&.tui-next-year-btn {
@@ -69,13 +72,45 @@
 				.fa-angle-double-right;
 			}
 			&:hover {
-				background-color:#f5f5f5;
+				background-color:@activeBackColor;
 			}
 		}
 	}
 	.tui-week {
-		background-color: #017bce;
+		background-color: @todayBackColor;
 		color:#fff;
 		font-size:12px;
+	}
+	.tui-calendar-timebar {
+		font-family: Microsoft Yahei;
+		font-size:14px;
+		font-weight: bold;
+		padding:4px 2px;
+		border-top:1px dotted @borderColor;
+		text-align:center;
+		color:#aaa;
+		.tui-calendar-timebox {
+			border:0;
+			/*border:1px solid @borderColor;*/
+			background-color: transparent;
+			padding: 0px 4px;
+			margin:0px;
+			/*height:22px;*/
+			width:18px;
+			vertical-align: middle;
+			text-align: center;
+			outline:none;
+		}
+		.tui-calendar-update {
+			font-weight:normal;
+			cursor:pointer;
+			margin-left:5px;
+			&:before {
+				padding:0px 5px;
+				display:inline-block;
+				.icon;
+				.fa-refresh;
+			}
+		}
 	}
 }

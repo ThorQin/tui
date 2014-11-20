@@ -238,6 +238,7 @@ module tui.ctrl {
 			var self = this;
 			var pop = tui.ctrl.popup();
 			var calendar = tui.ctrl.calendar();
+			calendar.timepart(this.timepart());
 			calendar.time(self.value());
 			calendar.on("picked", (e) => {
 				if (self.readonly()) {
@@ -347,6 +348,7 @@ module tui.ctrl {
 
 			list[0].style.width = self[0].offsetWidth - 2 + "px";
 			list.data(self._data);
+			var allKeys = list.allKeys(true);
 			list.uncheckAllItems();
 			var keys = getKeys(this.selectValue());
 			list.checkItems(keys);
@@ -354,6 +356,16 @@ module tui.ctrl {
 			var bar = document.createElement("div");
 			bar.className = "tui-input-select-bar";
 			calbox.appendChild(bar);
+			
+			var selAll = tui.ctrl.checkbox();
+			selAll.text("All");
+			selAll.on("click", function(){
+				if (selAll.checked())
+					list.checkAllItems();
+				else
+					list.uncheckAllItems();
+			});
+			
 			var okLink = document.createElement("a");
 			okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Accept");
 			okLink.href = "javascript:void(0)";
@@ -370,6 +382,16 @@ module tui.ctrl {
 					return;
 				self.doSubmit();
 			});
+			function isAllChecked() {
+				if (list.checkedItems().length >= allKeys.length)
+					selAll.checked(true);
+				else
+					selAll.checked(false);
+			}
+			isAllChecked();
+			list.on("rowcheck", (data) => {
+				isAllChecked();
+			});
 			list.on("keydown", (data) => {
 				if (data["event"].keyCode === 13) { // Enter
 					if (self.readonly()) {
@@ -385,8 +407,10 @@ module tui.ctrl {
 					self.doSubmit();
 				}
 			});
+			bar.appendChild(selAll[0]);
+			bar.appendChild(document.createTextNode(" | "));
 			bar.appendChild(okLink);
-
+			
 			pop.show(calbox, self[0], "Rb");
 
 			var items = self._data ? self._data.length() : 0;
@@ -491,7 +515,7 @@ module tui.ctrl {
 			var text = "";
 			for (var i = 0; i < val.length; i++) {
 				if (text.length > 0)
-					text += "; ";
+					text += ", ";
 				var t = map[val[i].key];
 				if (typeof t === tui.undef)
 					t = validText(val[i].value);
@@ -850,6 +874,17 @@ module tui.ctrl {
 			} else
 				return this.attr("data-accept");
 		}
+		
+		timepart(): boolean;
+		timepart(val: boolean): Input;
+		timepart(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-timepart", val);
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-timepart");
+		}
 
 		data(): tui.IDataProvider;
 		data(data: tui.IDataProvider): Input;
@@ -938,12 +973,11 @@ module tui.ctrl {
 					if (val && typeof val.length === "number") {
 						this.attr("data-value", JSON.stringify(val));
 						this.attr("data-text", this.formatSelectTextByData(val));
-						this._invalid = false;
 					} else if (val === null) {
 						this.attr("data-value", "[]");
 						this.attr("data-text", "");
-						this._invalid = false;
 					}
+					this._invalid = false;
 					this._initialized = false;
 					this.refresh();
 				}
@@ -966,6 +1000,7 @@ module tui.ctrl {
 			if (typeof val === "boolean") {
 				this.is("data-readonly", val);
 				this._initialized = false;
+				this._invalid = false;
 				this.refresh();
 				return this;
 			} else
@@ -980,6 +1015,26 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.attr("data-date-format");
+		}
+		
+		textFormat(): string;
+		textFormat(format: string): Input;
+		textFormat(format?: string): any {
+			if (typeof format === "string") {
+				this.attr("data-text-format", format);
+				return this;
+			} else
+				return this.attr("data-text-format");
+		}
+		
+		allKeys() {
+			var type = this.type();
+			if (type === "select" || type === "multi-select") {
+				var list = tui.ctrl.list();
+				list.data(this._data);
+				return list.allKeys(type === "multi-select");
+			} else
+				return null;
 		}
 
 		value(): any;
@@ -1003,7 +1058,14 @@ module tui.ctrl {
 					}
 					if (val instanceof Date) {
 						this.attr("data-value", formatDate(val, "yyyy-MM-ddTHH:mm:ss.SSSZ"));
-						this.attr("data-text", formatDate(val, tui.str("yyyy-MM-dd")));
+						var fmt = this.textFormat();
+						if (fmt === null) {
+							if (this.timepart())
+								fmt = tui.str("yyyy-MM-dd HH:mm:ss");
+							else
+								fmt = tui.str("yyyy-MM-dd");
+						}
+						this.attr("data-text", formatDate(val, fmt));
 						this._invalid = false;
 					}
 					this._initialized = false;
@@ -1051,7 +1113,7 @@ module tui.ctrl {
 				if (type === "calendar") {
 					if (val === null)
 						return null;
-					var dateVal = parseDate(val);
+					var dateVal = tui.parseDate(val);
 					if (this.dateFormat() !== null) {
 						return tui.formatDate(dateVal, this.dateFormat());
 					} else

@@ -687,6 +687,14 @@ module tui {
 		return false;
 	}
 	
+	export function cancelBubble(event: any): boolean {
+		if (event && event.stopPropagation)
+			event.stopPropagation(); 
+		else
+			window.event.cancelBubble = true;
+		return false;
+	}
+	
 	/**
 	 * Detect whether the given parent element is the real ancestry element
 	 * @param elem

@@ -1,7 +1,6 @@
 ﻿/// <reference path="../tui.core.ts" />
 (function () {
     var dict = {
-        "yyyy-MM-dd": "d MMM yyyy",
         "success": "Success",
         "notmodified": "Request's content has not been modified!",
         "error": "Occurred an internal error!",

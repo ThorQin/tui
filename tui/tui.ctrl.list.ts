@@ -476,6 +476,29 @@ module tui.ctrl {
 			}
 			return checkedItems;
 		}
+		
+		allKeys(onlyCheckable: boolean): any[] {
+			var self = this;
+			var keys = [];
+			function checkChildren(children: any[]) {
+				for (var i = 0; i < children.length; i++) {
+					if (!children[i])
+						continue;
+					var k = children[i][self._keyColumKey];
+					if ((onlyCheckable && typeof children[i][self._checkedColumnKey] !== tui.undef || !onlyCheckable) &&
+						typeof k !== tui.undef && k !== null)
+						keys.push(k);
+					var myChilren = children[i][self._childrenColumKey];
+					if (myChilren && myChilren.length > 0)
+						checkChildren(myChilren);
+				}
+			}
+			var data: ArrayProvider = <ArrayProvider>this._grid.data();
+			if (data && typeof data.src === "function") {
+				checkChildren(data.src());
+			}
+			return keys;
+		}
 
 		enumerate(func: (item: any) => any): void {
 			var self = this;
