@@ -342,7 +342,11 @@ module tui.ctrl {
 								return;
 						}
 						if (self.isShowError() && !(Form.ignoreErrors && Form.ignoreErrors.indexOf(jqXHR.status) >= 0)) {
-							tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
+							var respText = /^\s*text\/plain\s*(;.+)?/i.test(jqXHR.getResponseHeader("content-type"));
+							if (respText && jqXHR.responseText)
+								tui.errbox(tui.str(jqXHR.responseText), tui.str("Failed"));
+							else
+								tui.errbox(tui.str(status) + " (" + jqXHR.status + ")", tui.str("Failed"));
 						}
 					}
 				},
