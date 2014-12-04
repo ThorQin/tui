@@ -19,7 +19,7 @@ module tui.ctrl {
 					this._buttons.push(button);
 					if (button.checked())
 						activeIndex = this._buttons.length - 1;
-					button.on("check", function(data){
+					button.on("check", function(data:any){
 						self.checkPage(data.ctrl);
 					});
 				} else
@@ -54,18 +54,25 @@ module tui.ctrl {
 			return this._buttons.length;
 		}
 
+		add(name: Radiobox): Radiobox;
 		add(name: string): Radiobox;
+		add(name: Radiobox, index: number): Radiobox;
 		add(name: string, index: number): Radiobox;
-		add(name: string, index?: number): Radiobox {
+		add(name: any, index?: number): Radiobox {
 			var self = this;
 			if (typeof index === "number") {
 				if (index >= this._buttons.length)
 					return null;
-			}			
-			var button = tui.ctrl.radiobox();
-			button.text(name);
+			}
+			var button;
+			if (typeof name === "string") {
+				button = tui.ctrl.radiobox();
+				button.text(name);
+			} else if (typeof name === "object") {
+				button = name;
+			}
 			button.group(this._tabId);
-			button.on("check", function(data){
+			button.on("check", function(data:any){
 				self.checkPage(data.ctrl);
 			});
 			if (typeof index === tui.undef) {
@@ -77,25 +84,39 @@ module tui.ctrl {
 			}
 			return button;
 		}
-
-		remove(index: number): Radiobox {
+		
+		
+		remove(index: Radiobox): Radiobox;
+		remove(index: number): Radiobox;
+		remove(index: any): Radiobox {
+			if (typeof index === "object")
+				index = this._buttons.indexOf(index);
 			var button = this.at(index);
 			if (button) {
+				var activeIndex = -1;
+				if (button.checked()) {
+					activeIndex = index;
+				}
 				this._buttons.splice(index, 1);
 				tui.removeNode(button[0]);
-				if (index < this._buttons.length)
-					this.active(index);
-				else if (this._buttons.length > 0)
-					this.active(this._buttons.length - 1);
+				if (activeIndex >= 0) {
+					if (activeIndex < this._buttons.length)
+						this.active(activeIndex);
+					else if (this._buttons.length > 0)
+						this.active(this._buttons.length - 1);
+				}
 				return button;
 			}
 			return null;
 		}
 
 		active(): number;
+		active(index: Radiobox): Tab;
 		active(index: number): Tab;
-		active(index?: number): any {
+		active(index?: any): any {
 			if (typeof index !== tui.undef) {
+				if (typeof index === "object")
+					index = this._buttons.indexOf(index);
 				var button = this.at(index);
 				if (button) {
 					button.checked(true);
