@@ -163,6 +163,9 @@ module tui.ctrl {
 			$(this[0]).keyup(function (e) {
 				self.fire("keyup", {event:e});
 			});
+			$(this[0]).contextmenu(function (e) {
+				return self.fire("contextmenu", {event:e});
+			});
 			$(this[0]).keydown(function (e) {
 				if (self.fire("keydown", {event:e}) === false)
 					return;
@@ -686,7 +689,7 @@ module tui.ctrl {
 			}
 			var jqLine = $(line);
 			jqLine.on("contextmenu", function (e) {
-				self.fire("rowcontextmenu", {"event": e, "index": index, "row": line });
+				return self.fire("rowcontextmenu", {"event": e, "index": index, "row": line });
 			});
 			var dragIndex = null;
 			var mouseDownPt: { x: number; y: number; } = null;

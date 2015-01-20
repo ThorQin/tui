@@ -121,6 +121,9 @@ module tui.ctrl {
 			this._grid.on("resizecolumn", (data) => {
 				return this.fire("resizecolumn", data);
 			});
+			this._grid.on("contextmenu", (data) => {
+				return this.fire("contextmenu", data);
+			});
 			this._grid.on("keydown", (data) => {
 				if (this.fire("keydown", data) === false)
 					return false;

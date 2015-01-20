@@ -229,6 +229,7 @@ module tui.ctrl {
 					}
 				}
 				if (e.keyCode === tui.KEY_ENTER) {
+					self.fire("enter", { "ctrl": self[0], "event": e, "text": self.text() });
 					this.doSubmit();
 				}
 			});
