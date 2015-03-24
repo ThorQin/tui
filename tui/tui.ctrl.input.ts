@@ -275,6 +275,30 @@ module tui.ctrl {
 			var todayLine = document.createElement("div");
 			todayLine.appendChild(todayLink);
 			todayLine.className = "tui-input-select-bar";
+			
+			if (self.clearable()) {
+				var space = document.createElement("span");
+				space.className = "bar-space";
+				var clearLink = document.createElement("a");
+				clearLink.innerHTML = "<i class='fa fa-trash-o'></i>";
+				clearLink.href = "javascript:void(0)";
+				$(clearLink).click(function (e) {
+					if (self.readonly()) {
+						pop.close();
+						self.focus();
+						return false;
+					}
+					self.value(null);
+					pop.close();
+					self.focus();
+					if (self.fire("select", { ctrl: self[0], type: self.type(), time: e["time"] }) === false)
+						return;
+					self.doSubmit();
+				});
+				todayLine.appendChild(space);
+				todayLine.appendChild(clearLink);
+			}
+			
 			calbox.appendChild(todayLine);
 			pop.show(calbox, self[0], "Rb");
 			calendar.focus();
@@ -319,7 +343,32 @@ module tui.ctrl {
 			});
 			list[0].style.width = self[0].offsetWidth - 2 + "px";
 			list.data(self._data);
-			pop.show(list[0], self[0], "Rb");
+			var calbox = document.createElement("div");
+			calbox.appendChild(list[0]);
+			if (self.clearable()) {
+				var bar = document.createElement("div");
+				bar.className = "tui-input-select-bar";
+				var clearLink = document.createElement("a");
+				clearLink.innerHTML = "<i class='fa fa-trash-o'></i> " + tui.str("Clear");
+				clearLink.href = "javascript:void(0)";
+				$(clearLink).click(function (e) {
+					if (self.readonly()) {
+						pop.close();
+						self.focus();
+						return false;
+					}
+					self.selectValue(null);
+					pop.close();
+					self.focus();
+					if (self.fire("select", { ctrl: self[0], type: self.type(), item: list.activeItem() }) === false)
+						return;
+					self.doSubmit();
+				});
+				bar.appendChild(clearLink);
+				calbox.appendChild(bar);
+			}
+			
+			pop.show(calbox, self[0], "Rb");
 
 			var items = self._data ? self._data.length() : 0;
 			if (items < 1)
@@ -409,7 +458,11 @@ module tui.ctrl {
 				}
 			});
 			bar.appendChild(selAll[0]);
-			bar.appendChild(document.createTextNode(" | "));
+			
+			var space = document.createElement("span");
+			space.className = "bar-space";
+			// bar.appendChild(document.createTextNode(" | "));
+			bar.appendChild(space);
 			bar.appendChild(okLink);
 			
 			pop.show(calbox, self[0], "Rb");
@@ -876,6 +929,16 @@ module tui.ctrl {
 				return this.attr("data-accept");
 		}
 		
+		clearable(): boolean;
+		clearable(val: boolean): Input;
+		clearable(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-clearable", val);
+				return this;
+			} else
+				return this.is("data-clearable");
+		}
+
 		timepart(): boolean;
 		timepart(val: boolean): Input;
 		timepart(val?: boolean): any {

@@ -1,3 +1,4 @@
+#!/bin/bash
 # =====================================
 # CLEAN BUILD
 # =====================================
@@ -60,6 +61,6 @@ java -jar tools/lessc/js.jar -f \
 	
 rm tui/tui/css/*.less
 
-7z a -tzip tui-1.0.11.zip tui
+7z a -tzip tui-`cat version.txt`.zip tui
 
 # rm -r tui
