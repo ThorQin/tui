@@ -163,7 +163,7 @@ module tui.ctrl {
 			$(this[0]).keyup(function (e) {
 				self.fire("keyup", {event:e});
 			});
-			$(this[0]).contextmenu(function (e) {
+			$(this[0]).on("contextmenu", function (e) {
 				return self.fire("contextmenu", {event:e});
 			});
 			$(this[0]).keydown(function (e) {
