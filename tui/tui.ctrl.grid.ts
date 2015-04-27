@@ -54,6 +54,7 @@ module tui.ctrl {
 		private _vscroll: Scrollbar;
 		private _space: HTMLSpanElement;
 		private _splitters: HTMLSpanElement[] = [];
+		private _colLines: HTMLSpanElement[] = [];
 
 		// Scrolling related
 		private _scrollTop = 0;
@@ -75,6 +76,8 @@ module tui.ctrl {
 		// because grid cell need spend more time to draw.
 		private _drawingTimer = null;
 		private _delayDrawing = true;
+		
+		private _cellPaddingWidth : number = null;
 
 		constructor(el?: HTMLElement) {
 			super("div", Grid.CLASS, el);
@@ -106,11 +109,11 @@ module tui.ctrl {
 					self._scrollTop = data["value"];
 					self.drawLines();
 				} else {
-					var diff = Math.abs(data["value"] - self._scrollTop);
+					//var diff = Math.abs(data["value"] - self._scrollTop);
 					self._scrollTop = data["value"];
-					if (diff < 3 * self._lineHeight && self._drawingTimer === null) {
-						self.drawLines();
-					} else {
+					//if (diff < 3 * self._lineHeight && self._drawingTimer === null) {
+					//	self.drawLines();
+					//} else {
 						self.drawLines(true);
 						clearTimeout(self._drawingTimer);
 						self._drawingTimer = setTimeout(function () {
@@ -118,12 +121,13 @@ module tui.ctrl {
 							self.drawLines();
 							self._drawingTimer = null;
 						}, scrollTimeDelay);
-					}
+					//}
 				}
 			});
 			this._hscroll.on("scroll", function (data) {
 				self._scrollLeft = data["value"];
 				self.drawLines();
+				self.drawColumnLines();
 			});
 			var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
 			$(this[0]).on(mousewheelevt, function (ev) {
@@ -907,6 +911,52 @@ module tui.ctrl {
 				self.fire("rowdblclick", { "event": e, "index": index, "row": line });
 			});
 		}
+		
+		private drawColumnLines() {
+			if (this._vscroll.hidden() && !this.hasVLine()) {
+				for (var i = 0; i < this._colLines.length; i++) {
+					var colLine = this._colLines[i];
+					tui.removeNode(colLine);
+				}
+				this._colLines.length = 0;
+				return;
+			}
+		
+			var columns = this.myColumns();
+			if (columns.length != this._colLines.length) {
+				for (var i = 0; i < this._colLines.length; i++) {
+					var colLine = this._colLines[i];
+					tui.removeNode(colLine);
+				}
+				this._colLines.length = 0;
+				for (var i = 0; i < columns.length; i++) {
+					var colLine = document.createElement("span");
+					colLine.className = "tui-grid-column-line";
+					this[0].appendChild(colLine);
+					this._colLines.push(colLine);
+				}
+			}
+			if (this._cellPaddingWidth === null) {
+				var testLine = document.createElement("div");
+				testLine.style.visibility = "hidden";
+				testLine.className = "tui-grid-line";
+				var testCell = document.createElement("span");
+				testCell.className = "tui-grid-cell";
+				testCell.style.width= "1px";
+				testLine.appendChild(testCell);
+				this[0].appendChild(testLine);
+				this._cellPaddingWidth = testCell.offsetWidth - 1;
+				tui.removeNode(testLine);
+			}
+			var offsetBegin = -this._scrollLeft;
+			for (var i = 0; i < this._colLines.length; i++) {
+				var colLine = this._colLines[i];
+				//var cell = <HTMLSpanElement>this._headline.childNodes[i];//*2];
+				//colLine.style.left =-this._scrollLeft + cell.offsetLeft + cell.offsetWidth - Math.round(colLine.offsetWidth / 2) + "px";
+				colLine.style.left = offsetBegin + this._cellPaddingWidth + columns[i].width - 1 + "px";
+				offsetBegin += columns[i].width + this._cellPaddingWidth;
+			}
+		}
 
 		private moveLine(line: HTMLDivElement, index: number, base: number) {
 			line.style.top = (base + index * this._lineHeight) + "px";
@@ -931,7 +981,9 @@ module tui.ctrl {
 					this[0].appendChild(line);
 					newBuffer.push(line);
 					line["_rowIndex"] = i;
-					this.drawLine(line, i, empty);
+					if (!empty) {
+						this.drawLine(line, i, empty);
+					}
 					this.moveLine(line, i - begin, base);
 				}
 				if (this.isRowSelected(i)) {
@@ -1142,6 +1194,18 @@ module tui.ctrl {
 			} else
 				return this.is("data-has-hscroll");
 		}
+		
+		hasVLine(): boolean;
+		hasVLine(val: boolean): Grid;
+		hasVLine(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-has-vline", val);
+				this._initialized = false;
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-has-vline");
+		}
 
 		noHead(): boolean;
 		noHead(val: boolean): Grid;
@@ -1350,6 +1414,7 @@ module tui.ctrl {
 //			this._columnKeyMap = this.myData().columnKeyMap();
 			this.drawHead();
 			this.drawLines();
+			this.drawColumnLines();
 		}
 
 		autoRefresh(): boolean {

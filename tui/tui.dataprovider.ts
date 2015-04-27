@@ -320,6 +320,7 @@ module tui {
 					self._invalid = false;
 					if (typeof info.head !== tui.undef) {
 						self._head = info.head;
+						self._realKeyMap = null;
 					}
 					if (typeof self._updateCallback === "function") {
 						self._updateCallback({
@@ -330,16 +331,16 @@ module tui {
 					}
 				}
 			};
-			if (this._firstQuery) {
-				this._firstQuery = false;
-				this._queryCallback(queryInfo);
-			} else {
+			//if (this._firstQuery) {
+			//	this._firstQuery = false;
+			//	this._queryCallback(queryInfo);
+			//} else {
 				this._queryTimer = setTimeout(() => {
 					this._firstQuery = true;
 					this._queryTimer = null;
 					this._queryCallback(queryInfo);
 				}, 100);
-			}
+			//}
 		}
 
 		onupdate(callback: (updateInfo: IUpdateInfo) => void) {

@@ -434,59 +434,72 @@ module tui {
 			}
 		});
 	}
+	
+	function makeWarp(className, message) {
+		var wrap = document.createElement("div");
+		wrap.className = className;
+		if (typeof message === null || message === undefined)
+			message = "";
+		else
+			message += "";
+		var testSpan = document.createElement("span");
+		testSpan.style.position = "absolute";
+		testSpan.style.visibility = "hidden";
+		testSpan.style.display = "inline-block";
+		testSpan.style.whiteSpace = "nowrap";
+		testSpan.innerHTML = message;
+		document.body.appendChild(testSpan);
+		var realWidth = testSpan.offsetWidth;
+		tui.removeNode(testSpan);
+		if (realWidth < 400)
+			wrap.innerHTML = message;
+		else {
+			var span = document.createElement("span");
+			span.className = "tui-textarea tui-inline";
+			var textarea = new tui.ctrl.TextArea(span);
+			textarea.addClass("tui-dlg-long-msg");
+			textarea.text(message);
+			textarea.readonly(true);
+			$(wrap).addClass("tui-dlg-long-warp");
+			wrap.appendChild(textarea[0]);
+		}
+		return wrap;
+	}
 
 	export function msgbox(message: string, title?: string): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
-		var wrap = document.createElement("div");
-		wrap.className = "tui-dlg-msg";
-		wrap.innerHTML = message;
-		dlg.showElement(wrap, title);
+		dlg.showElement(makeWarp("tui-dlg-msg", message), title);
 		return dlg;
 	}
 
 	export function infobox(message: string, title?: string): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
-		var wrap = document.createElement("div");
-		wrap.className = "tui-dlg-warp tui-dlg-info";
-		wrap.innerHTML = message;
-		dlg.showElement(wrap, title);
+		dlg.showElement(makeWarp("tui-dlg-warp tui-dlg-info", message), title);
 		return dlg;
 	}
 
 	export function okbox(message: string, title?: string): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
-		var wrap = document.createElement("div");
-		wrap.className = "tui-dlg-warp tui-dlg-ok";
-		wrap.innerHTML = message;
-		dlg.showElement(wrap, title);
+		dlg.showElement(makeWarp("tui-dlg-warp tui-dlg-ok", message), title);
 		return dlg;
 	}
 
 	export function errbox(message: string, title?: string): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
-		var wrap = document.createElement("div");
-		wrap.className = "tui-dlg-warp tui-dlg-err";
-		wrap.innerHTML = message;
-		dlg.showElement(wrap, title);
+		dlg.showElement(makeWarp("tui-dlg-warp tui-dlg-err", message), title);
 		return dlg;
 	}
 
 	export function warnbox(message: string, title?: string): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
-		var wrap = document.createElement("div");
-		wrap.className = "tui-dlg-warp tui-dlg-warn";
-		wrap.innerHTML = message;
-		dlg.showElement(wrap, title);
+		dlg.showElement(makeWarp("tui-dlg-warp tui-dlg-warn", message), title);
 		return dlg;
 	}
 
 	export function askbox(message: string, title?: string, callback?: (result: boolean) => void): ctrl.Dialog {
 		var dlg = tui.ctrl.dialog();
-		var wrap = document.createElement("div");
-		wrap.className = "tui-dlg-warp tui-dlg-ask";
-		wrap.innerHTML = message;
 		var result = false;
-		dlg.showElement(wrap, title, [
+		dlg.showElement(makeWarp("tui-dlg-warp tui-dlg-ask", message), title, [
 			{
 				name: str("Ok"), func: () => {
 					result = true;

@@ -118,6 +118,7 @@
 	}
 	.tui-scroll-space {
 		.bottom-right-radius(@tableBorderRadius);
+		z-index:1000;
 	}
 	.tui-grid-line,.tui-grid-head {
 		display:block;
@@ -234,6 +235,14 @@
 				.shadow(0px, 0px, 7px, @inputFocusedShadowColor - #111);
 			}
 		}
+	}
+	.tui-grid-column-line {
+		display:inline-block;
+		position:absolute;
+		width:1px;
+		top:0;
+		bottom:0;
+		background-color:@borderColor;
 	}
 	
 	.tui-grid-splitter {

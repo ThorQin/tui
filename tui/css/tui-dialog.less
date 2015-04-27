@@ -77,18 +77,39 @@
 	}
 
 	.tui-dlg-msg {
-		padding:30px 0px;
+		padding:30px 20px;
 		text-align:center;
 	}
+	.tui-dlg-long-msg {
+		width:400px;
+		max-height:140px;
+		vertical-align:top;
+		
+		border:0;
+		& > textarea {
+			background-color:white;
+		}
+		&.tui-focus,&:focus {
+			border:0;
+			box-shadow:none;
+		}
+	}
 	.tui-dlg-warp {
-		padding:30px 0px;
+		padding:30px 20px;
 		text-align:center;
+		white-space:nowrap;		
 		&:before {
 			.icon-base;
 			font-size:3em;
 			margin:-8px 0;
 			margin-right:20px;
 			vertical-align:middle;
+		}
+		&.tui-dlg-long-warp {
+			&:before {
+				margin:8px;
+				vertical-align:top;			
+			}
 		}
 		&.tui-dlg-info:before {
 			.fa-info-circle;
@@ -116,5 +137,6 @@
 			color:#aaa;
 		}
 	}
+	
 
 }

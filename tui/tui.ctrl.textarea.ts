@@ -71,6 +71,16 @@ module tui.ctrl {
 					}
 				}, 0);
 			});
+			var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
+			$(this._textbox).on(mousewheelevt, function (ev) {
+				ev.stopPropagation();
+			});
+
+			$(this[0]).on("keydown keypress", (e: any) => {
+				if (this.readonly() && e.keyCode == tui.KEY_BACK) {
+					e.preventDefault();
+				}
+			});
 		}
 
 		validator(): {};

@@ -109,6 +109,11 @@ module tui.ctrl {
 					e.stopPropagation();
 				}
 			});
+			$(this[0]).on("keydown keypress", (e) => {
+				if (e.keyCode === 8 && (this.type() !== "text" || this.readonly())) {
+					e.preventDefault();
+				}				
+			});
 
 			if (this.type() === "text" || this.type() === "custom-text" ||
 				this.type() === "select" || this.type() === "multi-select") {

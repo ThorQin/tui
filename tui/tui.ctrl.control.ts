@@ -78,6 +78,10 @@ module tui {
 			return;
 		var obj = target;
 		while (obj) {
+			if (typeof obj.getAttribute !== "function") {
+				obj = null;
+				break;
+			}
 			var tooltip = obj.getAttribute("data-tooltip");
 			if (tooltip) {
 				if (obj.getAttribute("data-cursor-tooltip") === "true")
