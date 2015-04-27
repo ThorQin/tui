@@ -47,10 +47,6 @@ tsc -m amd --out tui/tui/tui.all.js \
 	
 rm tui/tui/*.ts
 
-# tools\ajaxmin\ajaxmin tui\tui\tui.all.js \
-#	-out tui\tui\tui.all.min.js \
-#	-map:v3 tui\tui\tui.all.min.js.map
-
 java -jar tools/yuicompressor-2.4.8.jar tui/tui/tui.all.js -o tui/tui/tui.all.min.js --charset utf-8
 	
 java -jar tools/lessc/js.jar -f \
@@ -61,6 +57,12 @@ java -jar tools/lessc/js.jar -f \
 	
 rm tui/tui/css/*.less
 
-7z a -tzip tui-`cat version.txt`.zip tui
+os=`uname`
+
+if [ "$os" = "Darwin" ]; then # MAC OSX
+	zip -r tui-`cat version.txt`.zip tui
+else
+	7z a -tzip tui-`cat version.txt`.zip tui
+fi
 
 # rm -r tui
