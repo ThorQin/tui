@@ -1,10 +1,10 @@
-﻿/// <reference path="tui.core.ts" />
+/// <reference path="tui.core.ts" />
 module tui {
 
-	var shortWeeks = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-	var weeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-	var shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-	var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	export var shortWeeks = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+	export var weeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+	export var shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	export var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 	/**
 	 * Get today
@@ -88,20 +88,40 @@ module tui {
 	 * Get new date of dt add specified unit of values.
 	 * @param dt The day of the target
 	 * @param val Increased value
-	 * @param unit "d", "h", "m", "s" or "ms"
+	 * @param unit "y", "M", "d", "h", "m", "s" or "ms"
 	 */
 	export function dateAdd(dt: Date, val: number, unit: string = "d"): Date {
-		var d = dt.getTime();
-		if (unit === "d") {
-			return new Date(d + val * 86400000);
+		var tm = dt.getTime();
+		if (unit === "y") {
+			var y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate();
+			var h = dt.getHours(), mi = dt.getMinutes(), s = dt.getSeconds(), ms = dt.getMilliseconds();
+			var totalMonth = y * 12 + m + (val * 12);
+			y = Math.floor(totalMonth / 12);
+			m = totalMonth % 12;
+			var newDate = new Date(y, m, 1);
+			if (d > tui.totalDaysOfMonth(newDate))
+				d = tui.totalDaysOfMonth(newDate);
+			return new Date(y, m, d, h, mi, s, ms);
+		} else if (unit === "M") {
+			var y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate();
+			var h = dt.getHours(), mi = dt.getMinutes(), s = dt.getSeconds(), ms = dt.getMilliseconds();
+			var totalMonth = y * 12 + m + val;
+			y = Math.floor(totalMonth / 12);
+			m = totalMonth % 12;
+			var newDate = new Date(y, m, 1);
+			if (d > tui.totalDaysOfMonth(newDate))
+				d = tui.totalDaysOfMonth(newDate);
+			return new Date(y, m, d, h, mi, s, ms);
+		} else if (unit === "d") {
+			return new Date(tm + val * 86400000);
 		} else if (unit === "h") {
-			return new Date(d + val * 3600000);
+			return new Date(tm + val * 3600000);
 		} else if (unit === "m") {
-			return new Date(d + val * 60000);
+			return new Date(tm + val * 60000);
 		} else if (unit === "s") {
-			return new Date(d + val * 1000);
+			return new Date(tm + val * 1000);
 		} else if (unit === "ms") {
-			return new Date(d + val);
+			return new Date(tm + val);
 		} else
 			return null;
 	}

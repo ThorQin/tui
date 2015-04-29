@@ -1,4 +1,4 @@
-﻿/// <reference path="tui.core.ts" />
+/// <reference path="tui.core.ts" />
 /// <reference path="tui.upload.ts" />
 /// <reference path="tui.ctrl.popup.ts" />
 /// <reference path="tui.ctrl.calendar.ts" />
@@ -110,7 +110,7 @@ module tui.ctrl {
 				}
 			});
 			$(this[0]).on("keydown keypress", (e) => {
-				if (e.keyCode === 8 && (this.type() !== "text" || this.readonly())) {
+				if (e.keyCode === 8 && ((this.type() !== "text" && this.type() !== "custom-text" && this.type() !== "password" ) || this.readonly())) {
 					e.preventDefault();
 				}				
 			});
@@ -127,6 +127,12 @@ module tui.ctrl {
 				this.useLabelClick(true);
 			if (!this.hasAttr("data-empty-suggestion"))
 				this.emptySuggestion(true);
+			if (this.monthOnly()) {
+				if (!this.hasAttr("data-text-format"))
+					this.textFormat("yyyy-MM");
+				//if (!this.hasAttr("data-date-format"))
+				//	this.dateFormat("yyyy-MM");
+			}
 			this.value(this.value());
 		}
 
@@ -243,9 +249,18 @@ module tui.ctrl {
 		private showCalendar() {
 			var self = this;
 			var pop = tui.ctrl.popup();
-			var calendar = tui.ctrl.calendar();
-			calendar.timepart(this.timepart());
-			calendar.time(self.value());
+			var calendar;
+			if (this.monthOnly())
+				calendar = tui.ctrl.primitiveCalendar();
+			else {
+				calendar = tui.ctrl.calendar();
+				calendar.timepart(this.timepart());
+			}
+			var dateVal = this.attr("data-value");
+			if (dateVal != null)
+				calendar.time(tui.parseDate(this.attr("data-value")));
+			else
+				calendar.time(new Date());
 			calendar.on("picked", (e) => {
 				if (self.readonly()) {
 					pop.close();
@@ -1074,6 +1089,19 @@ module tui.ctrl {
 				return this;
 			} else
 				return this.is("data-readonly");
+		}
+		
+		monthOnly(): boolean;
+		monthOnly(val: boolean): Input;
+		monthOnly(val?: boolean): any {
+			if (typeof val === "boolean") {
+				this.is("data-month-only", val);
+				this._initialized = false;
+				this._invalid = false;
+				this.refresh();
+				return this;
+			} else
+				return this.is("data-month-only");
 		}
 
 		dateFormat(): string;

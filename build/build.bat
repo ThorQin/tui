@@ -26,6 +26,7 @@ tools\tsc\tsc.exe -m amd --out tui/tui/tui.all.js ^
 	tui/tui/tui.ctrl.checkbox.ts ^
 	tui/tui/tui.ctrl.radiobox.ts ^
 	tui/tui/tui.ctrl.calendar.ts ^
+	tui/tui/tui.ctrl.primitivecalendar.ts ^
 	tui/tui/tui.ctrl.popup.ts ^
 	tui/tui/tui.ctrl.dialog.ts ^
 	tui/tui/tui.ctrl.scrollbar.ts ^

@@ -225,7 +225,6 @@ module tui.ctrl {
 				}
 			});
 			super.show(div, param, bindType);
-			div.focus();
 		}
 	}
 

@@ -6,3 +6,5 @@ build/*.html
 build/*.zip
 *.map
 *.zip
+.settings
+.project

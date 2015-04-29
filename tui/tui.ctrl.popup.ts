@@ -55,11 +55,8 @@ module tui.ctrl {
 			} else
 				return this._owner;
 		}
-
-		show(content: any, pos: { x: number; y: number }): void;
-		show(content: any, elemId: string, bindType: string): void;
-		show(content: any, elem: HTMLElement, bindType: string): void;
-		show(content: any, param: any, bindType?: string): void {
+		
+		showInternal(content: any, param: any, bindType?: string): void {
 			if (this._showing)
 				return;
 			this._showing = true;
@@ -109,6 +106,7 @@ module tui.ctrl {
 					elem.innerHTML = content;
 				} else if (content && content.nodeName) {
 					elem.appendChild(content);
+					
 				}
 				tui.ctrl.initCtrls(elem);
 				this.refresh();
@@ -121,7 +119,20 @@ module tui.ctrl {
 						}
 					}, 100);
 				}
+				if (content && content.nodeName) {
+					content.focus();
+				}
 			}
+		}
+
+		show(content: any, pos: { x: number; y: number }): void;
+		show(content: any, elemId: string, bindType: string): void;
+		show(content: any, elem: HTMLElement, bindType: string): void;
+		show(content: any, param: any, bindType?: string): void {
+			var self = this;
+			setTimeout(function(){
+				self.showInternal(content, param, bindType);
+			}, 0);
 		}
 
 		close(): void {

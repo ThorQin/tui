@@ -1,7 +1,7 @@
 @import 'tui-common.less';
 
 // Calendar Control
-.tui-calendar {
+.tui-calendar,.tui-month-calendar {
 	@activeBackColor:#f5f5f5;
 	@weekendBackColor:#fafafa;
 	@todayBackColor:#017bce;
@@ -13,10 +13,11 @@
 	font-size:14px;
 	vertical-align:middle;
 	cursor:default;
+	
 	td {
 		padding:3px;
 		text-align:center;
-		width: 24px;
+		width: 30px;
 		border:1px solid transparent;
 		&[colspan='3'] {
 			width:inherit;
@@ -76,9 +77,16 @@
 			}
 		}
 	}
+	tr.tui-year-bar > td {
+		border-bottom: 1px solid @todayBackColor;
+		height:25px;
+	}
 	.tui-week {
 		background-color: @todayBackColor;
 		color:#fff;
+		font-size:12px;
+	}
+	.tui-month {
 		font-size:12px;
 	}
 	.tui-calendar-timebar {
@@ -111,6 +119,24 @@
 				.icon;
 				.fa-refresh;
 			}
+		}
+	}
+}
+.tui-month-calendar {
+	@activeBackColor:#f5f5f5;
+	@todayBackColor:#017bce;
+	td {
+		width: 60px;
+		height:40px;	
+		border:0px;
+		&.tui-today {
+			color:#f00;
+			border:0px;
+			background-color: @activeBackColor;
+		}
+		&.tui-actived {
+			background-color:@todayBackColor;
+			color:#fff;
 		}
 	}
 }
