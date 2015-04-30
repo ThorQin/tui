@@ -1,6 +1,8 @@
 ﻿/// <reference path="../tui.core.ts" />
 (function () {
     var dict = {
+    	"Accept": "接受",
+    	"All": "全部",
         "Day": "天",
         "Days": "天",
         "Hour": "小时",

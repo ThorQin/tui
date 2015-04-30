@@ -314,9 +314,12 @@ module tui.ctrl {
 						}
 						var target: any = self.target();
 						var property: string = self.targetProperty();
+						var respJson = /^\s*application\/json\s*(;.+)?/i.test(jqXHR.getResponseHeader("content-type"));
+						var respVal = (respJson ? jqXHR["responseJSON"] : jqXHR.responseText);
+						if (self.fire("receive", respVal) === false) {
+							return;
+						}
 						if (target) {
-							var respJson = /^\s*application\/json\s*(;.+)?/i.test(jqXHR.getResponseHeader("content-type"));
-							var respVal = (respJson ? jqXHR["responseJSON"] : jqXHR.responseText);
 							target = document.getElementById(target);
 							if (target && target["_ctrl"]) {
 								var ctrl = target["_ctrl"];

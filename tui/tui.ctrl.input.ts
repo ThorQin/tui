@@ -123,6 +123,10 @@ module tui.ctrl {
 				if (predefined)
 					this.data(predefined);
 			}
+			if (this.type() === "custom-select") {
+				if (!this.hasAttr("data-icon"))
+					this.attr("data-icon", "fa-ellipsis-h");
+			}
 			if (!this.hasAttr("data-label-click"))
 				this.useLabelClick(true);
 			if (!this.hasAttr("data-empty-suggestion"))
@@ -428,7 +432,7 @@ module tui.ctrl {
 			calbox.appendChild(bar);
 			
 			var selAll = tui.ctrl.checkbox();
-			selAll.text("All");
+			selAll.text(tui.str("All"));
 			selAll.on("click", function(){
 				if (selAll.checked())
 					list.checkAllItems();
@@ -437,7 +441,7 @@ module tui.ctrl {
 			});
 			
 			var okLink = document.createElement("a");
-			okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Accept");
+			okLink.innerHTML = "<i class='fa fa-check'></i> " + tui.str("Ok");
 			okLink.href = "javascript:void(0)";
 			$(okLink).click(function (e) {
 				if (self.readonly()) {
@@ -1186,16 +1190,16 @@ module tui.ctrl {
 					this.refresh();
 				} else if (type === "custom-select") {
 					if (val.key && val.value) {
-						this.attr("data-value", val.key);
+						this.attr("data-value", JSON.stringify(val.key));
 						this.attr("data-text", val.value);
 					} else if (val.key) {
-						this.attr("data-value", val.key);
+						this.attr("data-value", JSON.stringify(val.key));
 						this.attr("data-text", val.key);
 					} else if (val.value) {
-						this.attr("data-value", val.value);
+						this.attr("data-value", JSON.stringify(val.value));
 						this.attr("data-text", val.value);
 					} else {
-						this.attr("data-value", val);
+						this.attr("data-value", JSON.stringify(val));
 						this.attr("data-text", val);
 					}
 					this._invalid = false;
@@ -1215,7 +1219,7 @@ module tui.ctrl {
 						return tui.formatDate(dateVal, this.dateFormat());
 					} else
 						return dateVal;
-				} else if (type === "file") {
+				} else if (type === "file" || type === "custom-select") {
 					if (val === null)
 						return null;
 					return eval("(" + val + ")");
