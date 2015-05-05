@@ -2,7 +2,7 @@
 
 // TUI button
 .tui-button {
-	.btn;
+	.btn();
 	margin:2px;
 	cursor:pointer;
 	.border-radius(@buttonBorderRadius);
@@ -13,7 +13,7 @@
 	border: 1px solid @borderColor;
 	min-width:40px;
 	&[data-data]:after,&[data-menu]:after {
-		.icon-base;
+		.icon-base();
 		font-size:@fontSize;
 		margin-left:6px;
 		.fa-caret-down;
@@ -31,8 +31,8 @@
 			content: "";
 		}
 		&:after {
-			.icon-base;
-			.fa-caret-down;
+			.icon-base();
+			.fa-caret-down();
 			margin-left:0px;
 		}
 	}
@@ -47,12 +47,20 @@
 		&[data-checked] {
 			.btn-color(#00b545 - #111, #00b545 - #111);
 		}
+		&[data-disabled] {
+			.btn-color(#ccc, #ccc);
+			color: #eee;
+		}
 	}
 	&.tui-primary {
 		color: #fff;
 		.btn-color(#0085f5, #0075e5);
 		&[data-checked] {
 			.btn-color(#0075e5 - #111, #0075e5 - #111);
+		}
+		&[data-disabled] {
+			.btn-color(#ccc, #ccc);
+			color: #eee;
 		}
 	}
 	&.tui-danger {
@@ -61,6 +69,10 @@
 		&[data-checked] {
 			.btn-color(#e50500 - #111, #e50500 - #111);
 		}
+		&[data-disabled] {
+			.btn-color(#ccc, #ccc);
+			color: #eee;
+		}
 	}
 	&.tui-warning {
 		color: #fff;
@@ -68,15 +80,14 @@
 		&[data-checked] {
 			.btn-color(#ef7a00 - #111, #ef7a00 - #111);
 		}
+		&[data-disabled] {
+			.btn-color(#ccc, #ccc);
+			color: #eee;
+		}
 	}
 	&[data-disabled] {
 		cursor:default;
-		&:hover {
-			.liner-color(@captionColor + #111, @captionColor);
-		}
-		&:active,&.tui-actived {
-			.liner-color(@captionColor + #111, @captionColor);
-		}
+		.btn-color(@captionColor, @captionColor);
 		color: @captionColor - #333;
 	}
 }

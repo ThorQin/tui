@@ -3,7 +3,7 @@
 # CLEAN BUILD
 # =====================================
 rm -rf tui
-rm *.zip
+rm -f *.zip
 
 
 # =====================================
@@ -16,7 +16,6 @@ cp -r ../depends tui/depends/
 cp ../license tui/
 cp ../README.md tui/
 
-# tools\tsc.exe -m amd --sourcemap --out tui/tui/tui.all.js \
 tsc -m amd --out tui/tui/tui.all.js \
 	tui/tui/tui.core.ts \
 	tui/tui/tui.time.ts \
@@ -48,22 +47,25 @@ tsc -m amd --out tui/tui/tui.all.js \
 	
 rm tui/tui/*.ts
 
-java -jar tools/yuicompressor-2.4.8.jar tui/tui/tui.all.js -o tui/tui/tui.all.min.js --charset utf-8
+cp tools/compress.js tui/tui/compress.js
+cd tui/tui
+node compress.js
+rm compress.js
+cd ../..
 	
 java -jar tools/lessc/js.jar -f \
 	tools/lessc/less-rhino-1.7.0.js \
 	tools/lessc/lessc-rhino-1.7.0.js -x\
 	tui/tui/css/tui.less tui/tui/css/tui.min.css
 	
-	
 rm tui/tui/css/*.less
 
 os=`uname`
 
-if [ "$os" = "Darwin" ]; then # MAC OSX
+#if [ "$os" = "Darwin" ]; then # MAC OSX
 	zip -r tui-`cat version.txt`.zip tui
-else
-	7z a -tzip tui-`cat version.txt`.zip tui
-fi
+#else
+#	7z a -tzip tui-`cat version.txt`.zip tui
+#fi
 
-# rm -r tui
+# rm -rf tui

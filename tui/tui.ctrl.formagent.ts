@@ -1,4 +1,6 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.ctrl.radiobox.ts" />
+/// <reference path="tui.ctrl.form.ts" />
 module tui.ctrl {
 	export class FormAgent extends Control<FormAgent> {
 		static CLASS: string = "tui-form-agent";

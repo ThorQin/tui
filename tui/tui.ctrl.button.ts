@@ -1,5 +1,8 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
 /// <reference path="tui.ctrl.form.ts" />
+/// <reference path="tui.dataprovider.ts" />
+/// <reference path="tui.ctrl.menu.ts" />
+/// <reference path="tui.ctrl.list.ts" />
 module tui.ctrl {
 	export interface IButton {
 		text(t?: string): string;

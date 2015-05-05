@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="utf-8">
+		<title>Test TUI</title>
+		<link rel="stylesheet" href="../build/tui/depends/font-awesome-4.2.0/css/font-awesome.css">
+		<link rel="stylesheet" href="../build/tui/tui/css/tui.min.css">
+		<script src="../build/tui/depends/jquery-1.11.1.js"></script>
+		<script src="../build/tui/tui/tui.all.min.js"></script>
+		<script src="../build/tui/tui/lang/en-us.js"></script>
+		<script src="../build/tui/tui/lang/zh-cn.js"></script>
+		<script>
+			tui.lang = "zh-cn";
+            $(function(){
+                var dbProvider = new tui.RemoteCursorProvider(100);
+                dbProvider.onquery(function(info){
+                	console.debug('query:' + JSON.stringify(info));
+                    var result = {};
+                    result.length = 10000;
+                    result.data = [];
+                    result.begin = info.begin;
+                    for (var i = 0; i < info.cacheSize; i++) {
+                        result.data.push(
+                            //["key" + (info.begin + i), "value" + (info.begin + i)]
+                            {"key":"key" + (info.begin + i), "value": "value" + (info.begin + i)}
+                        );
+                    }
+                    //result.head = ["key","value"];
+					setTimeout(function(){
+						info.update(result);
+					}, 50);
+                });
+                tui.ctrl.grid("grid").data(dbProvider);
+            });
+		</script>
+		<style>
+
+		</style>
+		
+	</head>
+	<body>
+		<div id="grid" class="tui-grid" data-has-hscroll="true" data-rowselectable="true" data-resizable="true" data-columns='
+		    [{"name":"col1", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"列名", "key":"key"},
+		    {"name":"列名", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"col1", "key":"key"},
+		    {"name":"col2", "key":"value"}]' style="height:600px;width:1000px"></div>
+		<div style="padding:10px">
+		
+		<span id="monthInput" class="tui-input" data-type="calendar" data-month-only="true" data-clearable="true"></span>
+		<span id="calInput" class="tui-input" data-type="calendar"></span>
+		<a id="btnShow" class="tui-button">show value</a>
+		
+		<div style="height:600px;">
+		</div>
+		<script>
+			tui.ctrl.button("btnShow").on("click", function(){
+				tui.msgbox(tui.ctrl.input("monthInput").value());
+			});
+			
+		</script>
+		
+	</body>
+</html>

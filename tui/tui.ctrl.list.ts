@@ -1,4 +1,5 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.ctrl.grid.ts" />
 module tui.ctrl {
 	enum TriState {
 		Unchecked = 0,

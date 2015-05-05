@@ -57,8 +57,8 @@
 				background-color:(@captionColor - #111);
 			}
 			&:before {
-				.icon-base;
-				.fa-times;
+				.icon-base();
+				.fa-times();
 			}
 		}
 	}
@@ -99,7 +99,7 @@
 		text-align:center;
 		white-space:nowrap;		
 		&:before {
-			.icon-base;
+			.icon-base();
 			font-size:3em;
 			margin:-8px 0;
 			margin-right:20px;
@@ -112,28 +112,28 @@
 			}
 		}
 		&.tui-dlg-info:before {
-			.fa-info-circle;
+			.fa-info-circle();
 			color:@iconInfoColor;
 		}
 		&.tui-dlg-ok:before {
-			.fa-check-circle;
+			.fa-check-circle();
 			color:@iconSuccessColor;
 		}
 		&.tui-dlg-warn:before {
-			.fa-warning;
+			.fa-warning();
 			color:@iconWarnColor;
 		}
 		&.tui-dlg-err:before {
-			.fa-times-circle;
+			.fa-times-circle();
 			color:red;
 		}
 		&.tui-dlg-ask:before {
-			.fa-question-circle;
+			.fa-question-circle();
 			color:@iconInfoColor;
 		}
 		&.tui-dlg-wait:before {
-			.fa-gear;
-			.tui-spin;
+			.fa-gear();
+			.tui-spin();
 			color:#aaa;
 		}
 	}

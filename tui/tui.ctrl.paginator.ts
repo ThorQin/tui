@@ -1,4 +1,5 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.ctrl.form.ts" />
 module tui.ctrl {
 	export class Paginator extends Control<Paginator> {
 		static CLASS: string = "tui-paginator";

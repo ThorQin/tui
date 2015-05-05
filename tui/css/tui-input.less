@@ -62,7 +62,7 @@
 	}
 
 	> span {
-		.icon-base;
+		.icon-base();
 		font-size:14px;
 		position:absolute;
 		width:@buttonWidth;
@@ -84,7 +84,7 @@
 		}
 	}
 	> div {
-		.icon-base;
+		.icon-base();
 		line-height:30px;
 		font-size:14px;
 		position:absolute;
@@ -98,18 +98,18 @@
 		background-color:@inputBackColor;
 		.border-radius(@radius);
 		&:before {
-			.fa-exclamation-triangle;
+			.fa-exclamation-triangle();
 		}
 	}
 	&[data-type=select] > span:before,&[data-type=multi-select] > span:before {
 		//.fa-chevron-down;
-		.fa-caret-down;
+		.fa-caret-down();
 	}
 	&[data-type=calendar] > span:before {
-		.fa-calendar;
+		.fa-calendar();
 	}
 	&[data-type=file] > span:before {
-		.fa-folder-o;
+		.fa-folder-o();
 	}
 }
 

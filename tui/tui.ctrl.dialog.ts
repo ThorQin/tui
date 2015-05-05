@@ -1,4 +1,6 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.ctrl.button.ts" />
+/// <reference path="tui.ctrl.textarea.ts" />
 module tui {
 	export module ctrl {
 		var _dialogStack: Dialog[] = [];

@@ -1,5 +1,6 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
 /// <reference path="tui.time.ts" />
+/// <reference path="tui.ctrl.input.ts" />
 module tui.ctrl {
 
 	function formatNumber (v, maxValue) {

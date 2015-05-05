@@ -1,4 +1,6 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.dataprovider.ts" />
+/// <reference path="tui.ctrl.grid.ts" />
 module tui.ctrl {
 
 	export class Table extends Control<Table> {
@@ -16,7 +18,7 @@ module tui.ctrl {
 		private _data: IDataProvider = null;
 		
 		constructor(el?: HTMLTableElement) {
-			super("table", Grid.CLASS, el);
+			super("table", Table.CLASS, el);
 			var self = this;
 
 			this.addClass(Table.CLASS);
@@ -129,7 +131,7 @@ module tui.ctrl {
 		}
 
 		noHead(): boolean;
-		noHead(val: boolean): Grid;
+		noHead(val: boolean): Table;
 		noHead(val?: boolean): any {
 			if (typeof val === "boolean") {
 				this.is("data-no-head", val);
@@ -140,7 +142,7 @@ module tui.ctrl {
 		}
 
 		columns(): GridColumn[];
-		columns(val?: GridColumn[]): Grid;
+		columns(val?: GridColumn[]): Table;
 		columns(val?: GridColumn[]): any {
 			if (val) {
 				this._columns = val;
@@ -159,9 +161,9 @@ module tui.ctrl {
 		 * Used for support form control
 		 */
 		value(): any[];
-		value(data: tui.IDataProvider): Grid;
-		value(data: any[]): Grid;
-		value(data: { data: any[]; head?: string[]; length?: number; }): Grid;
+		value(data: tui.IDataProvider): Table;
+		value(data: any[]): Table;
+		value(data: { data: any[]; head?: string[]; length?: number; }): Table;
 		value(data?: any): any {
 			if (data === null) {
 				return this.data([]);
@@ -178,9 +180,9 @@ module tui.ctrl {
 		}
 
 		data(): tui.IDataProvider;
-		data(data: tui.IDataProvider): Grid;
-		data(data: any[]): Grid;
-		data(data: { data: any[]; head?: string[]; length?: number; }): Grid;
+		data(data: tui.IDataProvider): Table;
+		data(data: any[]): Table;
+		data(data: { data: any[]; head?: string[]; length?: number; }): Table;
 		data(data?: any): any {
 			if (data) {
 				var self = this;

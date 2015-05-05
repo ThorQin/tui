@@ -256,7 +256,7 @@ module tui {
 			// Make sure that element opacity exists.
 			// Otherwise use IE filter
 			if (div.style.opacity !== "0") {
-				if (typeof (div.filters) === 'undefined') {
+				if (typeof ((<any>div).filters) === 'undefined') {
 					throw new Error('Opacity not supported by the browser');
 				}
 				div.style.filter = "alpha(opacity=0)";

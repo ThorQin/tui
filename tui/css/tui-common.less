@@ -58,7 +58,7 @@
 	font:@pageFont;
 }
 .btn() {
-	.font;
+	.font();
 	padding:@buttonPaddingTopBottom @buttonPaddingLeftRight;
 	text-align:center;
 	vertical-align:middle;
@@ -124,12 +124,21 @@
 }
 .btn-color(@begin, @end) {
 	.liner-color(@begin,@end);
+	&[data-disabled] {
+		.liner-color(@end, @end);
+	}
 	border-color: @end - #111;
 	&:hover {
 		.liner-color(@end,@begin);
+		&[data-disabled] {
+			.liner-color(@end, @end);
+		}
 	}
 	&:active,&.tui-actived {
 		.liner-color(@end - #111, @end - #111);
+		&[data-disabled] {
+			.liner-color(@end, @end);
+		}
 	}
 }
 .icon-base() {
@@ -143,7 +152,7 @@
 }
 
 .icon() {
-	.icon-base;
+	.icon-base();
 	font-size:@fontSize;
 	width:14px;
 	//margin-right:4px;
@@ -162,7 +171,7 @@
 .tui-mask {
 	display:block;
 	position:fixed;
-	.transparent;
+	.transparent();
 	left:0;
 	top:0;
 	right:0;

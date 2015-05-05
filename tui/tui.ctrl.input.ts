@@ -2,6 +2,7 @@
 /// <reference path="tui.upload.ts" />
 /// <reference path="tui.ctrl.popup.ts" />
 /// <reference path="tui.ctrl.calendar.ts" />
+/// <reference path="tui.ctrl.primitivecalendar.ts" />
 /// <reference path="tui.ctrl.list.ts" />
 /// <reference path="tui.ctrl.form.ts" />
 module tui.ctrl {

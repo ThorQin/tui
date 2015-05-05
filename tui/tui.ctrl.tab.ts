@@ -1,4 +1,5 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.ctrl.radiobox.ts" />
 module tui.ctrl {
 	export class Tab extends Control<Tab> {
 		static CLASS: string = "tui-tab";

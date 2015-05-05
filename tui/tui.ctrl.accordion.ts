@@ -1,4 +1,7 @@
 ﻿/// <reference path="tui.ctrl.accordiongroup.ts" />
+/// <reference path="tui.ctrl.list.ts" />
+/// <reference path="tui.dataprovider.ts" />
+/// <reference path="tui.ctrl.grid.ts" />
 module tui.ctrl {
 	/**
 	 * Accordion class used to display a navigation sidebar to 

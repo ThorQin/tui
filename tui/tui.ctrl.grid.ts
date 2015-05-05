@@ -1,4 +1,7 @@
 ﻿/// <reference path="tui.ctrl.control.ts" />
+/// <reference path="tui.time.ts" />
+/// <reference path="tui.ctrl.scrollbar.ts" />
+/// <reference path="tui.ctrl.input.ts" />
 module tui.ctrl {
 
 	export interface IColumnFormatInfo {
@@ -85,8 +88,8 @@ module tui.ctrl {
 
 			this.attr("tabIndex", "0");
 			this[0].innerHTML = "";
-			if (document.createStyleSheet) {
-				this._gridStyle = document.createStyleSheet();
+			if ((<any>document).createStyleSheet) {
+				this._gridStyle = (<any>document).createStyleSheet();
 			} else {
 				this._gridStyle = document.createElement("style");
 				document.head.appendChild(this._gridStyle);
@@ -498,7 +501,7 @@ module tui.ctrl {
 				var wd = columns[i].width;
 				cssText += (".tui-grid-" + this._tableId + "-" + i + "{width:" + wd + "px}");
 			}
-			if (document.createStyleSheet) // IE
+			if ((<any>document).createStyleSheet) // IE
 				this._gridStyle.cssText = cssText;
 			else
 				this._gridStyle.innerHTML = cssText;
