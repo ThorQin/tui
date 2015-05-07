@@ -5,6 +5,7 @@
 /// <reference path="tui.ctrl.primitivecalendar.ts" />
 /// <reference path="tui.ctrl.list.ts" />
 /// <reference path="tui.ctrl.form.ts" />
+/// <reference path="tui.ctrl.dialog.ts" />
 module tui.ctrl {
 	function validText(t) {
 		if (typeof t === tui.undef || t === null) {
@@ -507,6 +508,8 @@ module tui.ctrl {
 		private openPopup = (() => {
 			var self = this;
 			return function (e) {
+				if (self.readonly())
+					return;
 				if (self.type() === "calendar") {
 					self.showCalendar();
 				} else if (self.type() === "select") {
