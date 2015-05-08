@@ -22,7 +22,12 @@
                     for (var i = 0; i < info.cacheSize; i++) {
                         result.data.push(
                             //["key" + (info.begin + i), "value" + (info.begin + i)]
-                            {"key":"key" + (info.begin + i), "value": "value" + (info.begin + i)}
+                            {
+								"key":"key" + (info.begin + i), 
+								"value": "value" + (info.begin + i),
+								"back-color": ((info.begin + i) % 2 == 0) ? "#f0f0f0": null,
+								"text-color": ((info.begin + i) % 2 == 0) ? "#bbb": null
+							}
                         );
                     }
                     //result.head = ["key","value"];

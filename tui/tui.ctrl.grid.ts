@@ -681,6 +681,7 @@ module tui.ctrl {
 			var self = this;
 			var data = this.myData();
 			var rowData = data.at(index);
+						
 			for (var i = 0; i < line.childNodes.length; i++) {
 				var cell = <HTMLSpanElement>line.childNodes[i];
 				cell.innerHTML = "";
@@ -989,10 +990,30 @@ module tui.ctrl {
 					}
 					this.moveLine(line, i - begin, base);
 				}
-				if (this.isRowSelected(i)) {
+				
+				var isSelected = this.isRowSelected(i); 
+				if (isSelected)
 					$(line).addClass("tui-grid-line-selected");
-				} else
+				else
 					$(line).removeClass("tui-grid-line-selected");
+				if (isSelected || empty) {
+					line.style.color = "";
+					line.style.backgroundColor = "";
+				} else {
+					line.style.color = "";
+					line.style.backgroundColor = "";
+					var rowData = data.at(i);
+					var textColorKey = data.mapKey("text-color");
+					var textColor = (textColorKey !== null && rowData ? rowData[textColorKey] : null);
+					if (typeof textColor === "string") {
+						line.style.color = textColor;
+					}
+					var backColorKey = data.mapKey("back-color");
+					var backColor = (backColorKey !== null && rowData ? rowData[backColorKey] : null);
+					if (typeof backColor === "string") {
+						line.style.backgroundColor = backColor;
+					}
+				}
 			}
 			var end = i;
 			for (var i = this._bufferedBegin; i < this._bufferedEnd; i++) {

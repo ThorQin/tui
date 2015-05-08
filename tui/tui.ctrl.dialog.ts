@@ -538,6 +538,52 @@ module tui {
 		dlg.useesc(false);
 		return dlg;
 	}
+	
+	export function progressbox(message: string, cancelProc: () => {} = null): ctrl.Dialog {
+		var dlg = tui.ctrl.dialog();
+		var outbox = document.createElement("div");
+		var wrap = document.createElement("div");
+		wrap.className = "tui-progress-title";
+		wrap.innerHTML = message;
+		outbox.appendChild(wrap);
+		outbox.className = "tui-progress-wrap";
+		var progressbar = document.createElement("div");
+		progressbar.className = "tui-progress-bar";
+		var progress = document.createElement("span");
+		progress.className = "tui-progress";
+		progressbar.appendChild(progress);
+		var block = document.createElement("span");
+		block.className = "tui-progress-block";
+		progress.appendChild(block);
+		var text = document.createElement("span");
+		text.className = "tui-progress-text";
+		text.innerHTML = "0%";
+		progressbar.appendChild(text);
+		outbox.appendChild(progressbar);
+		if (typeof cancelProc === "function")
+			dlg.showElement(outbox, null, [{
+				name: str("Cancel"), func: function () {
+					dlg.close();
+					cancelProc();
+				}
+			}]);
+		else {
+			dlg.showElement(outbox, null, []);
+		}
+		dlg.useesc(false);
+		dlg["text"] = function(value) {
+			wrap.innerHTML = value;
+		};
+		dlg["progress"] = function(value: number) {
+			if (typeof value !== "number" || isNaN(value))
+				return;
+			if (value < 0) value = 0;
+			if (value > 100) value = 100;
+			block.style.width = Math.floor(300 * (value / 100)) + "px";
+			text.innerHTML = value + "%";
+		};
+		return dlg;
+	}
 
 	export function loadHTML(url: string, elem: HTMLElement, completeCallback?: (status: string, jqXHR: JQueryXHR) => any, async: boolean = true, method?: string, data?: any) {
 		loadURL(url, function (status: string, jqXHR: JQueryXHR) {

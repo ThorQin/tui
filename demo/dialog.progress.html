@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="utf-8">
+		<title>Button Color</title>
+		<link rel="stylesheet" href="../build/tui/tui/css/tui.min.css">
+		<link rel="stylesheet" href="../build/tui/depends/font-awesome-4.2.0/css/font-awesome.css">
+		<script src="../build/tui/depends/jquery-1.11.1.js"></script>
+		<script src="../build/tui/tui/tui.all.min.js"></script>
+	</head>
+	<body>
+		<a id="btn" class="tui-button">Normal</a>
+		<script>
+			tui.ctrl.button("btn").on("click",function(){
+				var progress = tui.progressbox("正在执行请稍候...");
+				var i = 0;
+				var tm = setInterval(function () {
+					progress.progress(++i);
+					if (i >= 100) {
+						clearInterval(tm);
+						progress.close();
+					}
+				}, 30);
+			});
+		</script>
+	</body>
+</html>
