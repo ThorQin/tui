@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+		<title>Test TUI</title>
+		<link rel="stylesheet" href="../build/tui/depends/font-awesome-4.2.0/css/font-awesome.css">
+		<link rel="stylesheet" href="../build/tui/tui/css/tui.min.css">
+		<script src="../build/tui/depends/jquery-1.11.1.js"></script>
+		<script src="../build/tui/tui/tui.all.js"></script>
+		<script src="../build/tui/tui/lang/en-us.js"></script>
+		<script src="../build/tui/tui/lang/zh-cn.js"></script>
+		<script>
+			tui.lang = "zh-cn";
+            $(function(){
+                
+            });
+		</script>
+		<style>
+
+		</style>
+		
+	</head>
+	<body>
+		
+		<div style="padding:10px">
+		
+		<span id="monthInput" class="tui-input" data-type="calendar" data-month-only="true" data-clearable="true"></span>
+		<br><span id="calInput" class="tui-input" data-type="calendar"></span>
+		<a id="btnShow" class="tui-button">show value</a><br>
+		<a class="tui-checkbox">复选框1</a> <a class="tui-checkbox">复选框2</a>
+		</div>
+		<script>
+			tui.ctrl.button("btnShow").on("click", function(){
+				tui.msgbox(tui.ctrl.input("monthInput").value());
+			});
+			
+		</script>
+		
+	</body>
+</html>

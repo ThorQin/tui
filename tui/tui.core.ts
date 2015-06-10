@@ -598,8 +598,8 @@ module tui {
 	/**
 	 * Get element's owner window
 	 */
-	export function getWindow(elem: HTMLElement): MSScriptHost {
-		return elem.ownerDocument.defaultView || elem.ownerDocument.parentWindow; 
+	export function getWindow(elem: HTMLElement): any {
+		return elem.ownerDocument.defaultView || (<any>elem.ownerDocument).parentWindow; 
 	}
 
 	function cloneInternal(obj, excludeProperties: any) {

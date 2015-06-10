@@ -163,6 +163,90 @@ module tui.ctrl {
 					}
 				}
 			});
+			
+			
+			function scrollX(distance: number) {
+				var oldValue = self._scrollLeft;
+				self._hscroll.value(self._hscroll.value() - distance);
+				self._scrollLeft = self._hscroll.value();
+				if (self._scrollLeft !== oldValue) {
+					self.drawLines();
+					self.drawColumnLines();
+					return true;
+				} else
+					return false;
+			}
+			
+			function scrollY(distance: number) {
+				var oldValue = self._scrollTop;
+				self._vscroll.value(self._vscroll.value() - distance);
+				self._scrollTop = self._vscroll.value();
+				if (self._scrollTop !== oldValue) {
+					self.drawLines();
+					return true;
+				} else
+					return false;
+			}
+			
+			var inTouched: boolean = false;
+			var direction: number = null;
+			var lastPos: any = null;
+			var lastTime: number = null;
+			var lastSpeed: number = null;
+
+			$(this[0]).on("touchstart", function (ev) {
+				if (inTouched)
+					return;
+				inTouched = true;
+				lastSpeed = 0;
+				var e = <any>ev.originalEvent;
+				if (e.targetTouches.length != 1)
+					return;
+				var touch = e.targetTouches[0];
+				lastPos = { x: touch.pageX, y: touch.pageY };
+				lastTime = new Date().getMilliseconds();
+			});
+			$(this[0]).on("touchmove", function (ev) {
+				if (!inTouched)
+					return;
+				var e = <any>ev.originalEvent;
+				var touch = e.targetTouches[0];
+				var movePos = { x: touch.pageX, y: touch.pageY };
+				var moveX = movePos.x - lastPos.x;
+				var moveY = movePos.y - lastPos.y;
+				var currentTime = new Date().getMilliseconds();
+				var spanTime = currentTime - lastTime;
+				lastPos = movePos;
+				lastTime = currentTime;
+				if (direction == null) {
+					direction = Math.abs(moveX) > Math.abs(moveY) ? 0 : 1; 
+				}
+				lastSpeed = (direction == 0 ? moveX / spanTime : moveY / spanTime); 
+				if (direction == 0 ? scrollX(moveX) : scrollY(moveY)) {
+					ev.stopPropagation();
+					ev.preventDefault();
+				}
+			});
+			$(this[0]).on("touchend", function(ev) {
+				var animation: number = null;
+				if (Math.abs(lastSpeed) > 0.05) {
+					var dir = direction;
+					animation = setInterval(function(){
+						if (dir == 0)
+							scrollX(lastSpeed * 10); 
+						else 
+							scrollY(lastSpeed * 10);
+						lastSpeed *= 0.9;
+						if (Math.abs(lastSpeed) < 0.01) {
+							clearInterval(animation);
+						}
+					}, 10);
+				}
+				inTouched = false;
+				direction = null;
+				lastTime = null;
+			});
+			
 			$(this[0]).mousedown(function (e) {
 				tui.focusWithoutScroll(self[0]);
 				e.preventDefault();
@@ -1249,6 +1333,8 @@ module tui.ctrl {
 			if (val) {
 				this._columns = val;
 				this._initialized = false;
+				this._sortColumn = null;
+				this._sortDesc = false;
 				this.refresh();
 				return this;
 			} else {
@@ -1389,6 +1475,9 @@ module tui.ctrl {
 				}
 				this._data && this._data.onupdate && this._data.onupdate(null);
 				this._data = data;
+				if (this._sortColumn != null) {
+					this.sort(this._sortColumn, this._sortDesc);
+				}
 				typeof this._data.onupdate === "function" && this._data.onupdate((updateInfo) => {
 					var b = updateInfo.begin;
 					var e = b + updateInfo.data.length;

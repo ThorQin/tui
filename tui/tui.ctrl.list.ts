@@ -411,6 +411,14 @@ module tui.ctrl {
 			} else
 				return null;
 		}
+		
+		editCell(rowIndex: number, colIndex: number): boolean {
+			return this._grid.editCell(rowIndex, colIndex);
+		}
+
+		editRow(rowIndex: number): boolean {
+			return this._grid.editRow(rowIndex);
+		}
 
 		private doCheck(keys: any[], checkState: TriState) {
 			var self = this;

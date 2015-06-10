@@ -122,11 +122,19 @@ module tui {
 			delete this._mapping[key];
 			this._realKeyMap = null;
 		}
-		sort(key: any, desc: boolean, func: (a: any, b: any) => number = null): ArrayProvider {
+		sort(key: any, desc: boolean, func: (a: any, b: any, desc: boolean) => number = null): ArrayProvider {
+			function toEmpty(v) {
+				if (v === null || typeof v === tui.undef)
+					return "";
+				else
+					return v;
+			}
 			if (this._src) {
 				if (typeof func === "function") {
 					this._data = this._src.concat();
-					this._data.sort(func);
+					this._data.sort(function(a,b){
+						return func(a,b,desc);
+					});
 				} else if (key === null && func === null) {
 					this._data = this._src;
 					return this;
@@ -136,9 +144,11 @@ module tui {
 					}
 					this._data = this._src.concat();
 					this._data.sort(function (a: any, b: any): number {
-						if (a[key] > b[key]) {
+						a = toEmpty(a[key]);
+						b = toEmpty(b[key]);
+						if (a > b) {
 							return desc ? -1 : 1;
-						} else if (a[key] < b[key]) {
+						} else if (a < b) {
 							return desc ? 1 : -1;
 						} else {
 							return 0;

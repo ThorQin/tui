@@ -2,11 +2,13 @@
 <html lang="en-US">
 	<head>
 		<meta charset="utf-8">
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
 		<title>Test TUI</title>
 		<link rel="stylesheet" href="../build/tui/depends/font-awesome-4.2.0/css/font-awesome.css">
 		<link rel="stylesheet" href="../build/tui/tui/css/tui.min.css">
 		<script src="../build/tui/depends/jquery-1.11.1.js"></script>
-		<script src="../build/tui/tui/tui.all.min.js"></script>
+		<script src="../build/tui/tui/tui.all.js"></script>
 		<script src="../build/tui/tui/lang/en-us.js"></script>
 		<script src="../build/tui/tui/lang/zh-cn.js"></script>
 		<script>
@@ -16,7 +18,7 @@
                 dbProvider.onquery(function(info){
                 	console.debug('query:' + JSON.stringify(info));
                     var result = {};
-                    result.length = 10000;
+                    result.length = 100;
                     result.data = [];
                     result.begin = info.begin;
                     for (var i = 0; i < info.cacheSize; i++) {
