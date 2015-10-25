@@ -38,10 +38,10 @@ module tui.ctrl {
 			if (button.checked()) {
 				$(tabId).removeClass("tui-hidden");
 				tui.ctrl.initCtrls($(tabId)[0]);
+				this.fire("active", {index: this._buttons.indexOf(button), text: button.text()});
 			} else {
 				$(tabId).addClass("tui-hidden");
 			}
-			this.fire("active", {index: this._buttons.indexOf(button), text: button.text()});
 		}
 
 		at(index: number): Radiobox {
